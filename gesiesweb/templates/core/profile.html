@@ -1,0 +1,456 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block extra_css_links %}
+	<!-- page specific plugin styles -->
+	<link rel="stylesheet" href="{% static 'css/jquery-ui.custom.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'css/jquery.gritter.css' %}" />
+	<link rel="stylesheet" href="{% static 'css/select2.css' %}" />
+	<link rel="stylesheet" href="{% static 'css/datepicker.css' %}" />
+	<link rel="stylesheet" href="{% static 'css/bootstrap-editable.css' %}" />
+{% endblock extra_css_links %}
+
+{% block breadcrumbs %}
+  <!-- #section:basics/content.breadcrumbs -->
+  <div class="breadcrumbs" id="breadcrumbs">
+    <script type="text/javascript">
+      try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+    </script>
+
+    <ul class="breadcrumb">
+      <li>
+        <i class="ace-icon fa fa-home home-icon"></i>
+        <a href="#">Usuario</a>
+      </li>
+      <li class="active">Perfíl</li>
+    </ul><!-- /.breadcrumb -->
+
+    <!-- #section:basics/content.searchbox -->
+    <div class="nav-search" id="nav-search">
+      <form class="form-search">
+        <span class="input-icon">
+          <input type="text" placeholder="Buscar ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+          <i class="ace-icon fa fa-search nav-search-icon"></i>
+        </span>
+      </form>
+    </div><!-- /.nav-search -->
+
+    <!-- /section:basics/content.searchbox -->
+  </div>
+  <!-- /section:basics/content.breadcrumbs -->
+{% endblock breadcrumbs %}
+
+
+
+{% block pageheader %}
+  {{ block.super }}
+  <div class="page-header">
+    <h1>
+      Mi Perfíl
+      <small>
+        <i class="ace-icon fa fa-angle-double-right"></i>
+        Visualiza tu información y modifica tu avatar en el sistema
+      </small>
+    </h1>
+  </div><!-- /.page-header -->
+{% endblock pageheader %}
+
+{% block contenido %}
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+			<div class="clearfix">
+				<div class="pull-left alert alert-success no-margin">
+					<button type="button" class="close" data-dismiss="alert">
+						<i class="ace-icon fa fa-times"></i>
+					</button>
+
+					<i class="ace-icon fa fa-umbrella bigger-120 blue"></i>
+					Haz Click en la imagen de abajo para cambiarla
+				</div>
+			</div>
+
+			<div class="hr dotted"></div>
+
+			<div>
+				<div id="user-profile-1" class="user-profile row">
+					<div class="col-xs-12 col-sm-3 center">
+						<div>
+							<!-- #section:pages/profile.picture -->
+							<span class="profile-picture">
+								<img id="avatar" class="editable img-responsive" alt="Avatar del usuario" src="{{ MEDIA_URL }}{{usuario.foto}}"/>
+							</span>
+
+							<!-- /section:pages/profile.picture -->
+							<div class="space-4"></div>
+
+							<div class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
+								<div class="inline position-relative">
+									&nbsp;
+									<span class="white">{% firstof user.get_short_name user.get_username %}</span>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="col-xs-12 col-sm-9">
+						<div class="center">
+							<span class="btn btn-app btn-sm btn-light no-hover">
+								<span class="line-height-1 bigger-170 blue"> {{ partes }} </span>
+
+								<br />
+								<span class="line-height-1 smaller-90"> Partes </span>
+							</span>
+
+							<span class="btn btn-app btn-sm btn-yellow no-hover">
+								<span class="line-height-1 bigger-170"> {{ absentismos }} </span>
+
+								<br />
+								<span class="line-height-1 smaller-80"> Absentismo </span>
+							</span>
+
+							<span class="btn btn-app btn-sm btn-pink no-hover">
+								<span class="line-height-1 bigger-170"> {{ retrasos }} </span>
+
+								<br />
+								<span class="line-height-1 smaller-90"> Retrasos </span>
+							</span>
+
+							<span class="btn btn-app btn-sm btn-grey no-hover">
+								<span class="line-height-1 bigger-170"> {{ grupos }} </span>
+
+								<br />
+								<span class="line-height-1 smaller-90"> Grupos </span>
+							</span>
+
+							<span class="btn btn-app btn-sm btn-success no-hover">
+								<span class="line-height-1 bigger-170"> {{ asignaturas }} </span>
+
+								<br />
+								<span class="line-height-1 smaller-90"> Asignaturas </span>
+							</span>
+
+							<span class="btn btn-app btn-sm btn-primary no-hover">
+								<span class="line-height-1 bigger-170"> {{ alumnos }} </span>
+
+								<br />
+								<span class="line-height-1 smaller-90"> Alumnos </span>
+							</span>
+						</div>
+
+						<div class="space-12"></div>
+
+						<!-- #section:pages/profile.info -->
+						<div class="profile-user-info profile-user-info-striped">
+
+  							<div class="profile-info-row">
+								<div class="profile-info-name"> Usuario </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="usuario">{{ request.user.username }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> Nombre </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="nombre">{{ request.user.first_name }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> Apellidos </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="apellidos">{{ request.user.last_name }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> D.N.I. </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="dni">{{ request.user.usuario.dni }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> Última sesión </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="ultimoiniciosesion">{{ request.user.last_login }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> Fecha de alta </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="fechaalta">{{ request.user.date_joined }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> Usuario Rayuela </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="rayuela">{{ request.user.usuario.usuario_rayuela }}</span>
+								</div>
+							</div>
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> IP Actual </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="ip">{{ ip }}</span>
+								</div>
+							</div>
+
+                            {% if request.session.es_responsable %}
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Responsable </div>
+
+                                    <div class="profile-info-value">
+                                        <span class="editable" id="responsable">
+                                                Si
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if request.session.es_tutor %}
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Tutoría </div>
+
+                                    <div class="profile-info-value">
+                                        <span class="editable" id="tutoria">{{ request.session.grupo_tutoria.grupo }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if request.session.es_jefe %}
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Jefe Dpto. </div>
+
+                                    <div class="profile-info-value">
+                                        <span class="editable" id="esjefe">
+                                            {% if request.session.es_jefe %}
+                                                Si
+                                            {% else %}
+                                                No
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+
+                            {% endif %}
+
+							<div class="profile-info-row">
+								<div class="profile-info-name"> Departamento </div>
+
+								<div class="profile-info-value">
+									<span class="editable" id="departamento">{{ request.session.departamento.departamento }}</span>
+								</div>
+							</div>
+
+                            {% for grupo in request.session.grupos_asignaturas_alumnos %}
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> {{ grupo.grupo }} </div>
+
+                                    <div class="profile-info-value">
+                                        <span class="editable" id="asignatura">({{ grupo.asignatura.abreviatura }}) {{ grupo.asignatura.asignatura }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"></div>
+
+                                    <div class="profile-info-value">
+                                        <span class="editable" id="alumno">
+
+                                            <div class="dd" id="nestable">
+                                                <ol class="dd-list">
+
+                                                    <li class="dd-item dd-collapsed" data-id="{{ grupo.grupo }}-{{ grupo.asignatura.abreviatura }}">
+                                                        <div class="dd-handle">Alumnado</div>
+                                                        <ol class="dd-list" style="display: none;">
+                                                        {% for alumno in grupo.alumnos %}
+                                                            <li class="dd-item" data-id="{{ alumno.id }}">
+                                                                <div class="dd-handle">
+                                                                    <span>
+                                                                        <img width=50px src="{% static 'avatars/avatar4.png' %}" alt="Foto del alumno"/>
+                                                                        <span>
+                                                                            {{ alumno.apellidos }},&nbsp{{ alumno.nombre }}
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+                                                        {% endfor %}
+                                                        </ol>
+                                                    </li>
+                                                </ol>
+                                            </div>
+
+
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+
+{% endblock contenido %}
+
+{% block extra_js_links %}
+<!--
+	<script src="{% static 'js/jquery-ui.custom.min.js' %}"></script>
+	<script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
+-->	
+	<script src="{% static 'js/jquery.gritter.min.js' %}"></script>
+<!--	
+	<script src="{% static 'js/bootbox.min.js' %}"></script>
+	<script src="{% static 'js/jquery.easy-pie-chart.min.js' %}"></script>
+	<script src="{% static 'js/date-time/bootstrap-datepicker.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap-wysiwyg.min.js' %}"></script>
+	<script src="{% static 'js/select2.min.js' %}"></script>
+	<script src="{% static 'js/fuelux/fuelux.spinner.min.js' %}"></script>
+-->	
+	<script src="{% static 'js/x-editable/bootstrap-editable.min.js' %}"></script>
+	<script src="{% static 'js/x-editable/ace-editable.min.js' %}"></script>	
+<!--
+	<script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+-->
+    <!--[if lte IE 8]>
+        <script src="{static 'js/excanvas.min.js' %}"></script>
+    <![endif]-->
+
+    <script src="{% static 'js/jquery.nestable.min.js' %}"></script>
+
+{% endblock extra_js_links %}
+
+{% block extra_js %}
+ jQuery(function($) {
+	
+		$.fn.editable.defaults.mode = 'inline';
+		//$.fn.editableform.loading = "<div class='editableform-loading'><i class='ace-icon fa fa-spinner fa-spin fa-2x light-blue'></i></div>";
+	  //  $.fn.editableform.buttons = '<button type="submit" class="btn btn-info editable-submit"><i class="ace-icon fa fa-check"></i></button>'+
+	  //                              '<button type="button" class="btn editable-cancel"><i class="ace-icon fa fa-times"></i></button>';    
+		
+		//editables 
+
+        $('#nombre').editable({
+            type: 'text',
+            name: 'nombre',
+            url: '{% url "core:profile" request.user.id %}'
+        });
+
+        $('#apellidos').editable({
+            type: 'text',
+            name: 'apellidos',
+            url: '{% url "core:profile" request.user.id %}'
+        });
+
+		// *** editable avatar *** //
+		try {//ie8 throws some harmless exceptions, so let's catch'em
+	
+			//first let's add a fake appendChild method for Image element for browsers that have a problem with this
+			//because editable plugin calls appendChild, and it causes errors on IE at unpredicted points
+			try {
+				document.createElement('IMG').appendChild(document.createElement('B'));
+			} catch(e) {
+				Image.prototype.appendChild = function(el){}
+			}
+	
+			var last_gritter
+			$('#avatar').editable({
+				type: 'image',
+				name: 'avatar',
+				value: null,
+				image: {
+					//specify ace file input plugin's options here
+					btn_choose: 'Cambia Avatar',
+					droppable: true,
+					maxSize: 110000,//~100Kb
+	
+					//and a few extra ones here
+					name: 'avatar',//put the field name here as well, will be used inside the custom plugin
+					on_error : function(error_type) {//on_error function will be called when the selected file has a problem
+						if(last_gritter) $.gritter.remove(last_gritter);
+						if(error_type == 1) {//file format error
+							last_gritter = $.gritter.add({
+								title: '¡El archivo no es una imagen!',
+								text: '¡Elige una imagen jpg|gif|png!',
+								class_name: 'gritter-error gritter-center'
+							});
+						} else if(error_type == 2) {//file size rror
+							last_gritter = $.gritter.add({
+								title: '¡Archivo demasiado grande!',
+								text: '¡El tamaño del archivo no puede exceder los 100Kb!',
+								class_name: 'gritter-error gritter-center'
+							});
+						}
+						else {//other error
+						}
+					},
+					on_success : function() {
+						$.gritter.removeAll();
+					}
+				},
+			    url: function(params) {
+					// ***UPDATE AVATAR HERE*** //
+					//for a working upload example you can replace the contents of this function with 
+					//examples/profile-avatar-update.js
+	
+					var deferred = new $.Deferred
+	
+					var value = $('#avatar').next().find('input[type=hidden]:eq(0)').val();
+					if(!value || value.length == 0) {
+						deferred.resolve();
+						return deferred.promise();
+					}
+	
+	
+					//dummy upload
+					setTimeout(function(){
+						if("FileReader" in window) {
+							//for browsers that have a thumbnail of selected image
+							var thumb = $('#avatar').next().find('img').data('thumb');
+							if(thumb) $('#avatar').get(0).src = thumb;
+						}
+						
+						deferred.resolve({'status':'OK'});
+	
+						if(last_gritter) $.gritter.remove(last_gritter);
+						last_gritter = $.gritter.add({
+							title: '¡Avatar Actualizado!',
+							text: 'La subida al servidor puede ser implementada fácilmente. Un ejemplo funcionando se incluye en la plantilla.',
+							class_name: 'gritter-info gritter-center'
+						});
+						
+					 } , parseInt(Math.random() * 800 + 800))
+	
+					return deferred.promise();
+					
+					// ***END OF UPDATE AVATAR HERE*** //
+				},
+				
+				success: function(response, newValue) {
+				}
+			})
+		}catch(e) {};
+
+        $('.dd').nestable();
+        $('.dd').nestable('collapseAll');
+
+	});
+
+
+{% endblock extra_js %}  

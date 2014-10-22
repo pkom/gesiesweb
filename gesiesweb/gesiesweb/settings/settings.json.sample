@@ -1,0 +1,24 @@
+{
+    "SECRET_KEY": "Here you must put your secret key",
+    "ADMIN": "Your name here",
+    "ADMIN_EMAIL": "Your email here",
+    "DB_BASE": {
+        "ENGINE": "Your database prod engine, some like django.db.backends.mysql",
+        "NAME": "Mysql database name for production",
+        "USER": "Mysql user name for production mysql database",
+        "PASSWORD": "Mysql user password for user",
+        "HOST": "Host name for mysql server",
+        "PORT": "Port number for mysql server"
+    },
+    "DB_LOCAL": {
+        "ENGINE": "Your database dev engine",
+        "NAME": "Mysql database name for development",
+        "USER": "Mysql user name for development mysql database",
+        "PASSWORD": "Mysql user password for user",
+        "HOST": "Host name for mysql development server",
+        "PORT": "Port number for mysql development server"
+    },
+    "AUTH_LDAP_SERVER_URI": "Your ldap uri for ldap auth, some like ldap://ldap.maestrojuancalero",
+    "AUTH_LDAP_BIND_DN": "Ldap user granted to get ldap information, some like dc="user,dc=organization",
+    "AUTH_LDAP_BIND_PASSWORD": "Ldaps user password"
+}
