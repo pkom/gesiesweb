@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
 from cursos.models import Curso
+from config.models import Config
 
 class CourseAuthenticationForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'id': 'id_username',
@@ -12,5 +13,9 @@ class CourseAuthenticationForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_password',
                                                              'placeholder': 'Contraseña',
                                                              'class': 'form-control'}))
-    course = forms.ModelChoiceField(queryset=Curso.objects.all(),widget=forms.Select())
+    course = forms.ModelChoiceField(queryset=Curso.objects.all(),
+                                    empty_label='Selecciona curso',
+                                    widget=forms.Select(attrs={'id': 'id_course',
+                                                               'class': 'form-control'}),
+                                    initial=Config.objects.all().first().curso_academico_defecto.id)
 
