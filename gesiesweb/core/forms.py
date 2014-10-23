@@ -16,6 +16,8 @@ class CourseAuthenticationForm(AuthenticationForm):
     course = forms.ModelChoiceField(queryset=Curso.objects.all(),
                                     empty_label='Selecciona curso',
                                     widget=forms.Select(attrs={'id': 'id_course',
-                                                               'class': 'form-control'}),
-                                    initial=Config.objects.all().first().curso_academico_defecto.id)
+                                                               'class': 'form-control'}))
 
+    def __init__(self, request=None, *args, **kwargs):
+        super(CourseAuthenticationForm, self).__init__(request, *args, **kwargs)
+        self.fields['course'].initial = Config.objects.all().first().curso_academico_defecto.id

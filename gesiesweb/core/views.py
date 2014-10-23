@@ -30,11 +30,6 @@ class LoginView(FormView):
         fillsessionuser(self.request, form.user_cache, course)
         return super(LoginView, self).form_valid(form)
 
-    def get_form_kwargs(self):
-        kwargs = super(LoginView, self).get_form_kwargs()
-        #kwargs['curso_defecto'] = Config.objects.all().first().curso_academico_defecto.id
-        return kwargs
-
 
 @login_required
 def mylogout(request):
