@@ -51,11 +51,10 @@
 		<!-- This file store project specific CSS -->
 		<link rel="stylesheet" href="{% static 'cssproject/gesiesweb.css' %}" />
 		<!-- Use this to quickly test CSS changes in a template, then move to gesiesweb.css -->
-		<style>
+
 		{% block extra_css %}
 
 		{% endblock extra_css %} 
-		</style>
 
 	</head>
 
@@ -468,13 +467,10 @@
 		<!-- place project specific Javascript in this file -->
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
 
-
-		<script>
 		{% block extra_js %}
 
 
 
 		{% endblock extra_js %}
-		</script>
 	</body>
 </html>
