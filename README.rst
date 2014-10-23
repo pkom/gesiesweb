@@ -1,94 +1,21 @@
 ========================
-gesiesweb-project
+Proyecto GesIESWeb
 ========================
 
-A project for Django 1.6.
+Proyecto ideado para llevar el control disciplinario, retrasos, absentismos pasivos, evaluaciones y fichas de tutores
+en los centros de educación secundaria de Extremadura.
 
-To use this project follow these steps:
+Los datos son importados al sistema desde los archivos generados por la plataforma Rayuela del Gobierno de Extremadura.
 
-#. Create your working environment
-#. Install Django
-#. Create the new project using the django-two-scoops template
-#. Install additional dependencies
-#. Use the Django admin to create the project
+Está realizado en Django 1.6.
 
-*note: these instructions show creation of a project called "icecream".  You
-should replace this name with the actual name of your project.*
+Para utilizarlo:
 
-Working Environment
-===================
+#. Crea un entorno virtual de desarrollo para python, con virtualenv y lo activas
+#. Instala Django 1.6.7
+#. Clona este repositorio desde github con git clone git@github.com:pkom/gesiesweb.git
+#. Instala las dependencias con pip install -r requirements/local.txt
+#. Configura los valores apropiados en el archivo settings.json según tu base de datos y demás
+#. Sincroniza la base de datos con python manage.py syncdb
+#. Corre el servidor con python manage.py runserver
 
-You have several options in setting up your working environment.  We recommend
-using virtualenv to separate the dependencies of your project from your system's
-python environment.  If on Linux or Mac OS X, you can also use virtualenvwrapper to help manage multiple virtualenvs across different projects.
-
-Virtualenv Only
----------------
-
-First, make sure you are using virtualenv (http://www.virtualenv.org). Once
-that's installed, create your virtualenv::
-
-    $ virtualenv --distribute icecream
-
-You will also need to ensure that the virtualenv has the project directory
-added to the path. Adding the project directory will allow `django-admin.py` to
-be able to change settings using the `--settings` flag.
-
-Virtualenv with virtualenvwrapper
-------------------------------------
-
-In Linux and Mac OSX, you can install virtualenvwrapper (http://virtualenvwrapper.readthedocs.org/en/latest/),
-which will take care of managing your virtual environments and adding the
-project path to the `site-directory` for you::
-
-    $ mkdir icecream
-    $ mkvirtualenv -a icecream icecream-dev
-    $ cd icecream && add2virtualenv `pwd`
-
-Using virtualenvwrapper with Windows
-----------------------------------------
-
-TBD
-
-Installing Django
-=================
-
-To install Django in the new virtual environment, run the following command::
-
-    $ pip install django
-
-Creating your project
-=====================
-
-To create a new Django project called '**icecream**' using
-django-twoscoops-project, run the following command::
-
-    $ django-admin.py startproject --template=https://github.com/twoscoops/django-twoscoops-project/archive/master.zip --extension=py,rst,html icecream_project
-    
-For Django 1.5 users, we recommend::
-
-    $ django-admin.py startproject --template=https://github.com/twoscoops/django-twoscoops-project/archive/1.5.zip --extension=py,rst,html icecream_project
-
-Installation of Dependencies
-=============================
-
-Depending on where you are installing dependencies:
-
-In development::
-
-    $ pip install -r requirements/local.txt
-
-For production::
-
-    $ pip install -r requirements.txt
-
-*note: We install production requirements this way because many Platforms as a
-Services expect a requirements.txt file in the root of projects.*
-
-Acknowledgements
-================
-
-- Many thanks to Randall Degges for the inspiration to write the book and django-skel.
-- All of the contributors_ to this project.
-
-.. _contributors: https://github.com/pkom/gesiesweb/master/CONTRIBUTORS.txt
