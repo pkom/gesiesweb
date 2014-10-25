@@ -78,7 +78,13 @@
 						<div>
 							<!-- #section:pages/profile.picture -->
 							<span class="profile-picture">
-								<img id="avatar" class="editable img-responsive" alt="Avatar del usuario" src="{{ MEDIA_URL }}{{usuario.foto}}"/>
+								<img id="avatar" class="editable img-responsive"
+                                    {% if request.user.usuario.foto %}
+                                        src="{{ MEDIA_URL }}{{usuario.foto}}"
+                                    {% else %}
+                                        src="{% static 'avatars/avatar2.png' %}"
+                                    {% endif %}
+                                alt="Avatar del usuario"/>
 							</span>
 
 							<!-- /section:pages/profile.picture -->
@@ -405,7 +411,7 @@
                         // ***UPDATE AVATAR HERE*** //
 
 
-                        var submit_url = 'file-upload.php';//please modify submit_url accordingly
+                        var submit_url = '{% url "core:updatephoto" %}';//please modify submit_url accordingly
                         var deferred = null;
                         var avatar = '#avatar';
 
@@ -422,7 +428,7 @@
 
                         var $form = $(avatar).next().find('.editableform:eq(0)')
                         var file_input = $form.find('input[type=file]:eq(0)');
-                        var pk = $(avatar).attr('data-pk');//primary key to be sent to server
+                        var pk = '{{ request.user.id }}';//primary key to be sent to server
 
                         var ie_timeout = null
 
@@ -496,8 +502,11 @@
                         //deferred callbacks, triggered by both ajax and iframe solution
                         deferred
                         .done(function(result) {//success
-                            var res = result[0];//the `result` is formatted by your server side response and is arbitrary
-                            if(res.status == 'OK') $(avatar).get(0).src = res.url;
+                            var res = result;//the `result` is formatted by your server side response and is arbitrary
+                            if(res.status == 'OK') {
+                                $(avatar).get(0).src = res.url;
+                                $('.nav-user-photo').get(0).src = res.url; // update base.html avatar photo
+                            }
                             else alert(res.message);
                         })
                         .fail(function(result) {//failure
@@ -509,19 +518,6 @@
                         });
 
                         return deferred.promise();
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                         // ***END OF UPDATE AVATAR HERE*** //
                     },

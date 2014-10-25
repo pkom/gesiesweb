@@ -212,7 +212,13 @@
 							<!-- #section:basics/navbar.user_menu -->
 							<li class="light-blue">
 								<a data-toggle="dropdown" href="#" class="dropdown-toggle">
-									<img class="nav-user-photo" src="{{ MEDIA_URL }}{{request.user.usuario.foto}}" alt="Foto de {{ request.user.username }}" />
+									<img class="nav-user-photo"
+                                         {% if request.user.usuario.foto %}
+                                            src="{{ MEDIA_URL }}{{request.user.usuario.foto}}"
+                                         {% else %}
+                                            src="{% static 'avatars/avatar2.png' %}"
+                                         {% endif %}
+                                         alt="Foto de {{ request.user.username }}" />
 									<span class="user-info">
 										<small>Bienvenid@,</small>
 										{% firstof request.user.get_short_name request.user.get_username %}

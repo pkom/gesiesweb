@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+
+from django.http.response import HttpResponse, HttpResponseBadRequest, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
@@ -11,11 +14,10 @@ from braces.views import LoginRequiredMixin
 from django.contrib.auth.models import User
 
 from usuarios.models import Usuario
-from config.models import Config
+
 from .forms import CourseAuthenticationForm
 
 class HomeTemplateView(LoginRequiredMixin, TemplateView):
-
     template_name = 'core/index.html'
 
 class LoginView(FormView):
@@ -24,7 +26,6 @@ class LoginView(FormView):
     success_url = '/'
 
     def form_valid(self, form):
-
         login(self.request, form.user_cache)
         course = form.cleaned_data['course']
         fillsessionuser(self.request, form.user_cache, course)
@@ -72,11 +73,41 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 
 @login_required
 def postprofile(request):
-    print "Es ajax "+request.is_ajax()
-    if request.method == 'POST':
-        print request.POST['value']
-        print request.POST['name']
-        print request.POST['pk']
+    if request.is_ajax():
+        print "Es ajax "
+        if request.method == 'POST':
+            print request.POST['value']
+            print request.POST['name']
+            print request.POST['pk']
+    else:
+        raise Http404
+
+
+@login_required
+def updatephoto(request):
+    if request.is_ajax():
+        result = dict()
+        if request.method == 'POST':
+            usuario = User.objects.get(pk=request.POST['pk']).usuario
+            usuario.foto = request.FILES['avatar']
+            try:
+                usuario.save()
+            except:
+                result['status'] = 'ERR'
+                result['message'] = 'Error al subir'
+                return HttpResponseBadRequest(json.dumps(result))
+            result['status'] = 'OK'
+            result['message'] = 'Foto cambiada'
+            result['url'] = usuario.foto.url
+            return HttpResponse(json.dumps(result))
+        else:
+            result['status'] = 'ERR'
+            result['message'] = 'Petición errónea'
+            return HttpResponseBadRequest(json.dumps(result))
+    else:
+        raise Http404
+
+
 
 def fillsessionuser(request, user, course):
     request.session['curso_academico_usuario'] = course
