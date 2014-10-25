@@ -71,14 +71,30 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         context['alumnos'] = 135
         return context
 
+
 @login_required
-def postprofile(request):
+def updatename(request):
     if request.is_ajax():
-        print "Es ajax "
+        result = dict()
         if request.method == 'POST':
-            print request.POST['value']
-            print request.POST['name']
-            print request.POST['pk']
+            user = User.objects.get(pk=request.POST['pk'])
+            if request.POST['name'] == 'nombre':
+                user.first_name = request.POST['value']
+            elif request.POST['name'] == 'apellidos':
+                user.last_name = request.POST['value']
+            try:
+                user.save()
+            except:
+                result['status'] = 'ERR'
+                result['message'] = 'Error actualizando el dato'
+                return HttpResponseBadRequest(json.dumps(result))
+            result['status'] = 'OK'
+            result['message'] = 'Dato actualizado'
+            return HttpResponse(json.dumps(result))
+        else:
+            result['status'] = 'ERR'
+            result['message'] = 'Petición errónea'
+            return HttpResponseBadRequest(json.dumps(result))
     else:
         raise Http404
 
@@ -97,7 +113,7 @@ def updatephoto(request):
                 result['message'] = 'Error al subir'
                 return HttpResponseBadRequest(json.dumps(result))
             result['status'] = 'OK'
-            result['message'] = 'Foto cambiada'
+            result['message'] = 'Foto actualizada'
             result['url'] = usuario.foto.url
             return HttpResponse(json.dumps(result))
         else:

@@ -351,14 +351,18 @@
 
             $('#nombre').editable({
                 type: 'text',
+                pk : '{{ request.user.id }}',//primary key to be sent to server
                 name: 'nombre',
-                url: '{% url "core:profile" request.user.id %}'
+                url: '{% url "core:updatename" %}',
+                send: 'always'
             });
 
             $('#apellidos').editable({
                 type: 'text',
+                pk : '{{ request.user.id }}',//primary key to be sent to server
                 name: 'apellidos',
-                url: '{% url "core:profile" request.user.id %}'
+                url: '{% url "core:updatename" %}',
+                send: 'always'
             });
 
             // *** editable avatar *** //
