@@ -87,14 +87,14 @@ def updatename(request):
             except:
                 result['status'] = 'ERR'
                 result['message'] = 'Error actualizando el dato'
-                return HttpResponseBadRequest(json.dumps(result))
+                return HttpResponseBadRequest(json.dumps(result), content_type="application/json")
             result['status'] = 'OK'
             result['message'] = 'Dato actualizado'
-            return HttpResponse(json.dumps(result))
+            return HttpResponse(json.dumps(result), content_type="application/json")
         else:
             result['status'] = 'ERR'
             result['message'] = 'Petición errónea'
-            return HttpResponseBadRequest(json.dumps(result))
+            return HttpResponseBadRequest(json.dumps(result), content_type="application/json")
     else:
         raise Http404
 
@@ -111,15 +111,15 @@ def updatephoto(request):
             except:
                 result['status'] = 'ERR'
                 result['message'] = 'Error al subir'
-                return HttpResponseBadRequest(json.dumps(result))
+                return HttpResponseBadRequest(json.dumps(result), content_type="application/json")
             result['status'] = 'OK'
             result['message'] = 'Foto actualizada'
             result['url'] = usuario.foto.url
-            return HttpResponse(json.dumps(result))
+            return HttpResponse(json.dumps(result), content_type="application/json")
         else:
             result['status'] = 'ERR'
             result['message'] = 'Petición errónea'
-            return HttpResponseBadRequest(json.dumps(result))
+            return HttpResponseBadRequest(json.dumps(result), content_type="application/json")
     else:
         raise Http404
 
