@@ -79,7 +79,7 @@
 							<!-- #section:pages/profile.picture -->
 							<span class="profile-picture">
 								<img id="avatar" class="editable img-responsive"
-                                    {% if request.user.usuario.foto %}
+                                    {% if request.user.profesor.foto %}
                                         src="{{ MEDIA_URL }}{{usuario.foto}}"
                                     {% else %}
                                         src="{% static 'avatars/avatar2.png' %}"
@@ -178,7 +178,7 @@
 								<div class="profile-info-name"> D.N.I. </div>
 
 								<div class="profile-info-value">
-									<span class="editable" id="dni">{{ request.user.usuario.dni }}</span>
+									<span class="editable" id="dni">{{ request.user.profesor.dni }}</span>
 								</div>
 							</div>
 
@@ -202,7 +202,7 @@
 								<div class="profile-info-name"> Usuario Rayuela </div>
 
 								<div class="profile-info-value">
-									<span class="editable" id="rayuela">{{ request.user.usuario.usuario_rayuela }}</span>
+									<span class="editable" id="rayuela">{{ request.user.profesor.usuario_rayuela }}</span>
 								</div>
 							</div>
 

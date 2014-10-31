@@ -33,9 +33,9 @@ urlpatterns = patterns('',
                 namespace='curso')),
 
     # urls usuarios
-    url(r'^usuarios/',
-        include('usuarios.urls',
-                namespace='usuario')),
+    url(r'^profesores/',
+        include('profesores.urls',
+                namespace='profesor')),
 
     # urls alumnos
     url(r'^alumnos/',

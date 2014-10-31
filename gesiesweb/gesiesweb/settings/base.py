@@ -144,7 +144,6 @@ DJANGO_APPS = (
 LOCAL_APPS = (
     'core',
     'rayuela',
-    'usuarios',
     'config',
     'cursos',
     'alumnos',
@@ -221,7 +220,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
     #"last_name": "sn"
 }
 
-AUTH_PROFILE_MODULE = 'usuarios.Usuario'
+AUTH_PROFILE_MODULE = 'profesores.Usuario'
 
 AUTH_LDAP_PROFILE_ATTR_MAP = {
     "dni": "employeeNumber",

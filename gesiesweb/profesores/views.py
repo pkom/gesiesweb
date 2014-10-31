@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from django.views.generic import ListView
 
-# Create your views here.
+from .models import Profesor
+
+class ProfesorListView(ListView):
+	model = Profesor

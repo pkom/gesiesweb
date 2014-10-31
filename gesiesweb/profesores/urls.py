@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = patterns("",
 	url(regex=r"^$",
-		view=views.UsuarioListView.as_view(),
-		name="usuario"),
+		view=views.ProfesorListView.as_view(),
+		name="profesor"),
 )

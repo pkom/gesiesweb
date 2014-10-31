@@ -13,7 +13,7 @@ from braces.views import LoginRequiredMixin
 
 from django.contrib.auth.models import User
 
-from usuarios.models import Usuario
+from profesores.models import Profesor
 
 from .forms import CourseAuthenticationForm
 
@@ -53,14 +53,13 @@ def get_client_ip(request):
     return ip
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
-
     template_name = 'core/profile.html'
     model = User
     context_object_name = 'user'
 
     def get_context_data(self, **kwargs):
         context = super(ProfileDetailView, self).get_context_data(**kwargs)
-        usuario = Usuario.objects.get(user=context['user'])
+        usuario = Profesor.objects.get(user=context['user'])
         context['usuario'] = usuario
         context['ip'] = get_client_ip(self.request)
         context['partes'] = 23
@@ -71,7 +70,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         context['alumnos'] = 135
         return context
 
-
+#todo: hacer que al cambiar el nombre del usuario en el perfíl se cambie en el navbar...
 @login_required
 def updatename(request):
     if request.is_ajax():
@@ -104,17 +103,17 @@ def updatephoto(request):
     if request.is_ajax():
         result = dict()
         if request.method == 'POST':
-            usuario = User.objects.get(pk=request.POST['pk']).usuario
-            usuario.foto = request.FILES['avatar']
+            profesor = User.objects.get(pk=request.POST['pk']).profesor
+            profesor.foto = request.FILES['avatar']
             try:
-                usuario.save()
+                profesor.save()
             except:
                 result['status'] = 'ERR'
                 result['message'] = 'Error al subir'
                 return HttpResponseBadRequest(json.dumps(result), content_type="application/json")
             result['status'] = 'OK'
             result['message'] = 'Foto actualizada'
-            result['url'] = usuario.foto.url
+            result['url'] = profesor.foto.url
             return HttpResponse(json.dumps(result), content_type="application/json")
         else:
             result['status'] = 'ERR'
