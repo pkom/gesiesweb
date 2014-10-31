@@ -1,6 +1,7 @@
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-class Alumno(models.Model):
+class Alumno(TimeStampedModel):
     nie = models.CharField(unique=True, max_length=15)
     nombre = models.CharField(max_length=20)
     apellidos = models.CharField(max_length=40)

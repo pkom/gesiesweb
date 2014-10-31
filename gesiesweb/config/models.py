@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils.encoding import smart_unicode
 
+from model_utils.models import TimeStampedModel
+
 from cursos.models import Curso
 
-# Create your models here.
-class Config(models.Model):
+class Config(TimeStampedModel):
     codigo_centro = models.CharField(unique=True, max_length=15)
     nombre_centro = models.CharField(unique=True, max_length=50)
     url_centro = models.URLField(max_length=200, blank=True)

@@ -1,9 +1,11 @@
 from django.db import models
 
+from model_utils.models import TimeStampedModel
+
 from django.utils.encoding import smart_unicode
 
 # Create your models here.
-class Curso(models.Model):
+class Curso(TimeStampedModel):
     curso = models.CharField(unique=True, max_length=9)
     retrasos_para_amonestacion = models.PositiveSmallIntegerField(default=2)
     retrasos_por_trimestres = models.BooleanField(default=True)

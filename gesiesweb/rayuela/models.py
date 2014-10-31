@@ -1,6 +1,9 @@
 from django.db import models
 
-class Rayuela(models.Model):
+from model_utils.models import TimeStampedModel
+
+
+class Rayuela(TimeStampedModel):
     TIPO = (
 		('PRO', 'Profesores'),
 		('ALU', 'Alumnos'),
