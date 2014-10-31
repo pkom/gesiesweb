@@ -182,8 +182,6 @@ INSTALLED_APPS += (
 
 )
 
-SOUTH_TESTS_MIGRATE = False
-
 LOGIN_URL = '/core/login'
 LOGOUT_URL = '/core/logout'
 
