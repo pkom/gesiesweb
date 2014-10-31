@@ -33,6 +33,8 @@ SITE_NAME = basename(DJANGO_ROOT)
 
 path.append(DJANGO_ROOT)
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 DEBUG = False
 
 TEMPLATE_DEBUG = DEBUG
@@ -177,8 +179,7 @@ LOGGING = {
 WSGI_APPLICATION = '%s.wsgi.application' % SITE_NAME
 
 INSTALLED_APPS += (
-    # Database migration helpers:
-    'south',
+
 )
 
 SOUTH_TESTS_MIGRATE = False

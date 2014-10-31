@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load firstof from future %}
+
 <!DOCTYPE html>
 <html lang="es">
 	<head>
@@ -82,7 +84,7 @@
 					<!-- /section:basics/sidebar.mobile.toggle -->
 					<div class="navbar-header pull-left">
 						<!-- #section:basics/navbar.layout.brand -->
-						<a href="#" class="navbar-brand">
+						<a href="{% url 'core:home' %}" class="navbar-brand">
 							<small>
 								<i class="fa fa-leaf"></i>
 								GesIESWeb
