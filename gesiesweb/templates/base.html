@@ -223,7 +223,9 @@
                                          alt="Foto de {{ request.user.username }}" />
 									<span class="user-info">
 										<small>Bienvenid@,</small>
+                                        <div id="nombreusuario">
 										{% firstof request.user.get_short_name request.user.get_username %}
+                                        </div>
 									</span>
 	
 									<i class="ace-icon fa fa-caret-down"></i>

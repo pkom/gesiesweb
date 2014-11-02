@@ -354,7 +354,10 @@
                 pk : '{{ request.user.id }}',//primary key to be sent to server
                 name: 'nombre',
                 url: '{% url "core:updatename" %}',
-                send: 'always'
+                send: 'always',
+                success: function(response, newValue) {
+                    $('#nombreusuario').text(newValue);
+                }
             });
 
             $('#apellidos').editable({

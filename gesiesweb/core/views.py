@@ -70,7 +70,6 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         context['alumnos'] = 135
         return context
 
-#todo: hacer que al cambiar el nombre del usuario en el perfíl se cambie en el navbar...
 @login_required
 def updatename(request):
     if request.is_ajax():

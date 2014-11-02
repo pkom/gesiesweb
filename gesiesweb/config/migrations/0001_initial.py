@@ -10,7 +10,7 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cursos', '__first__'),
+        ('cursos', '0001_initial'),
     ]
 
     operations = [
