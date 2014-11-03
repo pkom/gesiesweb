@@ -17,4 +17,4 @@ class Rayuela(TimeStampedModel):
     resultado = models.TextField(null=True, blank=True)
 
     def __unicode__(self):
-        return "%s %s [%s]" % (self.curso, self.TIPO[0 if self.tipo == 'PR' else 1][1], self.archivo)
+        return u"%s %s [%s]" % (self.curso, self.get_tipo_display(), self.archivo)

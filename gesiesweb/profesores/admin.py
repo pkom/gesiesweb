@@ -8,7 +8,7 @@ class ProfesorAdmin(admin.ModelAdmin):
     list_display = ('user', 'dni', 'usuario_rayuela', 'foto', 'es_usuario', 'id_usuario')
 
 class CursoProfesorAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('curso', 'profesor')
 
 class ProfesorInline(admin.StackedInline):
     model = Profesor

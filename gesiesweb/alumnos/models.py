@@ -12,7 +12,7 @@ class Alumno(TimeStampedModel):
     foto = models.ImageField(upload_to='alumnos', blank=True)
 
     def __unicode__(self):
-        return "%s, %s" % (self.apellidos, self.nombre)
+        return u"%s, %s" % (self.apellidos, self.nombre)
 
     def foto_alumno(self):
         return """

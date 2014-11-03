@@ -11,9 +11,12 @@ from profesores.models import Profesor, CursoProfesor
 def import_data(modeladmin, request, queryset):
 
     class ProfesorHandler(xml.sax.handler.ContentHandler):
-        def __init__(self):
+        def __init__(self, rayuela, request, queryset):
             self.buffer = ""
             self.inField = 0
+            self.modeladmin = modeladmin
+            self.request = request
+            self.queryset = queryset
 
         def startElement(self, name, attrs):
             if name == "dni":
@@ -43,15 +46,12 @@ def import_data(modeladmin, request, queryset):
 
         def endElement(self, name):
             if name == "profesor":
-                print "Procesando profesor %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
-                                                                           self.nombre, self.dni)
-                print "     es-usuario: %s login: %s id-usuario: %s departamento: %s grupo: %s" % (self.esusuario,
-                self.login, self.idusuario, self.departamento, self.grupos)
-                # todo: hay que grabar al profesor en profesor, user, etc
+                #rayuela.resultado += u"Procesando profesor %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
+                #                                                           self.nombre, self.dni)
                 #buscamos en User si ese profesor existe y si no lo damos de alta
                 updated_values = {
                     'first_name': self.nombre,
-                    'last_name': '%s %s' % (self.segundoapellido, self.primerapellido),
+                    'last_name': '%s %s' % (self.primerapellido, self.segundoapellido),
                     'is_staff': True,
                     'is_active': True
                 }
@@ -61,12 +61,11 @@ def import_data(modeladmin, request, queryset):
                 profe.usuario_rayuela = self.login
                 profe.es_usuario = self.esusuario
                 profe.id_usuario = self.idusuario
-                user.profesor = profe
-                user.save()
                 profe.save()
                 #veamos si existe el profesor en el curso
-                cursoProfesor = CursoProfesor.objects.all().filter(profesor=profe)
-                print cursoProfesor
+                curso = self.queryset[0].curso
+                cursoprofesor = CursoProfesor.objects.get_or_create(profesor=profe, curso=curso)
+
             elif name == "dni":
                 self.inField = 0
                 self.dni = self.buffer
@@ -103,18 +102,21 @@ def import_data(modeladmin, request, queryset):
 
 
     for rayuela in queryset:
-        print 'Procesando archivo',rayuela.archivo
+        rayuela.resultado = u'Proceso de importación iniciado...'
         parser = xml.sax.make_parser()
-        handler = ProfesorHandler()
+        handler = ProfesorHandler(rayuela, request, queryset)
         parser.setContentHandler(handler)
         parser.parse(rayuela.archivo.path)
+        rayuela.resultado += u'Proceso finalizado...'
+        rayuela.procesado = True
+        rayuela.save()
 
 import_data.short_description = 'Importa datos desde Rayuela'
 
 
 @admin.register(Rayuela)
 class RayuelaAdmin(admin.ModelAdmin):
-    list_display = ['curso', 'tipo', 'archivo', 'created', 'procesado']
+    list_display = ['curso', 'tipo', 'archivo', 'created', 'modified', 'procesado']
     readonly_fields = ['procesado', 'resultado']
     ordering = ['-created']
     actions = [import_data]

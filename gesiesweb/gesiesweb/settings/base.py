@@ -223,7 +223,10 @@ AUTH_LDAP_USER_ATTR_MAP = {
     #"last_name": "sn"
 }
 
-AUTH_PROFILE_MODULE = 'profesores.Usuario'
+#Esto ya no va en django 1.7
+#AUTH_PROFILE_MODULE = 'profesores.Profesor'
+#hay que hace algo como
+#profile = request.user.profesor
 
 AUTH_LDAP_PROFILE_ATTR_MAP = {
     "dni": "employeeNumber",
