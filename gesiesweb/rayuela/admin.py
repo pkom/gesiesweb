@@ -17,6 +17,7 @@ def import_data(modeladmin, request, queryset):
             self.modeladmin = modeladmin
             self.request = request
             self.queryset = queryset
+            self.rayuela = ''
 
         def startElement(self, name, attrs):
             if name == "dni":
@@ -46,9 +47,8 @@ def import_data(modeladmin, request, queryset):
 
         def endElement(self, name):
             if name == "profesor":
-                #rayuela.resultado += u"Procesando profesor %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
-                #                                                           self.nombre, self.dni)
-                #buscamos en User si ese profesor existe y si no lo damos de alta
+                self.rayuela += u"Procesando profesor %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
+                                                                           self.nombre, self.dni)
                 updated_values = {
                     'first_name': self.nombre,
                     'last_name': '%s %s' % (self.primerapellido, self.segundoapellido),
@@ -65,7 +65,6 @@ def import_data(modeladmin, request, queryset):
                 #veamos si existe el profesor en el curso
                 curso = self.queryset[0].curso
                 cursoprofesor = CursoProfesor.objects.get_or_create(profesor=profe, curso=curso)
-
             elif name == "dni":
                 self.inField = 0
                 self.dni = self.buffer
@@ -99,12 +98,13 @@ def import_data(modeladmin, request, queryset):
                 self.grupos.append(self.grupo)
 
             self.buffer = ""
+            rayuela = self.rayuela
 
 
     for rayuela in queryset:
         rayuela.resultado = u'Proceso de importación iniciado...'
         parser = xml.sax.make_parser()
-        handler = ProfesorHandler(rayuela, request, queryset)
+        handler = ProfesorHandler(rayuela.resultado, request, queryset)
         parser.setContentHandler(handler)
         parser.parse(rayuela.archivo.path)
         rayuela.resultado += u'Proceso finalizado...'
