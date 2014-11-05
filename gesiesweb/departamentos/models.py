@@ -6,11 +6,11 @@ from cursos.models import Curso
 from profesores.models import CursoProfesor
 
 class Departamento(TimeStampedModel):
-    departamento = models.CharField(max_length=50, db_index=True)
-    descripcion = models.CharField(max_length=50, blank=True)
+    departamento = models.CharField(max_length=100, db_index=True)
+    descripcion = models.TextField(max_length=100, blank=True)
 
     def __unicode__(self):
-        return self.departamento
+        return u"%s" % self.departamento
 
 class CursoDepartamento(TimeStampedModel):
     curso = models.ForeignKey(Curso)
@@ -18,17 +18,17 @@ class CursoDepartamento(TimeStampedModel):
     jefe = models.ForeignKey(CursoProfesor, null=True, blank=True)
 
     def __unicode__(self):
-        return "%s - %s (%s)" % (self.curso, self.departamento, self.jefe)
+        return u"%s - %s (%s)" % (self.curso, self.departamento, self.jefe if self.jefe else 'Sin jefe asignado')
 
     class Meta:
         unique_together = (("curso", "departamento"),)
 
 class DepartamentoProfesor(TimeStampedModel):
-    departamento = models.ForeignKey(CursoDepartamento)
-    profesor = models.ForeignKey(CursoProfesor)
+    cursodepartamento = models.ForeignKey(CursoDepartamento)
+    cursoprofesor = models.ForeignKey(CursoProfesor)
 
     def __unicode__(self):
-        return "%s - %s" % (self.departamento, self.profesor)
+        return u"%s - %s" % (self.cursodepartamento, self.cursoprofesor)
 
     class Meta:
-        unique_together = (("departamento", "profesor"),)
+        unique_together = (("cursodepartamento", "cursoprofesor"),)

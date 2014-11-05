@@ -1,4 +1,4 @@
-#encoding:utf-8
+# -*- encoding: utf-8 -*-
 
 import xml.sax.handler
 
@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 from .models import Rayuela
 from profesores.models import Profesor, CursoProfesor
+from departamentos.models import Departamento, CursoDepartamento, DepartamentoProfesor
 
 def import_data(modeladmin, request, queryset):
 
@@ -56,6 +57,10 @@ def import_data(modeladmin, request, queryset):
                     'is_active': True
                 }
                 user, created = User.objects.update_or_create(username=self.login, defaults=updated_values)
+                if created:
+                    self.rayuela += u'Se ha creado el profesor %s al curso %s' % (user)
+                else:
+                    self.rayuela += u'Ya existía el profesor %s' % (user)
                 profe = user.profesor
                 profe.dni = self.dni
                 profe.usuario_rayuela = self.login
@@ -64,7 +69,33 @@ def import_data(modeladmin, request, queryset):
                 profe.save()
                 #veamos si existe el profesor en el curso
                 curso = self.queryset[0].curso
-                cursoprofesor = CursoProfesor.objects.get_or_create(profesor=profe, curso=curso)
+                cursoprofesor, created = CursoProfesor.objects.get_or_create(profesor=profe, curso=curso)
+                if created:
+                    self.rayuela += u'Se ha asignado %s al curso %s' % (profe, curso)
+                else:
+                    self.rayuela += u'Ya existía el profesor %s en el curso %s' % (profe, curso)
+                if self.departamento:
+                    departamento, created = Departamento.objects.get_or_create(departamento=self.departamento)
+                    if created:
+                        self.rayuela += u'Se ha creado el departamento %s' % (self.departamento)
+                    else:
+                        self.rayuela += u"Ya existía el departamento %s" % (self.departamento)
+                    cursodepartamento, created = CursoDepartamento.objects.get_or_create(departamento=departamento,
+                                                                                         curso=curso)
+                    if created:
+                        self.rayuela += u'Se ha creado el departamento %s en el curso %s' % (departamento, curso)
+                    else:
+                        self.rayuela += u"Ya existía el departamento %s en el curso %s" % (departamento, curso)
+                    departamentoprofesor, created = DepartamentoProfesor.objects.get_or_create(cursodepartamento=cursodepartamento,
+                                                                                               cursoprofesor=cursoprofesor)
+                    if created:
+                        self.rayuela += u'Se ha asignado el profesor %s al departamento %s en el curso %s' %\
+                                        (cursoprofesor, cursodepartamento, curso)
+                    else:
+                        self.rayuela += u"Ya existía el profesor %s en el departamento %s en el curso %s" %\
+                                        (cursoprofesor, cursodepartamento, curso)
+
+
             elif name == "dni":
                 self.inField = 0
                 self.dni = self.buffer

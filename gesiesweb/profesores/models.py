@@ -53,7 +53,7 @@ class CursoProfesor(TimeStampedModel):
     profesor = models.ForeignKey(Profesor)
 
     def __unicode__(self):
-        return "%s - %s" % (self.curso, self.profesor)
+        return u"%s - %s" % (self.curso, self.profesor)
 
     class Meta:
         unique_together = (("curso", "profesor"),)

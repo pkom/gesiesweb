@@ -8,7 +8,9 @@ class ProfesorAdmin(admin.ModelAdmin):
     list_display = ('user', 'dni', 'usuario_rayuela', 'foto', 'es_usuario', 'id_usuario')
 
 class CursoProfesorAdmin(admin.ModelAdmin):
-    list_display = ('curso', 'profesor')
+    list_display = ('curso', 'profesor',)
+    ordering = ('profesor',)
+    list_filter = ('curso',)
 
 class ProfesorInline(admin.StackedInline):
     model = Profesor
