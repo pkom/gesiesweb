@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django.db import models
 from model_utils.models import TimeStampedModel
 
@@ -10,7 +12,7 @@ class Grupo(TimeStampedModel):
     descripcion = models.CharField(max_length=50, blank=True)
 
     def __unicode__(self):
-        return self.grupo
+        return u"%s" % self.grupo
 
 class CursoGrupo(TimeStampedModel):
     curso = models.ForeignKey(Curso)
@@ -18,27 +20,27 @@ class CursoGrupo(TimeStampedModel):
     tutor = models.ForeignKey(CursoProfesor, null=True, blank=True)
 
     def __unicode__(self):
-        return "%s - %s (%s)" % (self.curso, self.grupo, self.tutor)
+        return u"%s - %s (%s)" % (self.curso, self.grupo, self.tutor if self.tutor else u'Sin tutoría asignada')
 
     class Meta:
         unique_together = (("curso", "grupo"),)
 
 class GrupoAlumno(TimeStampedModel):
-    grupo = models.ForeignKey(CursoGrupo)
-    alumno = models.ForeignKey(CursoAlumno)
+    cursogrupo = models.ForeignKey(CursoGrupo)
+    cursoalumno = models.ForeignKey(CursoAlumno)
 
     def __unicode__(self):
-        return "%s - %s" % (self.grupo, self.alumno)
+        return u"%s - %s" % (self.cursogrupo, self.cursoalumno)
 
     class Meta:
-        unique_together = (("grupo", "alumno"),)
+        unique_together = (("cursogrupo", "cursoalumno"),)
 
 class GrupoProfesor(TimeStampedModel):
-    grupo = models.ForeignKey(CursoGrupo)
-    profesor = models.ForeignKey(CursoProfesor)
+    cursogrupo = models.ForeignKey(CursoGrupo)
+    cursoprofesor = models.ForeignKey(CursoProfesor)
 
     def __unicode__(self):
-        return "%s - %s" % (self.grupo, self.profesor)
+        return u"%s - %s" % (self.cursogrupo, self.cursoprofesor)
 
     class Meta:
-        unique_together = (("grupo", "profesor"),)
+        unique_together = (("cursogrupo", "cursoprofesor"),)

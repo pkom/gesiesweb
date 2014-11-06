@@ -1,19 +1,25 @@
+# -*- encoding: utf-8 -*-
+
 from django.contrib import admin
 
 from .models import Grupo, CursoGrupo, GrupoAlumno, GrupoProfesor
 
 class GrupoAdmin(admin.ModelAdmin):
-    pass
+    ordering = ('grupo',)
 
 class CursoGrupoAdmin(admin.ModelAdmin):
-    pass
+    ordering = ('grupo__grupo',)
+    list_filter = ('curso__curso',)
 
 class GrupoAlumnoAdmin(admin.ModelAdmin):
     pass
 
 class GrupoProfesorAdmin(admin.ModelAdmin):
-    pass
-
+    ordering = ('cursogrupo__grupo__grupo',)
+    list_filter = ('cursogrupo__curso__curso',
+                    'cursogrupo__grupo__grupo',
+                    'cursoprofesor__profesor')
+    search_fields = ('cursoprofesor__profesor__user__last_name',)
 
 admin.site.register(Grupo, GrupoAdmin)
 admin.site.register(CursoGrupo, CursoGrupoAdmin)

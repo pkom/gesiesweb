@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django.db import models
 from model_utils.models import TimeStampedModel
 
@@ -29,7 +31,7 @@ class CursoAlumno(TimeStampedModel):
     alumno = models.ForeignKey(Alumno)
 
     def __unicode__(self):
-        return self.alumno
+        return u"%s" % self.alumno
 
     class Meta:
         unique_together = (("curso", "alumno"),)

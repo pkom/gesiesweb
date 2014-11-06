@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from .models import Rayuela
 from profesores.models import Profesor, CursoProfesor
 from departamentos.models import Departamento, CursoDepartamento, DepartamentoProfesor
+from grupos.models import Grupo, CursoGrupo, GrupoProfesor
 
 def import_data(modeladmin, request, queryset):
 
@@ -77,9 +78,9 @@ def import_data(modeladmin, request, queryset):
                 if self.departamento:
                     departamento, created = Departamento.objects.get_or_create(departamento=self.departamento)
                     if created:
-                        self.rayuela += u'Se ha creado el departamento %s' % (self.departamento)
+                        self.rayuela += u'Se ha creado el departamento %s' % (departamento)
                     else:
-                        self.rayuela += u"Ya existía el departamento %s" % (self.departamento)
+                        self.rayuela += u"Ya existía el departamento %s" % (departamento)
                     cursodepartamento, created = CursoDepartamento.objects.get_or_create(departamento=departamento,
                                                                                          curso=curso)
                     if created:
@@ -95,9 +96,25 @@ def import_data(modeladmin, request, queryset):
                         self.rayuela += u"Ya existía el profesor %s en el departamento %s en el curso %s" %\
                                         (cursoprofesor, cursodepartamento, curso)
                 if self.grupos:
-                    for grupo in self.grupos:
-                        pass
-
+                    for grupoit in self.grupos:
+                        grupo, created = Grupo.objects.get_or_create(grupo=grupoit)
+                        if created:
+                            self.rayuela += u'Se ha creado el grupo %s' % (grupo)
+                        else:
+                            self.rayuela += u"Ya existía el grupo %s" % (grupo)
+                        cursogrupo, created = CursoGrupo.objects.get_or_create(grupo=grupo, curso=curso)
+                        if created:
+                            self.rayuela += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
+                        else:
+                            self.rayuela += u"Ya existía el grupo %s en el curso %s" % (grupo, curso)
+                        grupoprofesor, created = GrupoProfesor.objects.get_or_create(cursogrupo=cursogrupo,
+                                                                                    cursoprofesor=cursoprofesor)
+                        if created:
+                            self.rayuela += u'Se ha asignado el profesor %s al grupo %s en el curso %s' %\
+                                            (cursoprofesor, cursogrupo, curso)
+                        else:
+                            self.rayuela += u"Ya existía el profesor %s en el grupo %s en el curso %s" %\
+                                            (cursoprofesor, cursogrupo, curso)
 
             elif name == "dni":
                 self.inField = 0

@@ -4,13 +4,20 @@ from django.contrib.auth.models import User
 
 from profesores.models import Profesor, CursoProfesor
 
+
 class ProfesorAdmin(admin.ModelAdmin):
-    list_display = ('user', 'dni', 'usuario_rayuela', 'foto', 'es_usuario', 'id_usuario')
+    list_display = ('user_full_name', 'dni', 'usuario_rayuela', 'foto', 'es_usuario', 'id_usuario')
+
+    def user_full_name(self, obj):
+        return (u'%s, %s' % (obj.user.last_name, obj.user.first_name))
+
+    user_full_name.short_description = u'Profesor'
+
 
 class CursoProfesorAdmin(admin.ModelAdmin):
     list_display = ('curso', 'profesor',)
-    ordering = ('profesor',)
-    list_filter = ('curso',)
+    ordering = ('profesor__user__last_name',)
+    list_filter = ('curso__curso',)
 
 class ProfesorInline(admin.StackedInline):
     model = Profesor

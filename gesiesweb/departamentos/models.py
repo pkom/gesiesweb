@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django.db import models
 
 from model_utils.models import TimeStampedModel
@@ -18,7 +20,7 @@ class CursoDepartamento(TimeStampedModel):
     jefe = models.ForeignKey(CursoProfesor, null=True, blank=True)
 
     def __unicode__(self):
-        return u"%s - %s (%s)" % (self.curso, self.departamento, self.jefe if self.jefe else 'Sin jefe asignado')
+        return u"%s - %s (%s)" % (self.curso, self.departamento, self.jefe if self.jefe else u'Sin jefe asignado')
 
     class Meta:
         unique_together = (("curso", "departamento"),)
