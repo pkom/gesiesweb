@@ -94,6 +94,9 @@ def import_data(modeladmin, request, queryset):
                     else:
                         self.rayuela += u"Ya existía el profesor %s en el departamento %s en el curso %s" %\
                                         (cursoprofesor, cursodepartamento, curso)
+                if self.grupos:
+                    for grupo in self.grupos:
+                        pass
 
 
             elif name == "dni":
