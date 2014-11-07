@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+import sys, zipfile, os, os.path
+import shutil
 import xml.sax.handler
 
 from django.contrib import admin
@@ -8,11 +10,13 @@ from django.contrib.auth.models import User
 from .models import Rayuela
 from profesores.models import Profesor, CursoProfesor
 from departamentos.models import Departamento, CursoDepartamento, DepartamentoProfesor
-from grupos.models import Grupo, CursoGrupo, GrupoProfesor
+from grupos.models import Grupo, CursoGrupo, GrupoProfesor, GrupoAlumno
+from alumnos.models import Alumno, CursoAlumno
 
 def import_data(modeladmin, request, queryset):
 
     class ProfesorHandler(xml.sax.handler.ContentHandler):
+
         def __init__(self, rayuela, request, queryset):
             self.buffer = ""
             self.inField = 0
@@ -152,17 +156,187 @@ def import_data(modeladmin, request, queryset):
             rayuela = self.rayuela
 
 
+    class AlumnoHandler(xml.sax.handler.ContentHandler):
+
+        def __init__(self, rayuela, request, queryset):
+            self.buffer = ""
+            self.inField = 0
+            self.modeladmin = modeladmin
+            self.request = request
+            self.queryset = queryset
+            self.rayuela = ''
+
+        def startElement(self, name, attrs):
+            if name == "nie":
+                self.inField = 1
+            elif name == "nombre":
+                self.inField = 1
+            elif name == "primer-apellido":
+                self.inField = 1
+            elif name == "segundo-apellido":
+                self.inField = 1
+            elif name == "fecha-nacimiento":
+                self.inField = 1
+            elif name == "es-usuario":
+                self.inField = 1
+            elif name == "login":
+                self.inField = 1
+            elif name == "id-usuario":
+                self.inField = 1
+            elif name == 'con-foto':
+                self.inField = 1
+            elif name == 'formato':
+                self.inField = 1
+            elif name == 'nombre-fichero':
+                self.inField = 1
+            elif name == "grupo":
+                self.inField = 1
+
+        def characters(self, data):
+            if self.inField:
+                self.buffer += data
+
+        def endElement(self, name):
+            if name == "alumno":
+                self.rayuela += u"Procesando alumno %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
+                                                                           self.nombre, self.nie)
+                updated_values = {
+                    'nombre': self.nombre,
+                    'apellidos': '%s %s' % (self.primerapellido, self.segundoapellido),
+                    'fecha_nacimiento': self.fechanacimiento,
+                    'usuario_rayuela': self.login
+                }
+                alumno, created = Alumno.objects.update_or_create(nie=self.nie, defaults=updated_values)
+                if created:
+                    self.rayuela += u'Se ha creado el alumno %s' % (alumno)
+                else:
+                    self.rayuela += u'Ya existía el alumno %s' % (alumno)
+                alumno.save()
+                #veamos si existe el alumno en el curso
+                curso = self.queryset[0].curso
+                cursoalumno, created = CursoAlumno.objects.get_or_create(alumno=alumno, curso=curso)
+                if created:
+                    self.rayuela += u'Se ha asignado %s al curso %s' % (alumno, curso)
+                else:
+                    self.rayuela += u'Ya existía el alumno %s en el curso %s' % (alumno, curso)
+                if self.grupo:
+                    grupo, created = Grupo.objects.get_or_create(grupo=self.grupo)
+                    if created:
+                        self.rayuela += u'Se ha creado el grupo %s' % (grupo)
+                    else:
+                        self.rayuela += u"Ya existía el grupo %s" % (grupo)
+                    cursogrupo, created = CursoGrupo.objects.get_or_create(grupo=grupo, curso=curso)
+                    if created:
+                        self.rayuela += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
+                    else:
+                        self.rayuela += u"Ya existía el grupo %s en el curso %s" % (grupo, curso)
+                    grupoalumno, created = GrupoAlumno.objects.get_or_create(cursogrupo=cursogrupo,
+                                                                                cursoalumno=cursoalumno)
+                    if created:
+                        self.rayuela += u'Se ha asignado el alumno %s al grupo %s en el curso %s' %\
+                                        (cursoalumno, cursogrupo, curso)
+                    else:
+                        self.rayuela += u"Ya existía el alumno %s en el grupo %s en el curso %s" %\
+                                        (cursoalumno, cursogrupo, curso)
+            elif name == "nie":
+                self.inField = 0
+                self.nie = self.buffer
+            elif name == "nombre":
+                self.inField = 0
+                self.nombre = self.buffer
+            elif name == "primer-apellido":
+                self.inField = 0
+                self.primerapellido = self.buffer
+            elif name == "segundo-apellido":
+                self.inField = 0
+                self.segundoapellido = self.buffer
+            elif name == "fecha-nacimiento":
+                self.inField = 0
+                self.fechanacimiento = self.buffer[-4:]+'-'+self.buffer[3:5]+'-'+self.buffer[0:2]
+            elif name == "es-usuario":
+                self.inField = 0
+                if self.buffer == "true":
+                    self.esusuario = True
+                else:
+                    self.esusuario = False
+            elif name == "login":
+                self.inField = 0
+                self.login = self.buffer
+            elif name == "id-usuario":
+                self.inField = 0
+                self.idusuario = self.buffer
+            elif name == "grupo":
+                self.inField = 0
+                self.grupo = self.buffer
+            elif name == 'con-foto':
+                self.inField = 0
+                if self.buffer == "true":
+                    self.confoto = True
+                else:
+                    self.confoto = False
+            elif name == 'formato':
+                self.inField = 0
+                self.formato = self.buffer
+            elif name == 'nombre-fichero':
+                self.inField = 0
+                self.nombrefichero = self.buffer
+
+            self.buffer = ""
+            rayuela = self.rayuela
+
+
     for rayuela in queryset:
         rayuela.resultado = u'Proceso de importación iniciado...'
         parser = xml.sax.make_parser()
-        handler = ProfesorHandler(rayuela.resultado, request, queryset)
-        parser.setContentHandler(handler)
-        parser.parse(rayuela.archivo.path)
+        if rayuela.tipo == 'PR':
+            handler = ProfesorHandler(rayuela.resultado, request, queryset)
+            parser.setContentHandler(handler)
+            parser.parse(rayuela.archivo.path)
+        elif rayuela.tipo == 'AL':
+            descomprime(rayuela.archivo.path)
+            handler = AlumnoHandler(rayuela.resultado, request, queryset)
+            parser.setContentHandler(handler)
+            dirname = os.path.dirname(rayuela.archivo.path)
+            parser.parse(os.path.join(dirname, 'datos', 'Alumnos.xml'))
+            try:
+                datos = os.path.join(dirname,'datos')
+                shutil.rmtree(datos)
+            except:
+                pass
         rayuela.resultado += u'Proceso finalizado...'
         rayuela.procesado = True
         rayuela.save()
 
 import_data.short_description = 'Importa datos desde Rayuela'
+
+def descomprime(filezip):
+    if filezip[-4:].lower() == ".zip":
+        # Convert file and dir into absolute paths
+        dirname = os.path.dirname(filezip)
+        try:
+            datos = os.path.join(dirname,'datos')
+            shutil.rmtree(datos)
+        except:
+            pass
+        # creamos la nueva carpeta
+        try:
+            os.mkdir(os.path.join(dirname, 'datos'))
+        except:
+            pass
+        # Get a real Python file handle on the uploaded file
+        fullpathhandle = open(filezip, 'r')
+        # Unzip the file, creating subdirectories as needed
+        zfobj = zipfile.ZipFile(fullpathhandle)
+        for name in zfobj.namelist():
+            if name.endswith('/'):
+                try: # Don't try to create a directory if exists
+                    os.mkdir(os.path.join(dirname, name))
+                except:
+                    pass
+            else:
+                outfile = open(os.path.join(dirname, 'datos', name), 'wb')
+                outfile.write(zfobj.read(name))
+                outfile.close()
 
 
 @admin.register(Rayuela)
