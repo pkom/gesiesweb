@@ -2,10 +2,12 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
+from sorl.thumbnail.admin import AdminImageMixin
+
 from profesores.models import Profesor, CursoProfesor
 
 
-class ProfesorAdmin(admin.ModelAdmin):
+class ProfesorAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ('user_full_name', 'dni', 'usuario_rayuela', 'foto', 'es_usuario', 'id_usuario')
 
     def user_full_name(self, obj):

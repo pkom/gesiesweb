@@ -1,11 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-import sys, zipfile, os, os.path
+import zipfile, os, os.path
 import shutil
 import xml.sax.handler
 
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.core.files import File
 
 from .models import Rayuela
 from profesores.models import Profesor, CursoProfesor
@@ -158,13 +159,14 @@ def import_data(modeladmin, request, queryset):
 
     class AlumnoHandler(xml.sax.handler.ContentHandler):
 
-        def __init__(self, rayuela, request, queryset):
+        def __init__(self, rayuela, request, queryset, dirname):
             self.buffer = ""
             self.inField = 0
             self.modeladmin = modeladmin
             self.request = request
             self.queryset = queryset
             self.rayuela = ''
+            self.dirname = dirname
 
         def startElement(self, name, attrs):
             if name == "nie":
@@ -206,6 +208,9 @@ def import_data(modeladmin, request, queryset):
                     'fecha_nacimiento': self.fechanacimiento,
                     'usuario_rayuela': self.login
                 }
+                if self.nombrefichero:
+                    ficherofoto = os.path.join(self.dirname, 'datos', self.nombrefichero)
+                    updated_values['foto'] = File(open(ficherofoto))
                 alumno, created = Alumno.objects.update_or_create(nie=self.nie, defaults=updated_values)
                 if created:
                     self.rayuela += u'Se ha creado el alumno %s' % (alumno)
@@ -293,10 +298,10 @@ def import_data(modeladmin, request, queryset):
             parser.setContentHandler(handler)
             parser.parse(rayuela.archivo.path)
         elif rayuela.tipo == 'AL':
-            descomprime(rayuela.archivo.path)
-            handler = AlumnoHandler(rayuela.resultado, request, queryset)
-            parser.setContentHandler(handler)
             dirname = os.path.dirname(rayuela.archivo.path)
+            descomprime(rayuela.archivo.path)
+            handler = AlumnoHandler(rayuela.resultado, request, queryset, dirname)
+            parser.setContentHandler(handler)
             parser.parse(os.path.join(dirname, 'datos', 'Alumnos.xml'))
             try:
                 datos = os.path.join(dirname,'datos')

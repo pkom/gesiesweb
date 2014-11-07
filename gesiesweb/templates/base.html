@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load firstof from future %}
+{% load thumbnail %}
 
 <!DOCTYPE html>
 <html lang="es">
@@ -214,6 +215,7 @@
 							<!-- #section:basics/navbar.user_menu -->
 							<li class="light-blue">
 								<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                                <!--
 									<img class="nav-user-photo"
                                          {% if request.user.profesor.foto %}
                                             src="{{ MEDIA_URL }}{{request.user.profesor.foto}}"
@@ -221,6 +223,18 @@
                                             src="{% static 'avatars/avatar2.png' %}"
                                          {% endif %}
                                          alt="Foto de {{ request.user.username }}" />
+                                -->
+                                    {% thumbnail request.user.profesor.foto "50x40" crop="center" as foto %}
+                                        <img class="nav-user-photo"
+                                             {% if request.user.profesor.foto %}
+                                                src="{{ foto.url }}" width="{{ foto.width }}" height="{{ foto.height }}"
+                                             {% else %}
+                                                src="{% static 'avatars/avatar2.png' %}"
+                                             {% endif %}
+                                            alt="Foto de {{ request.user.username }}" />
+                                    {% endthumbnail %}
+
+
 									<span class="user-info">
 										<small>Bienvenid@,</small>
                                         <div id="nombreusuario">

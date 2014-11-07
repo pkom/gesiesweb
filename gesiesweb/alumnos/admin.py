@@ -1,10 +1,13 @@
 from django.contrib import admin
 
+from sorl.thumbnail.admin import AdminImageMixin
+
 from .models import Alumno, CursoAlumno
 
-class AlumnoAdmin(admin.ModelAdmin):
-    list_display = 	('nie', 'nombre', 'apellidos', 'fecha_nacimiento', 'foto_alumno')
+class AlumnoAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = 	('nie', 'nombre', 'apellidos', 'fecha_nacimiento', 'foto',)
     ordering = ('apellidos','nombre',)
+    search_fields = ('apellidos', 'nombre',)
 
 class CursoAlumnoAdmin(admin.ModelAdmin):
     list_display = ('curso', 'alumno',)

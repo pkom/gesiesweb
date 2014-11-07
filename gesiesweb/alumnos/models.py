@@ -3,31 +3,25 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 
+from sorl.thumbnail import ImageField
+
 from cursos.models import Curso
 
 class Alumno(TimeStampedModel):
+
     nie = models.CharField(unique=True, max_length=15, db_index=True)
     nombre = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     fecha_nacimiento = models.DateField(blank=True, null=True)
     usuario_rayuela = models.CharField(max_length=20, blank=True)
-    foto = models.ImageField(upload_to='alumnos', blank=True)
+    foto = ImageField(upload_to='alumnos', blank=True, default='')
 
     def __unicode__(self):
         return u"%s, %s" % (self.apellidos, self.nombre)
 
-    def foto_alumno(self):
-        if self.foto:
-            return """
-            <img src ="%s"/>
-            """ % self.foto.url
-        else:
-            return '<img/>'
-
-    foto_alumno.allow_tags = True
-
     class Meta:
         index_together = (("apellidos", "nombre"),)
+
 
 class CursoAlumno(TimeStampedModel):
     curso = models.ForeignKey(Curso)

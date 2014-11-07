@@ -7,6 +7,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from model_utils.models import TimeStampedModel
 
+from sorl.thumbnail import ImageField
+
 import django_auth_ldap.backend
 
 from cursos.models import Curso
@@ -40,7 +42,7 @@ class Profesor(TimeStampedModel):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, db_index=True)
     dni = models.CharField(blank=True, max_length=20, default='', db_index=True)
     usuario_rayuela = models.CharField(blank=True, max_length=20, default='')
-    foto = models.ImageField(upload_to=upload_to, blank=True, default='')
+    foto = ImageField(upload_to=upload_to, blank=True, default='')
     es_usuario = models.BooleanField(default=False)
     id_usuario = models.CharField(blank=True, max_length=20, default='')
 

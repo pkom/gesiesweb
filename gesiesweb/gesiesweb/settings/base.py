@@ -139,6 +139,7 @@ DJANGO_APPS = (
     # Admin panel and documentation:
     'django.contrib.admin',
     # 'django.contrib.admindocs',
+    'sorl.thumbnail',
 )
 
 LOCAL_APPS = (
