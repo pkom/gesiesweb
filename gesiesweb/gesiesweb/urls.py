@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import admin
 
 from core.views import HomeTemplateView, AboutTemplateView, LoginView
+from api.views import alumno_router
 
 admin.autodiscover()
 
@@ -41,6 +42,8 @@ urlpatterns = patterns('',
         include('alumnos.urls',
                 namespace='alumno')),
 
+    # API
+    url(r'^api/', include(alumno_router.urls)),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),

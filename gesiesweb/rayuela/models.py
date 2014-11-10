@@ -1,3 +1,5 @@
+from django.utils.safestring import mark_safe
+
 from django.db import models
 
 from model_utils.models import TimeStampedModel
@@ -18,3 +20,8 @@ class Rayuela(TimeStampedModel):
 
     def __unicode__(self):
         return u"%s %s [%s]" % (self.curso, self.get_tipo_display(), self.archivo)
+
+    def display_resultado(self):
+        return mark_safe(self.resultado)
+
+    display_resultado.allow_tags = True

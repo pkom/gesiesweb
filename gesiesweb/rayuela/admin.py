@@ -4,6 +4,7 @@ import zipfile, os, os.path
 import shutil
 import xml.sax.handler
 
+from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.files import File
@@ -18,13 +19,16 @@ def import_data(modeladmin, request, queryset):
 
     class ProfesorHandler(xml.sax.handler.ContentHandler):
 
-        def __init__(self, rayuela, request, queryset):
+        def __init__(self, request, queryset):
             self.buffer = ""
             self.inField = 0
             self.modeladmin = modeladmin
             self.request = request
             self.queryset = queryset
-            self.rayuela = ''
+            self.resultado = u'Proceso de importación iniciado...'
+
+        def get_resultado(self):
+            return self.resultado
 
         def startElement(self, name, attrs):
             if name == "dni":
@@ -54,8 +58,6 @@ def import_data(modeladmin, request, queryset):
 
         def endElement(self, name):
             if name == "profesor":
-                self.rayuela += u"Procesando profesor %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
-                                                                           self.nombre, self.dni)
                 updated_values = {
                     'first_name': self.nombre,
                     'last_name': '%s %s' % (self.primerapellido, self.segundoapellido),
@@ -63,10 +65,9 @@ def import_data(modeladmin, request, queryset):
                     'is_active': True
                 }
                 user, created = User.objects.update_or_create(username=self.login, defaults=updated_values)
+                self.resultado += u'Procesando profesor %s' % (user)
                 if created:
-                    self.rayuela += u'Se ha creado el profesor %s al curso %s' % (user)
-                else:
-                    self.rayuela += u'Ya existía el profesor %s' % (user)
+                    self.resultado += u'Se ha creado el profesor %s' % (user)
                 profe = user.profesor
                 profe.dni = self.dni
                 profe.usuario_rayuela = self.login
@@ -77,50 +78,33 @@ def import_data(modeladmin, request, queryset):
                 curso = self.queryset[0].curso
                 cursoprofesor, created = CursoProfesor.objects.get_or_create(profesor=profe, curso=curso)
                 if created:
-                    self.rayuela += u'Se ha asignado %s al curso %s' % (profe, curso)
-                else:
-                    self.rayuela += u'Ya existía el profesor %s en el curso %s' % (profe, curso)
+                    self.resultado += u'Se ha asignado %s al curso %s' % (profe, curso)
                 if self.departamento:
                     departamento, created = Departamento.objects.get_or_create(departamento=self.departamento)
                     if created:
-                        self.rayuela += u'Se ha creado el departamento %s' % (departamento)
-                    else:
-                        self.rayuela += u"Ya existía el departamento %s" % (departamento)
+                        self.resultado += u'Se ha creado el departamento %s' % (departamento)
                     cursodepartamento, created = CursoDepartamento.objects.get_or_create(departamento=departamento,
                                                                                          curso=curso)
                     if created:
-                        self.rayuela += u'Se ha creado el departamento %s en el curso %s' % (departamento, curso)
-                    else:
-                        self.rayuela += u"Ya existía el departamento %s en el curso %s" % (departamento, curso)
+                        self.resultado += u'Se ha creado el departamento %s en el curso %s' % (departamento, curso)
                     departamentoprofesor, created = DepartamentoProfesor.objects.get_or_create(cursodepartamento=cursodepartamento,
                                                                                                cursoprofesor=cursoprofesor)
                     if created:
-                        self.rayuela += u'Se ha asignado el profesor %s al departamento %s en el curso %s' %\
-                                        (cursoprofesor, cursodepartamento, curso)
-                    else:
-                        self.rayuela += u"Ya existía el profesor %s en el departamento %s en el curso %s" %\
+                        self.resultado += u'Se ha asignado el profesor %s al departamento %s en el curso %s' %\
                                         (cursoprofesor, cursodepartamento, curso)
                 if self.grupos:
                     for grupoit in self.grupos:
                         grupo, created = Grupo.objects.get_or_create(grupo=grupoit)
                         if created:
-                            self.rayuela += u'Se ha creado el grupo %s' % (grupo)
-                        else:
-                            self.rayuela += u"Ya existía el grupo %s" % (grupo)
+                            self.resultado += u'Se ha creado el grupo %s' % (grupo)
                         cursogrupo, created = CursoGrupo.objects.get_or_create(grupo=grupo, curso=curso)
                         if created:
-                            self.rayuela += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
-                        else:
-                            self.rayuela += u"Ya existía el grupo %s en el curso %s" % (grupo, curso)
+                            self.resultado += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
                         grupoprofesor, created = GrupoProfesor.objects.get_or_create(cursogrupo=cursogrupo,
                                                                                     cursoprofesor=cursoprofesor)
                         if created:
-                            self.rayuela += u'Se ha asignado el profesor %s al grupo %s en el curso %s' %\
+                            self.resultado += u'Se ha asignado el profesor %s al grupo %s en el curso %s' %\
                                             (cursoprofesor, cursogrupo, curso)
-                        else:
-                            self.rayuela += u"Ya existía el profesor %s en el grupo %s en el curso %s" %\
-                                            (cursoprofesor, cursogrupo, curso)
-
             elif name == "dni":
                 self.inField = 0
                 self.dni = self.buffer
@@ -154,12 +138,11 @@ def import_data(modeladmin, request, queryset):
                 self.grupos.append(self.grupo)
 
             self.buffer = ""
-            rayuela = self.rayuela
 
 
     class AlumnoHandler(xml.sax.handler.ContentHandler):
 
-        def __init__(self, rayuela, request, queryset, dirname):
+        def __init__(self, request, queryset, dirname):
             self.buffer = ""
             self.inField = 0
             self.modeladmin = modeladmin
@@ -167,6 +150,10 @@ def import_data(modeladmin, request, queryset):
             self.queryset = queryset
             self.rayuela = ''
             self.dirname = dirname
+            self.resultado = u'Proceso de importación iniciado...'
+
+        def get_resultado(self):
+            return self.resultado
 
         def startElement(self, name, attrs):
             if name == "nie":
@@ -200,8 +187,6 @@ def import_data(modeladmin, request, queryset):
 
         def endElement(self, name):
             if name == "alumno":
-                self.rayuela += u"Procesando alumno %s %s, %s (%s)" % (self.primerapellido, self.segundoapellido,
-                                                                           self.nombre, self.nie)
                 updated_values = {
                     'nombre': self.nombre,
                     'apellidos': '%s %s' % (self.primerapellido, self.segundoapellido),
@@ -213,35 +198,24 @@ def import_data(modeladmin, request, queryset):
                     updated_values['foto'] = File(open(ficherofoto))
                 alumno, created = Alumno.objects.update_or_create(nie=self.nie, defaults=updated_values)
                 if created:
-                    self.rayuela += u'Se ha creado el alumno %s' % (alumno)
-                else:
-                    self.rayuela += u'Ya existía el alumno %s' % (alumno)
+                    self.resultado += u'Se ha creado el alumno %s' % (alumno)
                 alumno.save()
                 #veamos si existe el alumno en el curso
                 curso = self.queryset[0].curso
                 cursoalumno, created = CursoAlumno.objects.get_or_create(alumno=alumno, curso=curso)
                 if created:
-                    self.rayuela += u'Se ha asignado %s al curso %s' % (alumno, curso)
-                else:
-                    self.rayuela += u'Ya existía el alumno %s en el curso %s' % (alumno, curso)
+                    self.resultado += u'Se ha asignado %s al curso %s' % (alumno, curso)
                 if self.grupo:
                     grupo, created = Grupo.objects.get_or_create(grupo=self.grupo)
                     if created:
-                        self.rayuela += u'Se ha creado el grupo %s' % (grupo)
-                    else:
-                        self.rayuela += u"Ya existía el grupo %s" % (grupo)
+                        self.resultado += u'Se ha creado el grupo %s' % (grupo)
                     cursogrupo, created = CursoGrupo.objects.get_or_create(grupo=grupo, curso=curso)
                     if created:
-                        self.rayuela += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
-                    else:
-                        self.rayuela += u"Ya existía el grupo %s en el curso %s" % (grupo, curso)
+                        self.resultado += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
                     grupoalumno, created = GrupoAlumno.objects.get_or_create(cursogrupo=cursogrupo,
                                                                                 cursoalumno=cursoalumno)
                     if created:
-                        self.rayuela += u'Se ha asignado el alumno %s al grupo %s en el curso %s' %\
-                                        (cursoalumno, cursogrupo, curso)
-                    else:
-                        self.rayuela += u"Ya existía el alumno %s en el grupo %s en el curso %s" %\
+                        self.resultado += u'Se ha asignado el alumno %s al grupo %s en el curso %s' %\
                                         (cursoalumno, cursogrupo, curso)
             elif name == "nie":
                 self.inField = 0
@@ -291,16 +265,15 @@ def import_data(modeladmin, request, queryset):
 
 
     for rayuela in queryset:
-        rayuela.resultado = u'Proceso de importación iniciado...'
         parser = xml.sax.make_parser()
         if rayuela.tipo == 'PR':
-            handler = ProfesorHandler(rayuela.resultado, request, queryset)
+            handler = ProfesorHandler(request, queryset)
             parser.setContentHandler(handler)
             parser.parse(rayuela.archivo.path)
         elif rayuela.tipo == 'AL':
             dirname = os.path.dirname(rayuela.archivo.path)
             descomprime(rayuela.archivo.path)
-            handler = AlumnoHandler(rayuela.resultado, request, queryset, dirname)
+            handler = AlumnoHandler(request, queryset, dirname)
             parser.setContentHandler(handler)
             parser.parse(os.path.join(dirname, 'datos', 'Alumnos.xml'))
             try:
@@ -308,7 +281,7 @@ def import_data(modeladmin, request, queryset):
                 shutil.rmtree(datos)
             except:
                 pass
-        rayuela.resultado += u'Proceso finalizado...'
+        rayuela.resultado = handler.get_resultado()
         rayuela.procesado = True
         rayuela.save()
 

@@ -144,6 +144,7 @@ DJANGO_APPS = (
 )
 
 LOCAL_APPS = (
+    'api',
     'core',
     'rayuela',
     'config',
@@ -193,13 +194,11 @@ LOGOUT_URL = '/core/logout'
 SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+#        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
-
 
 ########## DJANGO-AUTH-LDAP CONFIGURATION
 import ldap
