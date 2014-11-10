@@ -9,14 +9,14 @@ class Asignatura(TimeStampedModel):
     asignatura = models.CharField(max_length=60)
 
     def __unicode__(self):
-        return "%s - %s" % (self.abreviatura, self.asignatura)
+        return u"%s - %s" % (self.abreviatura, self.asignatura)
 
 class DepartamentoAsignatura(TimeStampedModel):
     departamento = models.ForeignKey(Departamento)
     asignatura = models.ForeignKey(Asignatura)
 
     def __unicode__(self):
-        return "%s - %s" % (self.departamento, self.asignatura)
+        return u"%s - %s" % (self.departamento, self.asignatura)
 
     class Meta:
         unique_together = (("departamento", "asignatura"),)

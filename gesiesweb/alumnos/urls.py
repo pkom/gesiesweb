@@ -6,4 +6,6 @@ urlpatterns = patterns("",
 	url(regex=r"^$",
 		view=views.ConfigListView.as_view(),
 		name="alumno"),
+
+
 )

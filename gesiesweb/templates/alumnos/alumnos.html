@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load thumbnail %}
+
+{% load staticfiles %}
+
+{% block extra_css_links %}
+
+{% endblock extra_css_links %}
+
+{% block contenido %}
+
+    {% for alumno in alumnos %}
+        <p>
+            {{ alumno }}
+
+            {% thumbnail alumno.foto "60x50" crop="center" as foto %}
+                <img class="nav-user-photo"
+                     {% if alumno.foto %}
+                        src="{{ foto.url }}" width="{{ foto.width }}" height="{{ foto.height }}"
+                     {% else %}
+                        src="{% static 'avatars/avatar2.png' %}"
+                     {% endif %}
+                    alt="Foto de {{ alumno }}" />
+            {% endthumbnail %}
+
+
+        </p>
+    {% endfor %}
+
+{% endblock contenido %}
+
+{% block extra_js %}
+
+{% endblock extra_js %}

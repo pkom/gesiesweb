@@ -1,11 +1,17 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
 from django.views.generic import ListView
-from django.core.urlresolvers import reverse
+
+from rest_framework import viewsets
 
 from .models import Alumno
+from .serializers import AlumnoSerializer
 
 # Create your views here.
 class ConfigListView(ListView):
-	model = Alumno
+    model = Alumno
+    context_object_name = 'alumnos'
+    template_name = 'alumnos/alumnos.html'
+
+
+class AlumnoViewSet(viewsets.ModelViewSet):
+    queryset = Alumno.objects.all()
+    serializer_class = AlumnoSerializer

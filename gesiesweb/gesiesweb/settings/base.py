@@ -140,6 +140,7 @@ DJANGO_APPS = (
     'django.contrib.admin',
     # 'django.contrib.admindocs',
     'sorl.thumbnail',
+    'rest_framework',
 )
 
 LOCAL_APPS = (
@@ -190,6 +191,14 @@ LOGIN_URL = '/core/login'
 LOGOUT_URL = '/core/logout'
 
 SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 
 ########## DJANGO-AUTH-LDAP CONFIGURATION

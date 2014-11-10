@@ -5,6 +5,8 @@ from .base import *
 
 DEBUG = True
 
+THUMBNAIL_DEBUG = DEBUG
+
 ALLOWED_HOSTS = ['*']
 
 TEMPLATE_DEBUG = DEBUG
