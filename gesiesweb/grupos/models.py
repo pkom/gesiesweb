@@ -8,11 +8,15 @@ from profesores.models import CursoProfesor
 from alumnos.models import CursoAlumno
 
 class Grupo(TimeStampedModel):
-    grupo = models.CharField(max_length=10, db_index=True)
+    grupo = models.CharField(max_length=10, db_index=True, unique=True)
     descripcion = models.CharField(max_length=50, blank=True)
 
     def __unicode__(self):
         return u"%s" % self.grupo
+
+    class Meta:
+        ordering = [ 'grupo' ]
+
 
 class CursoGrupo(TimeStampedModel):
     curso = models.ForeignKey(Curso)
@@ -24,6 +28,8 @@ class CursoGrupo(TimeStampedModel):
 
     class Meta:
         unique_together = (("curso", "grupo"),)
+        ordering = [ 'curso__curso', 'grupo__grupo' ]
+
 
 class GrupoAlumno(TimeStampedModel):
     cursogrupo = models.ForeignKey(CursoGrupo)
@@ -34,6 +40,9 @@ class GrupoAlumno(TimeStampedModel):
 
     class Meta:
         unique_together = (("cursogrupo", "cursoalumno"),)
+        ordering = [ 'cursogrupo__curso__curso', 'cursogrupo__grupo__grupo',
+                     'cursoalumno__alumno__apellidos', 'cursoalumno__alumno__nombre']
+
 
 class GrupoProfesor(TimeStampedModel):
     cursogrupo = models.ForeignKey(CursoGrupo)
@@ -44,3 +53,5 @@ class GrupoProfesor(TimeStampedModel):
 
     class Meta:
         unique_together = (("cursogrupo", "cursoprofesor"),)
+        ordering = [ 'cursogrupo__curso__curso', 'cursogrupo__grupo__grupo',
+                     'cursoprofesor__profesor__user__last_name', 'cursoprofesor__profesor__user__first_name' ]

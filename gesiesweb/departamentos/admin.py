@@ -3,14 +3,12 @@ from django.contrib import admin
 from .models import Departamento, CursoDepartamento, DepartamentoProfesor
 
 class DepartamentoAdmin(admin.ModelAdmin):
-    ordering = ('departamento',)
+    pass
 
 class CursoDepartamentoAdmin(admin.ModelAdmin):
-    ordering = ('departamento__departamento',)
     list_filter = ('curso__curso',)
 
 class DepartamentoProfesorAdmin(admin.ModelAdmin):
-    ordering = ('cursodepartamento__departamento__departamento',)
     list_filter = ('cursodepartamento__curso__curso',
                    'cursodepartamento__departamento__departamento',
                     'cursoprofesor__profesor')

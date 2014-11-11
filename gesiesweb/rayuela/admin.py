@@ -3,11 +3,13 @@
 import zipfile, os, os.path
 import shutil
 import xml.sax.handler
+from string import Template
 
 from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.files import File
+from django import forms
 
 from .models import Rayuela
 from profesores.models import Profesor, CursoProfesor
@@ -25,7 +27,7 @@ def import_data(modeladmin, request, queryset):
             self.modeladmin = modeladmin
             self.request = request
             self.queryset = queryset
-            self.resultado = u'Proceso de importación iniciado...'
+            self.resultado = u'<h5>Resultado del proceso</h5>'
 
         def get_resultado(self):
             return self.resultado
@@ -65,9 +67,10 @@ def import_data(modeladmin, request, queryset):
                     'is_active': True
                 }
                 user, created = User.objects.update_or_create(username=self.login, defaults=updated_values)
-                self.resultado += u'Procesando profesor %s' % (user)
+                self.resultado += u'<ul>Procesando profesor %s %s, %s' % (self.primerapellido, self.segundoapellido,
+                                                                            self.nombre)
                 if created:
-                    self.resultado += u'Se ha creado el profesor %s' % (user)
+                    self.resultado += u'<li>Se ha creado el profesor %s</li>' % (user)
                 profe = user.profesor
                 profe.dni = self.dni
                 profe.usuario_rayuela = self.login
@@ -78,33 +81,34 @@ def import_data(modeladmin, request, queryset):
                 curso = self.queryset[0].curso
                 cursoprofesor, created = CursoProfesor.objects.get_or_create(profesor=profe, curso=curso)
                 if created:
-                    self.resultado += u'Se ha asignado %s al curso %s' % (profe, curso)
+                    self.resultado += u'<li>Se ha asignado %s al curso %s</li>' % (profe, curso)
                 if self.departamento:
                     departamento, created = Departamento.objects.get_or_create(departamento=self.departamento)
                     if created:
-                        self.resultado += u'Se ha creado el departamento %s' % (departamento)
+                        self.resultado += u'<li>Se ha creado el departamento %s</li>' % (departamento)
                     cursodepartamento, created = CursoDepartamento.objects.get_or_create(departamento=departamento,
                                                                                          curso=curso)
                     if created:
-                        self.resultado += u'Se ha creado el departamento %s en el curso %s' % (departamento, curso)
+                        self.resultado += u'<li>Se ha creado el departamento %s en el curso %s</li>' % (departamento, curso)
                     departamentoprofesor, created = DepartamentoProfesor.objects.get_or_create(cursodepartamento=cursodepartamento,
                                                                                                cursoprofesor=cursoprofesor)
                     if created:
-                        self.resultado += u'Se ha asignado el profesor %s al departamento %s en el curso %s' %\
+                        self.resultado += u'<li>Se ha asignado el profesor %s al departamento %s en el curso %s</li>' %\
                                         (cursoprofesor, cursodepartamento, curso)
                 if self.grupos:
                     for grupoit in self.grupos:
                         grupo, created = Grupo.objects.get_or_create(grupo=grupoit)
                         if created:
-                            self.resultado += u'Se ha creado el grupo %s' % (grupo)
+                            self.resultado += u'<li>Se ha creado el grupo %s</li>' % (grupo)
                         cursogrupo, created = CursoGrupo.objects.get_or_create(grupo=grupo, curso=curso)
                         if created:
-                            self.resultado += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
+                            self.resultado += u'<li>Se ha creado el grupo %s en el curso %s</li>' % (grupo, curso)
                         grupoprofesor, created = GrupoProfesor.objects.get_or_create(cursogrupo=cursogrupo,
                                                                                     cursoprofesor=cursoprofesor)
                         if created:
-                            self.resultado += u'Se ha asignado el profesor %s al grupo %s en el curso %s' %\
+                            self.resultado += u'<li>Se ha asignado el profesor %s al grupo %s en el curso %s</li>' %\
                                             (cursoprofesor, cursogrupo, curso)
+                self.resultado += u'</ul>'
             elif name == "dni":
                 self.inField = 0
                 self.dni = self.buffer
@@ -148,9 +152,8 @@ def import_data(modeladmin, request, queryset):
             self.modeladmin = modeladmin
             self.request = request
             self.queryset = queryset
-            self.rayuela = ''
             self.dirname = dirname
-            self.resultado = u'Proceso de importación iniciado...'
+            self.resultado = u'<h5>Resultado del proceso</h5>'
 
         def get_resultado(self):
             return self.resultado
@@ -197,26 +200,28 @@ def import_data(modeladmin, request, queryset):
                     ficherofoto = os.path.join(self.dirname, 'datos', self.nombrefichero)
                     updated_values['foto'] = File(open(ficherofoto))
                 alumno, created = Alumno.objects.update_or_create(nie=self.nie, defaults=updated_values)
+                self.resultado += u'<ul>Procesando alumno %s' % (alumno)
                 if created:
-                    self.resultado += u'Se ha creado el alumno %s' % (alumno)
+                    self.resultado += u'<li>Se ha creado el alumno %s</li>' % (alumno)
                 alumno.save()
                 #veamos si existe el alumno en el curso
                 curso = self.queryset[0].curso
                 cursoalumno, created = CursoAlumno.objects.get_or_create(alumno=alumno, curso=curso)
                 if created:
-                    self.resultado += u'Se ha asignado %s al curso %s' % (alumno, curso)
+                    self.resultado += u'<li>Se ha asignado %s al curso %s</li>' % (alumno, curso)
                 if self.grupo:
                     grupo, created = Grupo.objects.get_or_create(grupo=self.grupo)
                     if created:
-                        self.resultado += u'Se ha creado el grupo %s' % (grupo)
+                        self.resultado += u'<li>Se ha creado el grupo %s</li>' % (grupo)
                     cursogrupo, created = CursoGrupo.objects.get_or_create(grupo=grupo, curso=curso)
                     if created:
-                        self.resultado += u'Se ha creado el grupo %s en el curso %s' % (grupo, curso)
+                        self.resultado += u'<li>Se ha creado el grupo %s en el curso %s</li>' % (grupo, curso)
                     grupoalumno, created = GrupoAlumno.objects.get_or_create(cursogrupo=cursogrupo,
                                                                                 cursoalumno=cursoalumno)
                     if created:
-                        self.resultado += u'Se ha asignado el alumno %s al grupo %s en el curso %s' %\
+                        self.resultado += u'<li>Se ha asignado el alumno %s al grupo %s en el curso %s</li>' %\
                                         (cursoalumno, cursogrupo, curso)
+                self.resultado += u'</ul>'
             elif name == "nie":
                 self.inField = 0
                 self.nie = self.buffer
@@ -261,7 +266,6 @@ def import_data(modeladmin, request, queryset):
                 self.nombrefichero = self.buffer
 
             self.buffer = ""
-            rayuela = self.rayuela
 
 
     for rayuela in queryset:
@@ -317,9 +321,19 @@ def descomprime(filezip):
                 outfile.close()
 
 
+class ResultadoWidget(forms.Textarea):
+  def render(self, name, value, attrs=None):
+    tpl = Template(u"""<div>$resultado</div>""")
+    return mark_safe(tpl.substitute(resultado=value))
+
+
 @admin.register(Rayuela)
 class RayuelaAdmin(admin.ModelAdmin):
     list_display = ['curso', 'tipo', 'archivo', 'created', 'modified', 'procesado']
-    readonly_fields = ['procesado', 'resultado']
-    ordering = ['-created']
+    readonly_fields = ['procesado']
     actions = [import_data]
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if db_field.name == 'resultado':
+          kwargs['widget'] = ResultadoWidget
+        return super(RayuelaAdmin,self).formfield_for_dbfield(db_field,**kwargs)

@@ -25,3 +25,6 @@ class Rayuela(TimeStampedModel):
         return mark_safe(self.resultado)
 
     display_resultado.allow_tags = True
+
+    class Meta:
+        ordering = [ '-curso', '-created' ]

@@ -16,12 +16,13 @@ class Alumno(TimeStampedModel):
     usuario_rayuela = models.CharField(max_length=20, blank=True)
     foto = ImageField(upload_to='alumnos', blank=True, default='')
 
+
     def __unicode__(self):
         return u"%s, %s" % (self.apellidos, self.nombre)
 
     class Meta:
         index_together = (("apellidos", "nombre"),)
-
+        ordering = ['apellidos', 'nombre' ]
 
 class CursoAlumno(TimeStampedModel):
     curso = models.ForeignKey(Curso)
@@ -32,3 +33,4 @@ class CursoAlumno(TimeStampedModel):
 
     class Meta:
         unique_together = (("curso", "alumno"),)
+        ordering = ['alumno__apellidos', 'alumno__nombre' ]

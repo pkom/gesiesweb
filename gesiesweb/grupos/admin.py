@@ -5,21 +5,17 @@ from django.contrib import admin
 from .models import Grupo, CursoGrupo, GrupoAlumno, GrupoProfesor
 
 class GrupoAdmin(admin.ModelAdmin):
-    ordering = ('grupo',)
+    pass
 
 class CursoGrupoAdmin(admin.ModelAdmin):
-    ordering = ('grupo__grupo',)
     list_filter = ('curso__curso',)
 
 class GrupoAlumnoAdmin(admin.ModelAdmin):
-    ordering = ('cursogrupo__grupo__grupo','cursoalumno__alumno__apellidos','cursoalumno__alumno__nombre',)
     list_filter = ('cursogrupo__curso__curso',
                     'cursogrupo__grupo__grupo',)
-#                    'cursoalumno__alumno')
     search_fields = ('cursoalumno__alumno__apellidos',)
 
 class GrupoProfesorAdmin(admin.ModelAdmin):
-    ordering = ('cursogrupo__grupo__grupo',)
     list_filter = ('cursogrupo__curso__curso',
                     'cursogrupo__grupo__grupo',
                     'cursoprofesor__profesor')

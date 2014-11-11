@@ -18,3 +18,5 @@ class CursoAlumnoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CursoAlumno
+        fields = ('id', 'curso', 'alumno',)
+

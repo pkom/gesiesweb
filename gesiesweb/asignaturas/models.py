@@ -11,6 +11,9 @@ class Asignatura(TimeStampedModel):
     def __unicode__(self):
         return u"%s - %s" % (self.abreviatura, self.asignatura)
 
+    class Meta:
+        ordering = [ 'abreviatura' ]
+
 class DepartamentoAsignatura(TimeStampedModel):
     departamento = models.ForeignKey(Departamento)
     asignatura = models.ForeignKey(Asignatura)
@@ -20,3 +23,4 @@ class DepartamentoAsignatura(TimeStampedModel):
 
     class Meta:
         unique_together = (("departamento", "asignatura"),)
+        ordering = [ 'asignatura__abreviatura' ]

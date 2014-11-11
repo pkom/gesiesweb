@@ -40,7 +40,7 @@ def upload_to(instance, filename):
 
 class Profesor(TimeStampedModel):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, db_index=True)
-    dni = models.CharField(blank=True, max_length=20, default='', db_index=True)
+    dni = models.CharField(blank=True, max_length=20, default='', db_index=True, unique=True)
     usuario_rayuela = models.CharField(blank=True, max_length=20, default='')
     foto = ImageField(upload_to=upload_to, blank=True, default='')
     es_usuario = models.BooleanField(default=False)
@@ -48,6 +48,9 @@ class Profesor(TimeStampedModel):
 
     def __unicode__(self):
         return u"%s, %s (%s)" % (self.user.last_name, self.user.first_name, self.user.username)
+
+    class Meta:
+        ordering = [ 'user__last_name', 'user__first_name' ]
 
 
 class CursoProfesor(TimeStampedModel):
@@ -59,3 +62,4 @@ class CursoProfesor(TimeStampedModel):
 
     class Meta:
         unique_together = (("curso", "profesor"),)
+        ordering = [ 'curso__curso', 'profesor__user__last_name', 'profesor__user__first_name' ]

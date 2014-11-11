@@ -18,7 +18,6 @@ class ProfesorAdmin(AdminImageMixin, admin.ModelAdmin):
 
 class CursoProfesorAdmin(admin.ModelAdmin):
     list_display = ('curso', 'profesor',)
-    ordering = ('profesor__user__last_name',)
     list_filter = ('curso__curso',)
 
 class ProfesorInline(admin.StackedInline):
@@ -29,6 +28,7 @@ class ProfesorInline(admin.StackedInline):
 # Define a new User admin
 class UserAdmin(UserAdmin):
     inlines = (ProfesorInline, )
+    ordering = [ 'last_name', 'first_name' ]
 
 # Re-register UserAdmin
 admin.site.unregister(User)

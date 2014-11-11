@@ -24,3 +24,6 @@ class Curso(TimeStampedModel):
 
     def __unicode__(self):
     	return smart_unicode(self.curso)
+
+    class Meta:
+        ordering = [ 'curso' ]
