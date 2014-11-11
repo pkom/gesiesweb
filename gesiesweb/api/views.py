@@ -1,17 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.routers import DefaultRouter
-from rest_framework.permissions import IsAdminUser
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from alumnos.models import CursoAlumno
-from api.serializers import CursoAlumnoSerializer
-
-class CursoAlumnoMixin(object):
-
-    queryset = CursoAlumno.objects.all().order_by('alumno__apellidos', 'alumno__nombre',)
-    serializer_class = CursoAlumnoSerializer
-    permission_classes = (IsAdminUser,)
-
+from grupos.models import GrupoAlumno
+from .mixins import CursoAlumnoMixin, GrupoAlumnoMixin
 
 class AlumnoViewSet(CursoAlumnoMixin, viewsets.ModelViewSet):
 
@@ -41,5 +33,34 @@ alumno_detail = AlumnoViewSet.as_view({
 })
 
 
+class GrupoAlumnoViewSet(GrupoAlumnoMixin, viewsets.ModelViewSet):
+
+    def get_queryset(self):
+        """
+        Opcionalmente restringe los alumnos retornados a determinado curso,
+        filtando contra el parametro `curso` en la URL.
+        """
+        queryset = GrupoAlumno.objects.all()
+        cursogrupo = self.request.QUERY_PARAMS.get('cursogrupo', None)
+        if cursogrupo is not None:
+            queryset = queryset.filter(cursogrupo__id=cursogrupo)
+        return queryset
+
+
+grupoalumno_list = GrupoAlumnoViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+
+grupoalumno_detail = GrupoAlumnoViewSet.as_view({
+    'get': 'retrive',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
+
 router = DefaultRouter()
 router.register(r'alumnos', AlumnoViewSet)
+router.register(r'grupoalumnos', GrupoAlumnoViewSet)
