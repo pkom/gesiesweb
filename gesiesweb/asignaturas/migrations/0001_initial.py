@@ -9,7 +9,7 @@ import model_utils.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('departamentos', '0006_auto_20141102_1642'),
+        ('departamentos', '__first__'),
     ]
 
     operations = [
@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('asignatura', models.CharField(max_length=60)),
             ],
             options={
-                'abstract': False,
+                'ordering': ['abreviatura'],
             },
             bases=(models.Model,),
         ),
@@ -37,8 +37,12 @@ class Migration(migrations.Migration):
                 ('departamento', models.ForeignKey(to='departamentos.Departamento')),
             ],
             options={
-                'abstract': False,
+                'ordering': ['asignatura__abreviatura'],
             },
             bases=(models.Model,),
+        ),
+        migrations.AlterUniqueTogether(
+            name='departamentoasignatura',
+            unique_together=set([('departamento', 'asignatura')]),
         ),
     ]

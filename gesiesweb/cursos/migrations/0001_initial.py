@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('peso_6', models.DecimalField(default=0, max_digits=5, decimal_places=2)),
             ],
             options={
-                'abstract': False,
+                'ordering': ['curso'],
             },
             bases=(models.Model,),
         ),

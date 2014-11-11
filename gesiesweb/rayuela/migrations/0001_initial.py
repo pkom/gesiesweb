@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('curso', models.ForeignKey(to='cursos.Curso')),
             ],
             options={
-                'abstract': False,
+                'ordering': ['-curso', '-created'],
             },
             bases=(models.Model,),
         ),
