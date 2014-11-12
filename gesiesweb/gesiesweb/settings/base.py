@@ -141,6 +141,7 @@ DJANGO_APPS = (
     # 'django.contrib.admindocs',
     'sorl.thumbnail',
     'rest_framework',
+    'django_filters',
 )
 
 LOCAL_APPS = (
@@ -195,9 +196,13 @@ SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
+#        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'PAGINATE_BY': 10,
+    'PAGINATE_BY_PARAM': 'page_size',
+    'MAX_PAGINATE_BY': 100,
 }
 
 ########## DJANGO-AUTH-LDAP CONFIGURATION

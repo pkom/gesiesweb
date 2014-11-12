@@ -2,20 +2,37 @@
 
 from rest_framework import serializers
 
-from alumnos.models import CursoAlumno
-from grupos.models import GrupoAlumno
+from config.models import Config
+from cursos.models import Curso
+from alumnos.models import Alumno, CursoAlumno
+from profesores.models import Profesor
 
 
-class CursoAlumnoSerializer(serializers.ModelSerializer):
+class ProfesorSerializer(serializers.HyperlinkedModelSerializer):
 
-    alumno = serializers.Field(source=u'alumno.apellidos')
+    class Meta:
+        model = Profesor
+
+
+class ConfigSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Config
+
+
+class CursoSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Curso
+
+
+class AlumnoSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Alumno
+
+
+class CursoAlumnoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CursoAlumno
-        fields = ('id', 'curso', 'alumno',)
-
-class GrupoAlumnoSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = GrupoAlumno
-        fields = ('id', 'cursogrupo', 'cursoalumno',)
