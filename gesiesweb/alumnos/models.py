@@ -29,7 +29,7 @@ class CursoAlumno(TimeStampedModel):
     alumno = models.ForeignKey(Alumno)
 
     def __unicode__(self):
-        return u"%s" % self.alumno
+        return u"%s - %s" % (self.curso, self.alumno)
 
     class Meta:
         unique_together = (("curso", "alumno"),)

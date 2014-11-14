@@ -6,6 +6,7 @@ from config.models import Config
 from cursos.models import Curso
 from alumnos.models import Alumno, CursoAlumno
 from profesores.models import Profesor
+from partes.models import Parte, ParteSeguimiento
 
 
 class ProfesorSerializer(serializers.HyperlinkedModelSerializer):
@@ -36,3 +37,14 @@ class CursoAlumnoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CursoAlumno
+
+class ParteSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Parte
+
+
+class ParteSeguimientoSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ParteSeguimiento

@@ -155,6 +155,7 @@ LOCAL_APPS = (
     'grupos',
     'departamentos',
     'asignaturas',
+    'partes',
 )
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
@@ -199,9 +200,11 @@ REST_FRAMEWORK = {
 #        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',
+                                'rest_framework.filters.OrderingFilter'),
     'PAGINATE_BY': 10,
     'PAGINATE_BY_PARAM': 'page_size',
+    'ORDERING_PARAM': 'ordering',
     'MAX_PAGINATE_BY': 100,
 }
 

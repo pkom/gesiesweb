@@ -8,8 +8,10 @@ from asignaturas.models import Asignatura, DepartamentoAsignatura
 from departamentos.models import Departamento, CursoDepartamento, DepartamentoProfesor
 from grupos.models import Grupo, CursoGrupo, GrupoAlumno, GrupoProfesor
 from profesores.models import Profesor, CursoProfesor
+from partes.models import Parte, ParteSeguimiento
 
 from .serializers import CursoSerializer, ConfigSerializer, ProfesorSerializer, AlumnoSerializer, CursoAlumnoSerializer
+from .serializers import ParteSerializer, ParteSeguimientoSerializer
 from .mixins import AuthenticateMixin
 
 
@@ -35,7 +37,7 @@ class CursoAlumnoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
 
     model = CursoAlumno
     serializer_class = CursoAlumnoSerializer
-    filter_fields = ('curso', 'id', 'alumno__nie', 'alumno__apellidos', 'alumno__nombre',)
+    filter_fields = ('curso', 'alumno__nie', 'alumno__apellidos', 'alumno__nombre',)
 
 
 class AsignaturaViewSet(AuthenticateMixin, viewsets.ModelViewSet):
@@ -93,6 +95,18 @@ class CursoProfesorViewSet(AuthenticateMixin, viewsets.ModelViewSet):
     serializer_class = ProfesorSerializer
 
 
+class ParteViewSet(AuthenticateMixin, viewsets.ModelViewSet):
+
+    model = Parte
+    serializer_class = ParteSerializer
+
+
+class ParteSeguimientoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
+
+    model = ParteSeguimiento
+    serializer_class = ParteSeguimientoSerializer
+
+
 router = DefaultRouter()
 router.register(r'config', ConfigViewSet)
 router.register(r'cursos', CursoViewSet)
@@ -109,6 +123,8 @@ router.register(r'grupoalumnos', GrupoAlumnoViewSet)
 router.register(r'grupoprofesores', GrupoProfesorViewSet)
 router.register(r'profesores', ProfesorViewSet)
 router.register(r'cursoprofesores', CursoProfesorViewSet)
+router.register(r'partes', ParteViewSet)
+router.register(r'parteseguimientos', ParteSeguimientoViewSet)
 
 
 
