@@ -8,6 +8,7 @@ from profesores.models import CursoProfesor
 from alumnos.models import CursoAlumno
 
 class Grupo(TimeStampedModel):
+
     grupo = models.CharField(max_length=10, db_index=True, unique=True)
     descripcion = models.CharField(max_length=50, blank=True)
 
@@ -19,6 +20,7 @@ class Grupo(TimeStampedModel):
 
 
 class CursoGrupo(TimeStampedModel):
+
     curso = models.ForeignKey(Curso)
     grupo = models.ForeignKey(Grupo)
     tutor = models.ForeignKey(CursoProfesor, null=True, blank=True)
@@ -32,11 +34,20 @@ class CursoGrupo(TimeStampedModel):
 
 
 class GrupoAlumno(TimeStampedModel):
+
     cursogrupo = models.ForeignKey(CursoGrupo)
     cursoalumno = models.ForeignKey(CursoAlumno)
 
     def __unicode__(self):
         return u"%s - %s" % (self.cursogrupo, self.cursoalumno)
+
+    def get_nombre_completo(self):
+
+        return u"%s, %s" % (self.cursoalumno.alumno.apellidos, self.cursoalumno.alumno.nombre)
+
+    def get_nombre_grupo(self):
+
+        return u"%s" % (self.cursogrupo.grupo.grupo)
 
     class Meta:
         unique_together = (("cursogrupo", "cursoalumno"),)
@@ -45,6 +56,7 @@ class GrupoAlumno(TimeStampedModel):
 
 
 class GrupoProfesor(TimeStampedModel):
+
     cursogrupo = models.ForeignKey(CursoGrupo)
     cursoprofesor = models.ForeignKey(CursoProfesor)
 

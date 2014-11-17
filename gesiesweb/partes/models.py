@@ -3,12 +3,12 @@ from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
 
-from alumnos.models import CursoAlumno
+from grupos.models import GrupoAlumno
 from profesores.models import CursoProfesor
 
 class Parte(TimeStampedModel):
 
-    cursoalumno = models.ForeignKey(CursoAlumno)
+    grupoalumno = models.ForeignKey(GrupoAlumno)
     cursoprofesor = models.ForeignKey(CursoProfesor)
     fecha = models.DateField(null=False, default= timezone.now())
     parte = models.TextField(blank=False)
@@ -31,7 +31,11 @@ class Parte(TimeStampedModel):
 
     def get_nombre_completo_alumno(self):
 
-        return self.cursoalumno.get_nombre_completo()
+        return self.grupoalumno.get_nombre_completo()
+
+    def get_nombre_grupo_alumno(self):
+
+        return self.grupoalumno.get_nombre_grupo()
 
     class Meta:
 

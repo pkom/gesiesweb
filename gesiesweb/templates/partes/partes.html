@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load staticfiles %}
+
 {% block breadcrumbs %}
   <!-- #section:basics/content.breadcrumbs -->
   <div class="breadcrumbs" id="breadcrumbs">
@@ -46,6 +48,153 @@
 
 
 {% block contenido %}
+    <div class="table-header">
+        Partes del profesor {{ request.user.get_full_name }}
+    </div>
+
+    <div>
+    <!--
+        <div id="partes-profesor_wrapper" class="dataTables_wrapper form-inline" role="grid">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div id="partes-profesor_length" class="dataTables_length">
+                        <label>Muestra
+                            <select size="1" name="partes-profesor_length" aria-controls="partes-profesor">
+                                <option value="10" selected="selected">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>partes
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="dataTables_filter" id="partes-profesor_filter">
+                    <label>Buscar: <input type="text" aria-controls="partes-profesor"></label>
+                </div>
+            </div>
+        </div>
+    -->
+        <table id="partes-profesor" class="table table-striped table-bordered table-hover dataTable" aria-describedby="partes-profesor_info">
+        <thead>
+            <tr role="row">
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Id: activate to sort column ascending">Id</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Fecha: activate to sort column ascending">Fecha</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">Grupo</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Alumn@</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Parte</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Comun.</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Cerrado</th>
+                <th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" aria-label=""></th>
+            </tr>
+        </thead>
+
+
+        <tbody role="alert" aria-live="polite" aria-relevant="all">
+        {% for parte in partes %}
+            {% cycle 'odd' 'event' as rowcolors silent %}
+            <tr class="{{ rowcolors }}">
+
+                <td class="hidden-480 align-right">{{ parte.id }}</td>
+                <td class="align-center">{{ parte.fecha | date:"SHORT_DATE_FORMAT" }}</td>
+                <td class="align-center">{{ parte.get_nombre_grupo_alumno }}</td>
+                <td class="align-left">{{ parte.get_nombre_completo_alumno }}</td>
+
+                <td class="hidden-480 align-center">
+                    {% if parte.con_parte %}
+                        <i class="ace-icon fa fa-check bigger-120"></i>
+                    {% endif %}
+                </td>
+                <td class="hidden-480 align-center">
+                    {% if parte.comunicado %}
+                        <i class="ace-icon fa fa-check bigger-120"></i>
+                    {% endif %}
+                </td>
+                <td class="hidden-480 align-center">
+                    {% if parte.cerrado %}
+                        <i class="ace-icon fa fa-check bigger-120"></i>
+                    {% endif %}
+                </td>
+
+                <td class=" ">
+                    <div class="hidden-sm hidden-xs action-buttons">
+                        <a class="blue tooltip-info" href="#" data-rel="tooltip" title="" data-original-title="Ver">
+                            <i class="ace-icon fa fa-search-plus bigger-130"></i>
+                        </a>
+
+                        <a class="green tooltip-success" href="#" data-rel="tooltip" title="" data-original-title="Edita">
+                            <i class="ace-icon fa fa-pencil bigger-130"></i>
+                        </a>
+
+                    </div>
+
+                    <div class="hidden-md hidden-lg">
+                        <div class="inline position-relative">
+                            <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                <li>
+                                    <a href="#" class="tooltip-info" data-rel="tooltip" title="" data-original-title="View">
+                                        <span class="blue">
+                                            <i class="ace-icon fa fa-search-plus bigger-120"></i>
+                                        </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="#" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edit">
+                                        <span class="green">
+                                            <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                        </span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="#" class="tooltip-error" data-rel="tooltip" title="" data-original-title="Delete">
+                                        <span class="red">
+                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        <!--
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="dataTables_info" id="sample-table-2_info">Mostrando partes 1 al 10 de 23 totales</div>
+            </div>
+            <div class="col-xs-6">
+                <div class="dataTables_paginate paging_bootstrap">
+                    <ul class="pagination">
+                        <li class="prev disabled">
+                            <a href="#"><i class="fa fa-angle-double-left"></i></a>
+                        </li>
+                        <li class="prev disabled">
+                            <a href="#"><i class="fa fa-angle-left"></i></a>
+                        </li><li class="active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li><li><a href="#">3</a></li>
+                        <li class="next"><a href="#"><i class="fa fa-angle-right"></i></a></li>
+                        <li class="next"><a href="#"><i class="fa fa-angle-double-right"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        -->
+	</div>
+
+
+
+
+
 
     <ul>
     {% for parte in partes %}
@@ -71,4 +220,74 @@
     {% endfor %}
     </ul>
 
+
 {% endblock contenido %}
+
+{% block extra_js_links %}
+		<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+		<script src="{% static 'js/jquery.dataTables.bootstrap.min.js' %}"></script>
+{% endblock extra_js_links %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        jQuery(function($) {
+            var oTable1 =
+            $('#partes-profesor')
+            //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
+            .dataTable( {
+                "language": {
+                    "url": "{% static 'js/dataTables.spanish.lang' %}"
+                },
+                "order": [[ 1, "desc" ], [ 0, "desc" ]],
+                bAutoWidth: false,
+                "aoColumns": [
+                  null, null, null,null,
+                  { "bSortable": false },
+                  { "bSortable": false },
+                  { "bSortable": false } ,
+                  { "bSortable": false }
+                ]
+
+
+                //,
+                //"sScrollY": "200px",
+                //"bPaginate": false,
+
+                //"sScrollX": "100%",
+                //"sScrollXInner": "120%",
+                //"bScrollCollapse": true,
+                //Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
+                //you may want to wrap the table inside a "div.dataTables_borderWrap" element
+
+                //"iDisplayLength": 50
+            } );
+
+
+
+            $(document).on('click', 'th input:checkbox' , function(){
+                var that = this;
+                $(this).closest('table').find('tr > td:first-child input:checkbox')
+                .each(function(){
+                    this.checked = that.checked;
+                    $(this).closest('tr').toggleClass('selected');
+                });
+            });
+
+
+            $('[data-rel="tooltip"]').tooltip({placement: tooltip_placement});
+            function tooltip_placement(context, source) {
+                var $source = $(source);
+                var $parent = $source.closest('table')
+                var off1 = $parent.offset();
+                var w1 = $parent.width();
+
+                var off2 = $source.offset();
+                //var w2 = $source.width();
+
+                if( parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2) ) return 'right';
+                return 'left';
+            }
+
+        })
+    </script>
+{% endblock extra_js %}

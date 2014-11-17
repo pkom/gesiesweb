@@ -13,11 +13,11 @@ class ParteSeguimientoInline(admin.StackedInline):
 
 class ParteAdmin(admin.ModelAdmin):
 
-    list_display = ( 'id', 'cursoalumno', 'cursoprofesor', 'fecha', 'parte', 'con_parte', 'comunicado',
+    list_display = ( 'id', 'grupoalumno', 'cursoprofesor', 'fecha', 'parte', 'con_parte', 'comunicado',
                      'cerrado', 'created', 'modified', )
     readonly = ( 'created', 'modified', )
     inlines = [ ParteSeguimientoInline ]
-    list_filter = ('cursoalumno__curso__curso',
+    list_filter = ('grupoalumno__cursogrupo__curso__curso',
                     'con_parte',
                     'comunicado',
                     'cerrado',
