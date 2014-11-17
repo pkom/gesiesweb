@@ -39,6 +39,7 @@ def upload_to(instance, filename):
 
 
 class Profesor(TimeStampedModel):
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, db_index=True)
     dni = models.CharField(blank=True, max_length=20, default='', db_index=True, unique=True)
     usuario_rayuela = models.CharField(blank=True, max_length=20, default='')
@@ -47,18 +48,30 @@ class Profesor(TimeStampedModel):
     id_usuario = models.CharField(blank=True, max_length=20, default='')
 
     def __unicode__(self):
+
+        return u"%s, %s (%s)" % (self.user.last_name, self.user.first_name, self.user.username)
+
+    def get_nombre_completo(self):
+
         return u"%s, %s (%s)" % (self.user.last_name, self.user.first_name, self.user.username)
 
     class Meta:
+
         ordering = [ 'user__last_name', 'user__first_name' ]
 
 
 class CursoProfesor(TimeStampedModel):
+
     curso = models.ForeignKey(Curso)
     profesor = models.ForeignKey(Profesor)
 
     def __unicode__(self):
+
         return u"%s - %s" % (self.curso, self.profesor)
+
+    def get_nombre_completo(self):
+
+        return u"%s, %s" % (self.profesor.user.last_name, self.profesor.user.first_name)
 
     class Meta:
         unique_together = (("curso", "profesor"),)

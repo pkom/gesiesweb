@@ -18,18 +18,30 @@ class Alumno(TimeStampedModel):
 
 
     def __unicode__(self):
+
+        return u"%s, %s" % (self.apellidos, self.nombre)
+
+    def get_nombre_completo(self):
+
         return u"%s, %s" % (self.apellidos, self.nombre)
 
     class Meta:
+
         index_together = (("apellidos", "nombre"),)
         ordering = ['apellidos', 'nombre' ]
 
 class CursoAlumno(TimeStampedModel):
+
     curso = models.ForeignKey(Curso)
     alumno = models.ForeignKey(Alumno)
 
     def __unicode__(self):
+
         return u"%s - %s" % (self.curso, self.alumno)
+
+    def get_nombre_completo(self):
+
+        return u"%s, %s" % (self.alumno.apellidos, self.alumno.nombre)
 
     class Meta:
         unique_together = (("curso", "alumno"),)

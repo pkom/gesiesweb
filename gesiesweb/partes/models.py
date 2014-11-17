@@ -17,17 +17,39 @@ class Parte(TimeStampedModel):
     cerrado = models.BooleanField(default=False)
 
     def __unicode__(self):
+
         return u"%s - %s" % (self.cursoalumno, self.cursoprofesor)
 
+
+    def parte_seguimientos(self):
+
+        return self.parteseguimiento_set.all()
+
+    def get_nombre_completo_profesor(self):
+
+        return self.cursoprofesor.get_nombre_completo()
+
+    def get_nombre_completo_alumno(self):
+
+        return self.cursoalumno.get_nombre_completo()
+
     class Meta:
+
         ordering = ['-created' ]
 
 
 class ParteSeguimiento(TimeStampedModel):
 
-    parte = models.ForeignKey(Parte)
-    profesor = models.ForeignKey(CursoProfesor)
+    parte = models.ForeignKey(Parte, related_name='seguimientos')
+    cursoprofesor = models.ForeignKey(CursoProfesor)
     seguimiento = models.TextField(blank=False)
 
+    def get_nombre_completo(self):
+
+        return self.cursoprofesor.get_nombre_completo()
+
+    class Meta:
+
+        ordering = [ '-created' ]
 
 

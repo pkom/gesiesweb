@@ -38,13 +38,26 @@ class CursoAlumnoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CursoAlumno
 
-class ParteSerializer(serializers.HyperlinkedModelSerializer):
 
-    class Meta:
-        model = Parte
+class ParteSeguimientoSerializer(serializers.ModelSerializer):
 
-
-class ParteSeguimientoSerializer(serializers.HyperlinkedModelSerializer):
+    profesor = serializers.CharField(source='get_nombre_completo', read_only=True)
 
     class Meta:
         model = ParteSeguimiento
+        fields = ( 'id', 'parte', 'cursoprofesor', 'profesor', 'seguimiento', 'created', 'modified')
+
+
+class ParteSerializer(serializers.ModelSerializer):
+
+    seguimientos = ParteSeguimientoSerializer(many=True)
+    profesor = serializers.CharField(source='get_nombre_completo_profesor', read_only=True)
+    alumno = serializers.CharField(source='get_nombre_completo_alumno', read_only=True)
+
+    class Meta:
+        model = Parte
+        fields = ( 'id', 'cursoalumno', 'alumno', 'cursoprofesor', 'profesor', 'fecha', 'parte', 'con_parte',
+                'comunicado', 'cerrado', 'seguimientos')
+
+
+

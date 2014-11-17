@@ -42,6 +42,11 @@ urlpatterns = patterns('',
         include('alumnos.urls',
                 namespace='alumno')),
 
+    # urls partes
+    url(r'^partes/',
+        include('partes.urls',
+                namespace='partes')),
+
     # API
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
