@@ -45,7 +45,7 @@ urlpatterns = patterns('',
     # urls partes
     url(r'^partes/',
         include('partes.urls',
-                namespace='partes')),
+                namespace='parte')),
 
     # API
     url(r'^api/', include(router.urls)),

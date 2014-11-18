@@ -18,7 +18,7 @@ class ProfesorAdmin(AdminImageMixin, admin.ModelAdmin):
 
 class CursoProfesorAdmin(admin.ModelAdmin):
     list_display = ('curso', 'profesor',)
-    list_filter = ('curso__curso',)
+    list_filter = ('curso__curso', 'es_responsable')
 
 class ProfesorInline(admin.StackedInline):
     model = Profesor

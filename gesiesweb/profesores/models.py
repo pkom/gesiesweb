@@ -64,6 +64,7 @@ class CursoProfesor(TimeStampedModel):
 
     curso = models.ForeignKey(Curso)
     profesor = models.ForeignKey(Profesor)
+    es_responsable = models.BooleanField(default=False)
 
     def __unicode__(self):
 

@@ -21,7 +21,7 @@ class ParteAdmin(admin.ModelAdmin):
                     'con_parte',
                     'comunicado',
                     'cerrado',
-#                   'cursoalumno__alumno',
+                    'grupoalumno__cursogrupo__grupo',
                     'cursoprofesor__profesor', )
 
 admin.site.register(Parte, ParteAdmin)

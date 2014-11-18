@@ -66,7 +66,7 @@
 					</button>
 
 					<i class="ace-icon fa fa-umbrella bigger-120 blue"></i>
-					Haz Click en la imagen de abajo para cambiarla
+					Haz Click en la imagen de abajo para cambiarla o cambiar el nombre y los apellidos
 				</div>
 			</div>
 
@@ -124,7 +124,7 @@
 							</span>
 
 							<span class="btn btn-app btn-sm btn-grey no-hover">
-								<span class="line-height-1 bigger-170"> {{ grupos }} </span>
+								<span class="line-height-1 bigger-170"> {{ numgrupos }} </span>
 
 								<br />
 								<span class="line-height-1 smaller-90"> Grupos </span>
@@ -257,9 +257,27 @@
 								<div class="profile-info-name"> Departamento </div>
 
 								<div class="profile-info-value">
-									<span class="editable" id="departamento">{{ request.session.departamento.departamento }}</span>
+									<span class="editable" id="departamento">
+                                        {%  if request.session.departamento_profesor == "Sin Departamento Asignado" %}
+                                            {{ request.session.departamento_profesor }}
+                                        {% else %}
+                                            {{ request.session.departamento_profesor.cursodepartamento.departamento }}
+                                        {% endif %}
+                                    </span>
 								</div>
 							</div>
+
+                            {% if grupos %}
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Grupos </div>
+
+                                    <div class="profile-info-value">
+                                        {% for grupo in grupos %}
+                                            <span class="editable" id="grupos">{{ grupo.cursogrupo.grupo }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
 
                             {% for grupo in request.session.grupos_asignaturas_alumnos %}
 

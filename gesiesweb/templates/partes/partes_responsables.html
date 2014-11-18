@@ -49,17 +49,17 @@
 
 {% block contenido %}
     <div class="table-header">
-        Partes del profesor {{ request.user.get_full_name }}
+        Partes del profesorado
     </div>
 
     <div>
     <!--
-        <div id="partes-profesor_wrapper" class="dataTables_wrapper form-inline" role="grid">
+        <div id="partes-responsable_wrapper" class="dataTables_wrapper form-inline" role="grid">
             <div class="row">
                 <div class="col-xs-6">
-                    <div id="partes-profesor_length" class="dataTables_length">
+                    <div id="partes-responsable_length" class="dataTables_length">
                         <label>Muestra
-                            <select size="1" name="partes-profesor_length" aria-controls="partes-profesor">
+                            <select size="1" name="partes-responsable_length" aria-controls="partes-responsable">
                                 <option value="10" selected="selected">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -69,22 +69,23 @@
                     </div>
                 </div>
                 <div class="col-xs-6">
-                    <div class="dataTables_filter" id="partes-profesor_filter">
-                    <label>Buscar: <input type="text" aria-controls="partes-profesor"></label>
+                    <div class="dataTables_filter" id="partes-responsable_filter">
+                    <label>Buscar: <input type="text" aria-controls="partes-responsable"></label>
                 </div>
             </div>
         </div>
     -->
-        <table id="partes-profesor" class="table table-striped table-bordered table-hover dataTable" aria-describedby="partes-profesor_info">
+        <table id="partes-responsable" class="table table-striped table-bordered table-hover dataTable" aria-describedby="partes-responsable_info">
         <thead>
             <tr role="row">
-                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Id: activate to sort column ascending">Id</th>
-                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Fecha: activate to sort column ascending">Fecha</th>
-                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">Grupo</th>
-                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Alumn@</th>
-                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Parte</th>
-                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Comun.</th>
-                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Cerrado</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Id: activate to sort column ascending">Id</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Fecha: activate to sort column ascending">Fecha</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">Grupo</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Alumno</th>
+                <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Profesor</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Parte</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Comun.</th>
+                <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Cerrado</th>
                 <th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" aria-label=""></th>
             </tr>
         </thead>
@@ -99,6 +100,7 @@
                 <td class="align-center">{{ parte.fecha | date:"SHORT_DATE_FORMAT" }}</td>
                 <td class="align-center">{{ parte.get_nombre_grupo_alumno }}</td>
                 <td class="align-left">{{ parte.get_nombre_completo_alumno }}</td>
+                <td class="align-left">{{ parte.get_nombre_completo_profesor }}</td>
 
                 <td class="hidden-480 align-center">
                     {% if parte.con_parte %}
@@ -232,7 +234,7 @@
     <script type="text/javascript">
         jQuery(function($) {
             var oTable1 =
-            $('#partes-profesor')
+            $('#partes-responsable')
             //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
             .dataTable( {
                 "language": {
@@ -241,7 +243,7 @@
                 "order": [[ 1, "desc" ], [ 0, "desc" ]],
                 bAutoWidth: false,
                 "aoColumns": [
-                  null, null, null,null,
+                  null, null, null,null,null,
                   { "bSortable": false },
                   { "bSortable": false },
                   { "bSortable": false } ,

@@ -18,7 +18,7 @@ class Parte(TimeStampedModel):
 
     def __unicode__(self):
 
-        return u"%s - %s" % (self.cursoalumno, self.cursoprofesor)
+        return u"%s - %s" % (self.grupoalumno.cursoalumno, self.cursoprofesor)
 
 
     def parte_seguimientos(self):
