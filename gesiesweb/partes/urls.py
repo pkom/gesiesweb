@@ -5,5 +5,5 @@ from .views import PartesListView, PartesResponsableListView, PartesDetailView
 urlpatterns = patterns("",
 	url(regex=r'^$', view=PartesListView.as_view(), name="partes"),
 	url(regex=r'^responsable/$', view=PartesResponsableListView.as_view(), name="partes-responsable"),
-    url(regex=r'^detalle/(?P<pk>\d+)/$', view=PartesDetailView.as_view(), name="detalle"),
+    url(regex=r'^(?P<pk>\d+)/$', view=PartesDetailView.as_view(), name="detalle"),
 )

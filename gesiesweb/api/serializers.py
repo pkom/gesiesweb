@@ -56,7 +56,7 @@ class ParteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Parte
-        fields = ( 'id', 'cursoalumno', 'alumno', 'cursoprofesor', 'profesor', 'fecha', 'parte', 'con_parte',
+        fields = ( 'id', 'grupoalumno', 'alumno', 'cursoprofesor', 'profesor', 'fecha', 'parte', 'con_parte',
                 'comunicado', 'cerrado', 'seguimientos')
 
 

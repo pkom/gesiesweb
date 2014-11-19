@@ -28,25 +28,34 @@ class HomeTemplateView(LoginRequiredMixin, TemplateView):
 class LoginView(FormView):
     template_name = 'core/login.html'
     form_class = CourseAuthenticationForm
-    #success_url = '/'
+    success_url = '/'
 
     def form_valid(self, form):
+
         login(self.request, form.user_cache)
         course = form.cleaned_data['course']
         fillsessionuser(self.request, form.user_cache, course)
         return super(LoginView, self).form_valid(form)
 
+
     def get_success_url(self):
-       # find your next url here
-       next_url = self.request.POST.get('next',None) # here method should be GET or POST.
-       if next_url:
-           return "%s" % (next_url) # you can include some query strings as well
-       else :
+
+        next_url = self.request.POST.get('next') # here method should be GET or POST.
+        if next_url == 'None':
            return reverse('core:home') # what url you wish to return
+        else:
+           return "%s" % (next_url) # you can include some query strings as well
+
+    def get_context_data(self, **kwargs):
+
+        context = super(LoginView, self).get_context_data(**kwargs)
+        context['next'] = self.request.REQUEST.get('next')
+        return context
 
 
 @login_required
 def mylogout(request):
+
     if request.user.is_authenticated():
         logout(request)
     return redirect('/core/login')
@@ -58,6 +67,7 @@ class AboutTemplateView(LoginRequiredMixin,TemplateView):
 
 
 def get_client_ip(request):
+
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[0]

@@ -6,34 +6,34 @@
 
 					<div class="sidebar-shortcuts" id="sidebar-shortcuts">
 						<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-							<button class="btn btn-success">
-								<i class="ace-icon fa fa-signal"></i>
+							<button class="btn btn-warning">
+								<i class="ace-icon fa fa-bullhorn"></i>
 							</button>
 
-							<button class="btn btn-info">
-								<i class="ace-icon fa fa-pencil"></i>
+							<button class="btn btn-warning">
+								<i class="ace-icon fa fa-tachometer"></i>
 							</button>
 
 							<!-- #section:basics/sidebar.layout.shortcuts -->
-							<button class="btn btn-warning">
-								<i class="ace-icon fa fa-users"></i>
+							<button class="btn btn-danger">
+								<i class="ace-icon fa fa-ambulance"></i>
 							</button>
 
-							<button class="btn btn-danger">
-								<i class="ace-icon fa fa-cogs"></i>
+							<button class="btn btn-info">
+								<i class="ace-icon fa fa-user"></i>
 							</button>
 
 							<!-- /section:basics/sidebar.layout.shortcuts -->
 						</div>
 
 						<div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
-							<span class="btn btn-success"></span>
-
-							<span class="btn btn-info"></span>
+							<span class="btn btn-warning"></span>
 
 							<span class="btn btn-warning"></span>
 
 							<span class="btn btn-danger"></span>
+
+							<span class="btn btn-info"></span>
 						</div>
 					</div><!-- /.sidebar-shortcuts -->
 
@@ -49,8 +49,8 @@
 
 						<li class="">
 							<a href="#" class="dropdown-toggle">
-								<i class="menu-icon fa fa-desktop"></i>
-								<span class="menu-text"> UI Elements </span>
+								<i class="menu-icon fa fa-bullhorn"></i>
+								<span class="menu-text"> Partes </span>
 
 								<b class="arrow fa fa-angle-down"></b>
 							</a>
@@ -59,22 +59,36 @@
 
 							<ul class="submenu">
 								<li class="">
-									<a href="elements.html">
+									<a href="{% url "parte:partes" %}">
 										<i class="menu-icon fa fa-caret-right"></i>
-										Elements
+										Mis Partes
 									</a>
 
 									<b class="arrow"></b>
 								</li>
 
+                                {% if request.session.es_tutor %}
 								<li class="">
-									<a href="buttons.html">
+									<a href="#">
 										<i class="menu-icon fa fa-caret-right"></i>
-										Buttons &amp; Icons
+										Partes Tutoría
 									</a>
 
 									<b class="arrow"></b>
 								</li>
+                                {% endif %}
+
+                                {% if request.session.es_responsable %}
+								<li class="">
+									<a href="{% url "parte:partes-responsable" %}">
+										<i class="menu-icon fa fa-caret-right"></i>
+										Partes Centro
+									</a>
+
+									<b class="arrow"></b>
+								</li>
+                                {% endif %}
+
 							</ul>
 						</li>
 					</ul><!-- /.nav-list -->
