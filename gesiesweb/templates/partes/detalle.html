@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load thumbnail %}
+
 {% block breadcrumbs %}
   <!-- #section:basics/content.breadcrumbs -->
   <div class="breadcrumbs" id="breadcrumbs">
@@ -10,9 +12,9 @@
     <ul class="breadcrumb">
       <li>
         <i class="ace-icon fa fa-bullhorn home-icon"></i>
-        <a href="{% url 'parte:detalle' parte.pk %}">Detalle del parte {{ parte.pk }}</a>
+        <a href="{% url 'parte:partes' %}">Partes</a>
       </li>
-      <li class="active">Detalle del Parte {{ parte.pk }}</li>
+      <li class="active">Parte {{ parte.pk }}</li>
     </ul><!-- /.breadcrumb -->
 
     <!-- #section:basics/content.searchbox -->
@@ -38,7 +40,8 @@
       Detalle del Parte
       <small>
         <i class="ace-icon fa fa-angle-double-right"></i>
-        Detalle del Parte {{ parte.pk }}
+        Detalle del Parte {{ parte.pk }} ({{ parte.fecha }}) de {{ parte.get_nombre_completo_profesor }}
+          a {{ parte.get_nombre_completo_alumno }}
       </small>
     </h1>
   </div><!-- /.page-header -->
@@ -47,26 +50,150 @@
 
 {% block contenido %}
 
-    <ul>
-        <li>
-            <span>{{ parte.id }}</span>
-            <span>{{ parte.get_nombre_completo_alumno }}</span>
-            <span>{{ parte.get_nombre_completo_profesor }}</span>
-            <span>{{ parte.fecha }}</span>
-            <span>{{ parte.parte }}</span>
-            <span>{{ parte.con_parte }}</span>
-            <span>{{ parte.comunicado }}</span>
-            <span>{{ parte.cerrado }}</span>
-            <ul>
-            {% for seguimiento in parte.seguimientos.all %}
-                <li>
-                    <span>{{ seguimiento.id }}</span>
-                    <span>{{ seguimiento.get_nombre_completo }}</span>
-                    <span>{{ seguimiento.seguimiento }}</span>
-                </li>
-            {% endfor %}
-            </ul>
-            </li>
-    </ul>
+<div class="row">
+    <div class="col-xs-12 col-sm-2">
+        {% if parte.grupoalumno.cursoalumno.alumno.foto %}
+            {% thumbnail parte.grupoalumno.cursoalumno.alumno.foto "150x140" as fotoalu %}
+                <img class="nav-user-photo" style="border-radius: 15px; margin:{{ fotoalu|margin:"150x140" }}"
+                    src="{{ fotoalu.url }}" width="{{ fotoalu.width }}" height="{{ fotoalu.height }}"
+                    alt="Foto de {{ parte.grupoalumno.cursoalumno.alumno }}" />
+            {% endthumbnail %}
+        {% endif %}
+    </div>
+
+
+    <div class="col-xs-12 col-sm-6">
+        <form role="form" class="form-horizontal">
+            <!-- #section:elements.form -->
+            <div class="form-group">
+                <label for="form-field-1" class="col-sm-3 control-label no-padding-right"> Grupo </label>
+                <div class="col-sm-9">
+                    <input type="text" class="col-xs-10 col-sm10" placeholder="{{ parte.get_nombre_grupo_alumno }}"
+                           id="form-field-1" readonly disabled>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label for="form-field-2" class="col-sm-3 control-label no-padding-right"> Alumno </label>
+                <div class="col-sm-9">
+                    <input type="text" class="col-xs-10 col-sm-10" placeholder="{{ parte.get_nombre_completo_alumno }}"
+                           id="form-field-2" readonly disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="form-field-3" class="col-sm-3 control-label no-padding-right"> Profesor </label>
+                <div class="col-sm-9">
+                    <input type="text" class="col-xs-10 col-sm-10" placeholder="{{ parte.get_nombre_completo_profesor }}"
+                           id="form-field-3" readonly disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="form-field-4" class="col-sm-3 control-label no-padding-right"> Fecha </label>
+
+                <div class="col-sm-9">
+                    <input type="text" class="col-xs-10 col-sm-10" placeholder="{{ parte.fecha }}"
+                           id="form-field-4" readonly disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="form-field-5" class="col-sm-3 control-label no-padding-right"> Parte </label>
+
+                <div class="col-sm-9">
+                    <textarea class="col-xs-10 col-sm-10" id="form-field-5" rows="10" readonly disabled>
+                        {{ parte.parte }}
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="form-field-6" class="col-sm-3 control-label no-padding-right"> Parte Realizado </label>
+                <div class="col-sm-9">
+                    <input type="checkbox" class="col-xs-10 col-sm-10" id="form-field-6" readonly disabled
+                           {% if parte.con_parte %}
+                            checked="checked"
+                           {% endif %}
+                            />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="form-field-7" class="col-sm-3 control-label no-padding-right"> Parte Comunicado </label>
+                <div class="col-sm-9">
+                    <input type="checkbox" class="col-xs-10 col-sm-5" id="form-field-7" readonly disabled
+                           {% if parte.comunicado %}
+                            checked="checked"
+                           {% endif %}
+                            />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="form-field-8" class="col-sm-3 control-label no-padding-right"> Parte Cerrado </label>
+                <div class="col-sm-9">
+                    <input type="checkbox" class="col-xs-10 col-sm-5" id="form-field-8" readonly disabled
+                           {% if parte.cerrado %}
+                            checked="checked"
+                           {% endif %}
+                            />
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="col-xs-12 col-sm-4">
+        <div class="widget-box collapsed">
+            <div class="widget-header">
+                <h4 class="widget-title">Seguimientos</h4>
+
+                <div class="widget-toolbar">
+                    <a data-action="collapse" href="#">
+                        <i class="ace-icon fa fa-chevron-up"></i>
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="widget-body"><div class="widget-body-inner" style="display: block;">
+                <div class="widget-main">
+
+                    {% for seguimiento in parte.seguimientos.all %}
+                        <div class="form-group">
+                            <label for="form-field-{{ seguimiento.created }}-fecha" class="col-xs-3 control-label no-padding-right"> Fecha </label>
+
+                            <div class="">
+                                <input type="text" class="col-xs-9" placeholder="{{ seguimiento.created }}"
+                                       id="form-field-{{ seguimiento.created }}-fecha" readonly disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="form-field-{{ seguimiento.id }}-responsable" class="col-xs-3 control-label no-padding-right"> Responsable </label>
+                            <div class="">
+                                <input type="text" class="col-xs-9" id="form-field-{{ seguimiento.id }}-responsable" readonly disabled
+                                   placeholder="{{ seguimiento.get_nombre_completo }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="form-field-{{ seguimiento.id }}-seguimiento" class="col-xs-3 control-label no-padding-right"> Seguimiento </label>
+                            <div class="col-xs-9">
+                                <textarea class="" id="form-field-{{ seguimiento.id }}-seguimiento" rows="3" readonly disabled>
+                                    {{ seguimiento.seguimiento }}
+                                </textarea>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% endblock contenido %}

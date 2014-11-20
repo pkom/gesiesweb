@@ -1,10 +1,10 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, CreateView, DetailView
 
 from core.mixins import LoginRequerido
 
 from .models import Parte, ParteSeguimiento
 
-class PartesListView(LoginRequerido, ListView):
+class ParteListView(LoginRequerido, ListView):
 
     template_name = "partes/partes.html"
     model = Parte
@@ -15,7 +15,29 @@ class PartesListView(LoginRequerido, ListView):
         return Parte.objects.filter(cursoprofesor=self.request.session['curso_profesor'])
 
 
-class PartesResponsableListView(LoginRequerido, ListView):
+class ParteCreateView(LoginRequerido, CreateView):
+
+    pass
+
+
+class ParteDetailView(LoginRequerido, DetailView):
+
+    template_name = "partes/detalle.html"
+    model = Parte
+    context_object_name = 'parte'
+
+
+class ParteUpdateView(LoginRequerido, DetailView):
+
+    pass
+
+
+class ParteDeleteView(LoginRequerido, DetailView):
+
+    pass
+
+
+class ParteResponsableListView(LoginRequerido, ListView):
 
     template_name = "partes/partes_responsables.html"
     model = Parte
@@ -26,8 +48,3 @@ class PartesResponsableListView(LoginRequerido, ListView):
         return Parte.objects.filter(cursoprofesor__curso=self.request.session['curso_academico_usuario'])
 
 
-class PartesDetailView(LoginRequerido, DetailView):
-
-    template_name = "partes/detalle.html"
-    model = Parte
-    context_object_name = 'parte'

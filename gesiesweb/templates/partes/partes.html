@@ -82,15 +82,13 @@
                     <td class="align-center" style="vertical-align: middle">
                         {{ parte.get_nombre_grupo_alumno }}</td>
                     <td class="align-left" style="vertical-align: middle">
-                        {% thumbnail parte.grupoalumno.cursoalumno.alumno.foto "50x40" as foto %}
-                            <img class="nav-user-photo" style="border-radius: 15px; margin:{{ foto|margin:"50x40" }}"
-                                 {% if parte.grupoalumno.cursoalumno.alumno.foto %}
-                                    src="{{ foto.url }}" width="{{ foto.width }}" height="{{ foto.height }}"
-                                 {% else %}
-                                    src="{% static 'avatars/avatar2.png' %}"
-                                 {% endif %}
-                                alt="Foto de {{ parte.grupoalumno.cursoalumno.alumno }}" />
-                        {% endthumbnail %}
+                        {% if parte.grupoalumno.cursoalumno.alumno.foto %}
+                            {% thumbnail parte.grupoalumno.cursoalumno.alumno.foto "50x40" as fotoalu %}
+                                <img class="nav-user-photo" style="border-radius: 15px; margin:{{ fotoalu|margin:"50x40" }}"
+                                    src="{{ fotoalu.url }}" width="{{ fotoalu.width }}" height="{{ fotoalu.height }}"
+                                    alt="Foto de {{ parte.grupoalumno.cursoalumno.alumno }}" />
+                            {% endthumbnail %}
+                        {% endif %}
                         {{ parte.get_nombre_completo_alumno }}</td>
                     <td class="hidden-480 align-center" style="vertical-align: middle">
                         {% if parte.con_parte %}
@@ -114,7 +112,7 @@
                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                             </a>
 
-                            <a class="green tooltip-success" href="{% url "parte:detalle" parte.id %}" data-rel="tooltip" title="" data-original-title="Edita">
+                            <a class="green tooltip-success" href="{% url "parte:editar" parte.id %}" data-rel="tooltip" title="" data-original-title="Edita">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>
 
@@ -128,7 +126,7 @@
 
                                 <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                     <li>
-                                        <a href="#" class="tooltip-info" data-rel="tooltip" title="" data-original-title="Ver">
+                                        <a href="{% url "parte:detalle" parte.id %}" class="tooltip-info" data-rel="tooltip" title="" data-original-title="Ver">
                                             <span class="blue">
                                                 <i class="ace-icon fa fa-search-plus bigger-120"></i>
                                             </span>
@@ -136,7 +134,7 @@
                                     </li>
 
                                     <li>
-                                        <a href="#" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edita">
+                                        <a href="{% url "parte:editar" parte.id %}" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edita">
                                             <span class="green">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                             </span>
