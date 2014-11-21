@@ -14,7 +14,7 @@
         <i class="ace-icon fa fa-bullhorn home-icon"></i>
         <a href="{% url 'parte:partes' %}">Partes</a>
       </li>
-      <li class="active">Parte {{ parte.pk }}</li>
+      <li class="active">Nuevo Parte</li>
     </ul><!-- /.breadcrumb -->
 
     <!-- #section:basics/content.searchbox -->
@@ -37,11 +37,10 @@
 {% block pageheader %}
   <div class="page-header">
     <h1>
-      Detalle del Parte
+      Nuevo Parte
       <small>
         <i class="ace-icon fa fa-angle-double-right"></i>
-        Detalle del Parte {{ parte.pk }} ({{ parte.fecha }}) de {{ parte.get_nombre_completo_profesor }}
-          a {{ parte.get_nombre_completo_alumno }} ({{ parte.get_nombre_grupo_alumno }})
+        Nuevo Parte
       </small>
     </h1>
   </div><!-- /.page-header -->
@@ -50,12 +49,11 @@
 
 {% block contenido %}
 
-
 <div class="row">
-    <div class="col-sm-7">
+    <div class="col-xs-12">
         <div class="widget-box">
             <div class="widget-header">
-                <h4 class="widget-title">Parte {{ parte.id }} - {{ parte.get_nombre_completo_alumno }} ({{ parte.get_nombre_grupo_alumno }})</h4>
+                <h4 class="widget-title">Parte</h4>
             </div>
 
             <div class="widget-body">
@@ -72,6 +70,13 @@
                         </div>
                         <div class="col-xs-12 col-md-10">
                             <form role="form" class="form-horizontal">
+
+
+
+                            {{ form.as_p }}
+
+
+
                                 <!-- #section:elements.form -->
                                 <div class="form-group">
                                     <label for="form-field-1" class="col-sm-3 control-label no-padding-right"> Grupo </label>
@@ -152,10 +157,15 @@
 
                             </form>
                                 <div class="col-xs-offset-4 col-xs-7">
-                                    <a class="btn" href="{% url 'parte:partes' %}">
-                                        <i class="ace-icon fa fa-reply bigger-110"></i>
-                                            Regresar
+                                    <a class="btn btn-success" href="{% url 'parte:partes' %}">
+                                        <i class="ace-icon fa fa-save bigger-110"></i>
+                                            Grabar
                                     </a>
+                                    <a class="btn btn-danger" href="{% url 'parte:partes' %}">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i>
+                                            Cancelar
+                                    </a>
+
                                 </div>
                         </div>
                     </div>
@@ -164,53 +174,6 @@
         </div>
     </div>
 
-    <div class="col-sm-5">
-        <div class="widget-box collapsed">
-            <div class="widget-header">
-                <h4 class="widget-title">Seguimientos en el parte {{ parte.id }}</h4>
-                    <span class="widget-toolbar">
-                        <a data-action="collapse" href="#">
-                            <i class="ace-icon fa fa-chevron-up"></i>
-                        </a>
-                    </span>
-            </div>
-
-            <div class="widget-body">
-                <div class="widget-main">
-                    {% for seguimiento in parte.seguimientos.all %}
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <label for="form-field-{{ seguimiento.created }}-fecha" class="col-sm-12 col-md-3 control-label"> Fecha </label>
-
-                                <div class="col-sm-12 col-md-9">
-                                    <input type="text" class="col-xs-12" placeholder="{{ seguimiento.created }}"
-                                           id="form-field-{{ seguimiento.created }}-fecha" readonly disabled>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="form-field-{{ seguimiento.id }}-responsable" class="col-sm-12 col-md-3 control-label"> Responsable </label>
-                                <div class="col-sm-12 col-md-9">
-                                    <input type="text" class="col-xs-12" id="form-field-{{ seguimiento.id }}-responsable" readonly disabled
-                                       placeholder="{{ seguimiento.get_nombre_completo }}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="form-field-{{ seguimiento.id }}-seguimiento" class="col-sm-12 col-md-3 control-label"> Seguimiento </label>
-                                <div class="col-sm-12 col-md-9">
-                                    <textarea class="col-xs-12" id="form-field-{{ seguimiento.id }}-seguimiento" rows="3" readonly disabled>
-                                        {{ seguimiento.seguimiento }}
-                                    </textarea>
-                                </div>
-                            </div>
-                        </form>
-                        <hr>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 

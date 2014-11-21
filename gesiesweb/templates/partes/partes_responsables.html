@@ -50,8 +50,13 @@
 
 {% block contenido %}
     <div class="table-header">
-        Partes del Centro
+      <span class="badge badge-success">{{ total_partes }}</span>
+      <span> Partes del centro</span>
+      <span class="badge badge-important">Parte {{ total_partes_partes }}</span>
+      <span class="badge badge-important">Comunicados {{ total_partes_comunicados }}</span>
+      <span class="badge badge-important">Cerrados {{ total_partes_cerrados }}</span>
     </div>
+
 
     <div>
         <table id="partes-responsable" class="table table-striped table-bordered table-hover dataTable" aria-describedby="partes-responsable_info">
@@ -60,7 +65,9 @@
                     <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Id: activate to sort column ascending">Id</th>
                     <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Fecha: activate to sort column ascending">Fecha</th>
                     <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">Grupo</th>
+                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">FotoA</th>
                     <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Alumno</th>
+                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">FotoP</th>
                     <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Profesor</th>
                     <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Parte</th>
                     <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Comun.</th>
@@ -91,6 +98,8 @@
                                     alt="Foto de {{ parte.grupoalumno.cursoalumno.alumno }}" />
                             {% endthumbnail %}
                         {% endif %}
+                    </td>
+                    <td class="align-left" style="vertical-align: middle">
                         {{ parte.get_nombre_completo_alumno }}</td>
                     <td class="align-left" style="vertical-align: middle">
                         {% if parte.cursoprofesor.profesor.foto %}
@@ -100,8 +109,9 @@
                                     alt="Foto de {{ parte.cursoprofesor.profesor }}" />
                             {% endthumbnail %}
                         {% endif %}
+                    </td>
+                    <td class="align-left" style="vertical-align: middle">
                         {{ parte.get_nombre_completo_profesor }}</td>
-
                     <td class="hidden-480 align-center" style="vertical-align: middle">
                         {% if parte.con_parte %}
                             <i class="ace-icon fa fa-check bigger-120"></i>
@@ -172,37 +182,6 @@
             </tbody>
         </table>
 	</div>
-
-
-
-
-
-
-    <ul>
-    {% for parte in partes %}
-        <li>
-            <span>{{ parte.id }}</span>
-            <span>{{ parte.get_nombre_completo_alumno }}</span>
-            <span>{{ parte.get_nombre_completo_profesor }}</span>
-            <span>{{ parte.fecha }}</span>
-            <span>{{ parte.parte }}</span>
-            <span>{{ parte.con_parte }}</span>
-            <span>{{ parte.comunicado }}</span>
-            <span>{{ parte.cerrado }}</span>
-            <ul>
-            {% for seguimiento in parte.seguimientos.all %}
-                <li>
-                    <span>{{ seguimiento.id }}</span>
-                    <span>{{ seguimiento.get_nombre_completo }}</span>
-                    <span>{{ seguimiento.seguimiento }}</span>
-                </li>
-            {% endfor %}
-            </ul>
-            </li>
-    {% endfor %}
-    </ul>
-
-
 {% endblock contenido %}
 
 {% block extra_js_links %}
@@ -223,11 +202,34 @@
                 "order": [[ 1, "desc" ], [ 0, "desc" ]],
                 bAutoWidth: false,
                 "aoColumns": [
-                  null, null, null,null,null,
+                  null, null, null,
                   { "bSortable": false },
+                  null,
                   { "bSortable": false },
-                  { "bSortable": false } ,
+                  null, null, null, null,
                   { "bSortable": false }
+                ],
+                "columnDefs": [
+                    {
+                        // The `data` parameter refers to the data for the cell (defined by the
+                        // `data` option, which defaults to the column being worked with, in
+                        // this case `data: 0`.
+                        "render": function ( data, type, row ) {
+                            return row[3] + data;
+                        },
+                        "targets": 4
+                    },
+                    {
+                        // The `data` parameter refers to the data for the cell (defined by the
+                        // `data` option, which defaults to the column being worked with, in
+                        // this case `data: 0`.
+                        "render": function ( data, type, row ) {
+                            return row[5] + data;
+                        },
+                        "targets": 6
+                    },
+                    { "visible": false,  "targets": [ 3 ] },
+                    { "visible": false,  "targets": [ 5 ] }
                 ]
 
 

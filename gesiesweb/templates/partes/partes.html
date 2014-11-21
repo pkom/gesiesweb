@@ -50,7 +50,11 @@
 
 {% block contenido %}
     <div class="table-header">
-        Partes del profesor {{ request.user.get_full_name }}
+      <span class="badge badge-success">{{ total_partes }}</span>
+      <span> Partes del profesor {{ request.user.get_full_name }}</span>
+      <span class="badge badge-important">Parte {{ total_partes_partes }}</span>
+      <span class="badge badge-important">Comunicados {{ total_partes_comunicados }}</span>
+      <span class="badge badge-important">Cerrados {{ total_partes_cerrados }}</span>
     </div>
 
     <div>
@@ -149,39 +153,6 @@
             </tbody>
         </table>
 	</div>
-
-
-
-
-
-
-    <ul>
-    {% for parte in partes %}
-        <li>
-            <span>{{ parte.id }}</span>
-            <span>{{ parte.get_nombre_completo_alumno }}</span>
-            <span>{{ parte.get_nombre_completo_profesor }}</span>
-            <span>{{ parte.fecha }}</span>
-            <span>{{ parte.parte }}</span>
-            <span>{{ parte.con_parte }}</span>
-            <span>{{ parte.comunicado }}</span>
-            <span>{{ parte.cerrado }}</span>
-
-
-            <ul>
-            {% for seguimiento in parte.seguimientos.all %}
-                <li>
-                    <span>{{ seguimiento.id }}</span>
-                    <span>{{ seguimiento.get_nombre_completo }}</span>
-                    <span>{{ seguimiento.seguimiento }}</span>
-                </li>
-            {% endfor %}
-            </ul>
-            </li>
-    {% endfor %}
-    </ul>
-
-
 {% endblock contenido %}
 
 {% block extra_js_links %}
@@ -202,10 +173,7 @@
                 "order": [[ 1, "desc" ], [ 0, "desc" ]],
                 bAutoWidth: false,
                 "aoColumns": [
-                  null, null, null,null,
-                  { "bSortable": false },
-                  { "bSortable": false },
-                  { "bSortable": false } ,
+                  null, null, null, null, null, null, null,
                   { "bSortable": false }
                 ]
 
