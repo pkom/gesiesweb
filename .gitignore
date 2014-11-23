@@ -45,6 +45,8 @@ gesiesweb.komodoproject
 .idea
 
 # gesiesweb
+/gesiesweb.sql
+/gesieswebdev.sql
 /gesiesweb/media
 /gesiesweb/mediadev
 /gesiesweb/templates copia
