@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+
+import datetime
+
 from django.core.urlresolvers import reverse_lazy
-from django.templatetags.static import static
+from django.db.models import Q
 from django.views.generic import ListView, CreateView, DetailView
 
 from sorl.thumbnail import get_thumbnail
@@ -84,38 +88,75 @@ class ParteResponsableListView(LoginRequerido, ListView):
 
 
 class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
+
     model = Parte
     columns = ['id', 'fecha', 'grupo', 'fotoalu', 'alumno', 'fotoprofe', 'profesor', 'con_parte', 'comunicado',
                'cerrado', 'acciones']
-    order_columns = ['id', 'fecha', 'grupo', '', 'alumno', '', 'profesor', 'con_parte', 'comunicado', 'cerrado', '']
+    order_columns = ['id', 'fecha', 'grupoalumno__cursogrupo__grupo__grupo', '',
+                     ['grupoalumno__cursoalumno__alumno__apellidos','grupoalumno__cursoalumno__alumno__nombre' ], '',
+                     ['cursoprofesor__profesor__user__last_name', 'cursoprofesor__profesor__user__first_name' ],
+                     'con_parte', 'comunicado', 'cerrado', '']
     max_display_length = 500
 
     def get_initial_queryset(self):
+
         return self.model.objects.filter(cursoprofesor__curso=self.request.session['curso_academico_usuario'])
 
 
     def filter_queryset(self, qs):
-        # use parameters passed in POST request to filter queryset
 
-        # simple example:
         search = self.request.GET.get('search[value]', None)
         if search:
-            qs = qs.filter(fecha__istartswith=search)
-
-        # more advanced example using extra parameters
-#        filter_customer = self.request.POST.get('customer', None)
-
-#        if filter_customer:
-#            customer_parts = filter_customer.split(' ')
-#            qs_params = None
-#            for part in customer_parts:
-#                q = Q(customer_firstname__istartswith=part)|Q(customer_lastname__istartswith=part)
-#                qs_params = qs_params | q if qs_params else q
-#            qs = qs.filter(qs_params)
+            cadena = search.split('/')
+            haydia = False
+            haymes = False
+            hayanio = False
+            try:
+                dia = int(cadena[0])
+            except:
+                pass
+            else:
+                haydia = True
+            try:
+                mes = int(cadena[1])
+            except:
+                pass
+            else:
+                haymes = True
+            try:
+                anio = int(cadena[2])
+            except:
+                pass
+            else:
+                hayanio = True
+            q = Q(grupoalumno__cursogrupo__grupo__grupo__icontains=search)
+            q = q | Q(grupoalumno__cursoalumno__alumno__apellidos__icontains=search)
+            q = q | Q(grupoalumno__cursoalumno__alumno__nombre__icontains=search)
+            q = q | Q(cursoprofesor__profesor__user__last_name__icontains=search)
+            q = q | Q(cursoprofesor__profesor__user__first_name__icontains=search)
+            if haydia:
+                q = q | Q(fecha__day=dia)
+            if haymes:
+                q = q & Q(fecha__month=mes)
+            if hayanio:
+                q = q & Q(fecha__year=anio)
+            qs = qs.filter(q)
         return qs
 
 
+    def prepare_results(self, qs):
+        data = []
+        for item in qs:
+            row = {'DT_RowId': item.id}
+            for column in self.get_columns():
+                row[column] = self.render_column(item, column)
+            data.append(row)
+#                [self.render_column(item, column) for column in self.get_columns()])
+        return data
+
+
     def render_column(self, row, column):
+
         if column == "id":
             return u'<a href="%s">%s</a>' % (reverse_lazy('parte:detalle', args=[row.id]), row.id)
         elif column == "fecha":
@@ -140,24 +181,33 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
             return row.get_nombre_completo_profesor()
         elif column == "con_parte":
             if row.con_parte:
-                return u'<i class="ace-icon fa fa-check bigger-120"></i>'
+                return u'<input type="checkbox" checked="checked">'
+            else:
+                return u'<input type="checkbox">'
+                #return u'<i class="ace-icon fa fa-check bigger-120"></i>'
         elif column == "comunicado":
             if row.comunicado:
-                return u'<i class="ace-icon fa fa-check bigger-120"></i>'
+                return u'<input type="checkbox" checked="checked">'
+            else:
+                return u'<input type="checkbox">'
+                #return u'<i class="ace-icon fa fa-check bigger-120"></i>'
         elif column == "cerrado":
             if row.cerrado:
-                return u'<i class="ace-icon fa fa-check bigger-120"></i>'
+                return u'<input type="checkbox" checked="checked">'
+            else:
+                return u'<input type="checkbox">'
+                #return u'<i class="ace-icon fa fa-check bigger-120"></i>'
         elif column == "acciones":
             return u"""<div class="hidden-sm hidden-xs action-buttons">
-                            <a class="blue tooltip-info" href="%s" data-rel="tooltip" title="" data-original-title="Ver">
+                            <a class="blue tooltip-info" href="%s" data-rel="tooltip" title="Ver parte" data-original-title="Ver">
                                 <i class="ace-icon fa fa-search-plus bigger-130"></i>
                             </a>
 
-                            <a class="green tooltip-success" href="%s" data-rel="tooltip" title="" data-original-title="Edita">
+                            <a class="green tooltip-success" href="%s" data-rel="tooltip" title="Edita parte" data-original-title="Edita">
                                 <i class="ace-icon fa fa-pencil bigger-130"></i>
                             </a>
 
-                            <a class="red tooltip-error" href="%s" data-rel="tooltip" title="" data-original-title="Elimina">
+                            <a class="red tooltip-error" href="%s" data-rel="tooltip" title="Elimina parte" data-original-title="Elimina">
                                 <i class="ace-icon fa fa-trash-o bigger-130"></i>
                             </a>
 
@@ -170,7 +220,7 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
 
                                 <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                     <li>
-                                        <a href="%s" class="tooltip-info" data-rel="tooltip" title="" data-original-title="Ver">
+                                        <a href="%s" class="tooltip-info" data-rel="tooltip" title="Ver parte" data-original-title="Ver">
                                             <span class="blue">
                                                 <i class="ace-icon fa fa-search-plus bigger-120"></i>
                                             </span>
@@ -178,14 +228,14 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
                                     </li>
 
                                     <li>
-                                        <a href="%s" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edita">
+                                        <a href="%s" class="tooltip-success" data-rel="tooltip" title="Edita parte" data-original-title="Edita">
                                             <span class="green">
                                                 <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                             </span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="%s" class="tooltip-error" data-rel="tooltip" title="Elimina">
+                                        <a href="%s" class="tooltip-error" data-rel="tooltip" title="Elimina" data-original-title="Elimina">
                                             <span class="red">
                                                 <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                             </span>

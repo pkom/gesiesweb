@@ -59,7 +59,7 @@
     <div class="table-header">
       <span class="badge badge-success">{{ total_partes }}</span>
       <span> Partes del centro</span>
-      <span class="badge badge-important">Parte {{ total_partes_partes }}</span>
+      <span class="badge badge-important">Partes {{ total_partes_partes }}</span>
       <span class="badge badge-important">Comunicados {{ total_partes_comunicados }}</span>
       <span class="badge badge-important">Cerrados {{ total_partes_cerrados }}</span>
     </div>
@@ -73,9 +73,9 @@
                     <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Fecha: activate to sort column ascending">Fecha</th>
                     <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">Grupo</th>
                     <th class="align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Foto Alumno: activate to sort column ascending">FotoA</th>
-                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Alumno: activate to sort column ascending">Alumno</th>
+                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Alumno: activate to sort column ascending">Alumn@</th>
                     <th class="align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Foto Profesor: activate to sort column ascending">FotoP</th>
-                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Profesor: activate to sort column ascending">Profesor</th>
+                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Profesor: activate to sort column ascending">Profesor/a</th>
                     <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Parte: activate to sort column ascending">Parte</th>
                     <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Comunicado: activate to sort column ascending">Comun.</th>
                     <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-responsable" rowspan="1" colspan="1" aria-label="Cerrado: activate to sort column ascending">Cerrado</th>
@@ -92,6 +92,10 @@
 {% block extra_js_links %}
 		<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
 		<script src="{% static 'js/jquery.dataTables.bootstrap.min.js' %}"></script>
+		<script src="{% static 'js/jquery.jeditable.mini.js' %}"></script>
+		<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+		<script src="{% static 'js/jquery-validate.min.js' %}"></script>
+		<script src="{% static 'js/jquery.dataTables.editable.js' %}"></script>
 {% endblock extra_js_links %}
 
 {% block extra_js %}
@@ -101,7 +105,7 @@
             var oPartesResponsable =
             $('#partes-responsable').dataTable({
                 "lengthMenu": [[ 5, 10, 15, -1 ], [ 5, 10, 15, "Todos" ]],
-                "processing": true,
+                "processing": false,
                 "serverSide": true,
                 "ajax": "{% url 'parte:partes_responsable_json' %}",
 
@@ -117,6 +121,19 @@
                   { "bSortable": false },
                   null, null, null, null,
                   { "bSortable": false }
+                ],
+                "columns": [
+                    { "data": "id" },
+                    { "data": "fecha" },
+                    { "data": "grupo" },
+                    { "data": "fotoalu" },
+                    { "data": "alumno" },
+                    { "data": "fotoprofe" },
+                    { "data": "profesor" },
+                    { "data": "con_parte" },
+                    { "data": "comunicado" },
+                    { "data": "cerrado" },
+                    { "data": "acciones" }
                 ],
                 "columnDefs": [
                     { "searchable": false, "targets": [ 0, 3, 5, 7, 8, 9, 10] },
@@ -144,6 +161,8 @@
                     { "visible": false,  "targets": [ 3 ] },
                     { "visible": false,  "targets": [ 5 ] }
                 ]
+            }).makeEditable({
+                sUpdateURL: "/partes/actualiza"
             });
 
             $(document).on('click', 'th input:checkbox' , function(){
