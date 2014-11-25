@@ -91,11 +91,11 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
 
     model = Parte
     columns = ['id', 'fecha', 'grupo', 'fotoalu', 'alumno', 'fotoprofe', 'profesor', 'con_parte', 'comunicado',
-               'cerrado', 'acciones']
+               'cerrado']
     order_columns = ['id', 'fecha', 'grupoalumno__cursogrupo__grupo__grupo', '',
                      ['grupoalumno__cursoalumno__alumno__apellidos','grupoalumno__cursoalumno__alumno__nombre' ], '',
                      ['cursoprofesor__profesor__user__last_name', 'cursoprofesor__profesor__user__first_name' ],
-                     'con_parte', 'comunicado', 'cerrado', '']
+                     'con_parte', 'comunicado', 'cerrado']
     max_display_length = 500
 
     def get_initial_queryset(self):
@@ -158,7 +158,9 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
     def render_column(self, row, column):
 
         if column == "id":
-            return u'<a href="%s">%s</a>' % (reverse_lazy('parte:detalle', args=[row.id]), row.id)
+            return {'_': row.id,
+                    'display': u'<a href="%s">%s</a>' % (reverse_lazy('parte:detalle', args=[row.id]), row.id)
+            }
         elif column == "fecha":
             return  row.fecha.strftime("%d/%m/%Y")
         elif column == 'grupo':
