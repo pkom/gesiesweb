@@ -91,11 +91,11 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
 
     model = Parte
     columns = ['id', 'fecha', 'grupo', 'fotoalu', 'alumno', 'fotoprofe', 'profesor', 'con_parte', 'comunicado',
-               'cerrado']
+               'cerrado', 'urls']
     order_columns = ['id', 'fecha', 'grupoalumno__cursogrupo__grupo__grupo', '',
                      ['grupoalumno__cursoalumno__alumno__apellidos','grupoalumno__cursoalumno__alumno__nombre' ], '',
                      ['cursoprofesor__profesor__user__last_name', 'cursoprofesor__profesor__user__first_name' ],
-                     'con_parte', 'comunicado', 'cerrado']
+                     'con_parte', 'comunicado', 'cerrado', '']
     max_display_length = 500
 
     def get_initial_queryset(self):
@@ -158,8 +158,8 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
     def render_column(self, row, column):
 
         if column == "id":
-            return {'_': row.id,
-                    'display': u'<a href="%s">%s</a>' % (reverse_lazy('parte:detalle', args=[row.id]), row.id)
+            return {'id': row.id,
+                    'display': reverse_lazy('parte:detalle', args=[row.id])
             }
         elif column == "fecha":
             return  row.fecha.strftime("%d/%m/%Y")
@@ -167,89 +167,23 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
             return row.get_nombre_grupo_alumno()
         elif column == "fotoalu":
             if row.grupoalumno.cursoalumno.alumno.foto:
-                fotoalu = get_thumbnail(row.grupoalumno.cursoalumno.alumno.foto, '50x40')
-                return u'<img class="nav-user-photo" style="border-radius: 15px;" src="%s">' % (fotoalu.url,)
+                return get_thumbnail(row.grupoalumno.cursoalumno.alumno.foto, '50x40').url
             else:
                 return u''
         elif column == "alumno":
             return row.get_nombre_completo_alumno()
         elif column == "fotoprofe":
             if row.cursoprofesor.profesor.foto:
-                fotopro = get_thumbnail(row.cursoprofesor.profesor.foto, '50x40')
-                return u'<img class="nav-user-photo" style="border-radius: 15px;" src="%s">' % (fotopro.url,)
+                return get_thumbnail(row.cursoprofesor.profesor.foto, '50x40').url
             else:
                 return u''
         elif column == "profesor":
             return row.get_nombre_completo_profesor()
-        elif column == "con_parte":
-            if row.con_parte:
-                return u'<input type="checkbox" checked="checked">'
-            else:
-                return u'<input type="checkbox">'
-                #return u'<i class="ace-icon fa fa-check bigger-120"></i>'
-        elif column == "comunicado":
-            if row.comunicado:
-                return u'<input type="checkbox" checked="checked">'
-            else:
-                return u'<input type="checkbox">'
-                #return u'<i class="ace-icon fa fa-check bigger-120"></i>'
-        elif column == "cerrado":
-            if row.cerrado:
-                return u'<input type="checkbox" checked="checked">'
-            else:
-                return u'<input type="checkbox">'
-                #return u'<i class="ace-icon fa fa-check bigger-120"></i>'
-        elif column == "acciones":
-            return u"""<div class="hidden-sm hidden-xs action-buttons">
-                            <a class="blue tooltip-info" href="%s" data-rel="tooltip" title="Ver parte" data-original-title="Ver">
-                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                            </a>
-
-                            <a class="green tooltip-success" href="%s" data-rel="tooltip" title="Edita parte" data-original-title="Edita">
-                                <i class="ace-icon fa fa-pencil bigger-130"></i>
-                            </a>
-
-                            <a class="red tooltip-error" href="%s" data-rel="tooltip" title="Elimina parte" data-original-title="Elimina">
-                                <i class="ace-icon fa fa-trash-o bigger-130"></i>
-                            </a>
-
-                        </div>
-                        <div class="hidden-md hidden-lg">
-                            <div class="inline position-relative">
-                                <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                    <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                    <li>
-                                        <a href="%s" class="tooltip-info" data-rel="tooltip" title="Ver parte" data-original-title="Ver">
-                                            <span class="blue">
-                                                <i class="ace-icon fa fa-search-plus bigger-120"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="%s" class="tooltip-success" data-rel="tooltip" title="Edita parte" data-original-title="Edita">
-                                            <span class="green">
-                                                <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="%s" class="tooltip-error" data-rel="tooltip" title="Elimina" data-original-title="Elimina">
-                                            <span class="red">
-                                                <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>""" % (reverse_lazy('parte:detalle', args=[row.id]),
-                                reverse_lazy('parte:editar', args=[row.id]),
-                                reverse_lazy('parte:eliminar', args=[row.id]),
-                                reverse_lazy('parte:detalle', args=[row.id]),
-                                reverse_lazy('parte:editar', args=[row.id]),
-                                reverse_lazy('parte:eliminar', args=[row.id]))
+        elif column == "urls":
+            return {
+                'detalle': reverse_lazy('parte:detalle', args=[row.id]),
+                'editar': reverse_lazy('parte:editar', args=[row.id]),
+                'eliminar': reverse_lazy('parte:eliminar', args=[row.id])
+            }
         else:
             return super(ParteResponsableBaseDatatableView, self).render_column(row, column)
