@@ -91,11 +91,11 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
 
     model = Parte
     columns = ['id', 'fecha', 'grupo', 'fotoalu', 'alumno', 'fotoprofe', 'profesor', 'con_parte', 'comunicado',
-               'cerrado', 'urls']
+               'cerrado', 'parte', 'urls']
     order_columns = ['id', 'fecha', 'grupoalumno__cursogrupo__grupo__grupo', '',
                      ['grupoalumno__cursoalumno__alumno__apellidos','grupoalumno__cursoalumno__alumno__nombre' ], '',
                      ['cursoprofesor__profesor__user__last_name', 'cursoprofesor__profesor__user__first_name' ],
-                     'con_parte', 'comunicado', 'cerrado', '']
+                     'con_parte', 'comunicado', 'cerrado', '', '']
     max_display_length = 500
 
     def get_initial_queryset(self):

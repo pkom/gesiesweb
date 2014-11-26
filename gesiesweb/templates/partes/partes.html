@@ -163,9 +163,7 @@
 {% block extra_js %}
     <script type="text/javascript">
         jQuery(function($) {
-            var oTable1 =
-            $('#partes-profesor')
-            //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
+            var oTable1 = $('#partes-profesor')
             .dataTable( {
                 "language": {
                     "url": "{% static 'js/dataTables.spanish.lang' %}"
@@ -176,33 +174,7 @@
                   null, null, null, null, null, null, null,
                   { "bSortable": false }
                 ]
-
-
-                //,
-                //"sScrollY": "200px",
-                //"bPaginate": false,
-
-                //"sScrollX": "100%",
-                //"sScrollXInner": "120%",
-                //"bScrollCollapse": true,
-                //Note: if you are applying horizontal scrolling (sScrollX) on a ".table-bordered"
-                //you may want to wrap the table inside a "div.dataTables_borderWrap" element
-
-                //"iDisplayLength": 50
             } );
-
-
-
-            $(document).on('click', 'th input:checkbox' , function(){
-                var that = this;
-                $(this).closest('table').find('tr > td:first-child input:checkbox')
-                .each(function(){
-                    this.checked = that.checked;
-                    $(this).closest('tr').toggleClass('selected');
-                });
-            });
-
-
             $('[data-rel="tooltip"]').tooltip({placement: tooltip_placement});
             function tooltip_placement(context, source) {
                 var $source = $(source);
@@ -216,7 +188,6 @@
                 if( parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2) ) return 'right';
                 return 'left';
             }
-
         })
     </script>
 {% endblock extra_js %}
