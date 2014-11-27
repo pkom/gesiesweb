@@ -155,7 +155,7 @@
 							<li class="light-blue">
 								<a data-toggle="dropdown" href="#" class="dropdown-toggle">
                                     {% thumbnail request.user.profesor.foto "50x40" crop="center" as foto %}
-                                        <img class="nav-user-photo" src="{{ foto.url }}" width="{{ foto.width }}" height="{{ foto.height }}"
+                                        <img class="nav-user-photo img-circle" src="{{ foto.url }}" width="{{ foto.width }}" height="{{ foto.height }}"
                                                 alt="Foto de {{ request.user.username }}">
                                     {% empty %}
                                         <img class="nav-user-photo" src="{% static 'avatars/avatar2.png' %}">

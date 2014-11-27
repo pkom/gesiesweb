@@ -54,8 +54,10 @@
   </div><!-- /.page-header -->
 {% endblock pageheader %}
 
+{% block angularCTRL %}ParteCtrl{% endblock angularCTRL %}
 
 {% block contenido %}
+
     <div class="table-header">
       <span class="badge badge-success">{{ total_partes }}</span>
       <span> Partes del centro</span>
@@ -248,15 +250,13 @@
                     {
                         "targets": 4,
                         "render": function ( data, type, row ) {
-                            return '<img class="nav-user-foto" style="border-radius: 15px;"' +
-                                    'src="' + row.fotoalu + '"/>'+data;
+                            return '<img class="nav-user-foto img-circle img-thumbnail" src="' + row.fotoalu + '"/>'+data;
                         }
                     },
                     {
                         "targets": 6,
                         "render": function ( data, type, row ) {
-                            return '<img class="nav-user-foto" style="border-radius: 15px;"' +
-                                    'src="' + row.fotoprofe + '"/>'+data;
+                            return '<img class="nav-user-foto img-circle img-thumbnail" src="' + row.fotoprofe + '"/>'+data;
                         }
                     },
                     {

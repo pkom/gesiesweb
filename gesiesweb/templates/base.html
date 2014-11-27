@@ -3,7 +3,7 @@
 {% load thumbnail %}
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" ng-app="gesieswebApp">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta charset="utf-8" />
@@ -121,7 +121,7 @@
 						{% endblock pageheader %}
 
 						<div class="row">
-							<div class="col-xs-12">
+							<div class="col-xs-12" ng-controller="{% block angularCTRL %}{% endblock angularCTRL %}">
 								<!-- PAGE CONTENT BEGINS -->
 								{% block contenido %}
 								
@@ -153,6 +153,9 @@
 		</script>
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
+		<script src="{% static 'js/angular.min.js' %}"></script>
+
+
 		{% block extra_js_links %}
 		
 
@@ -164,7 +167,9 @@
 
 		<!-- place project specific Javascript in this file -->
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
-
+		<script src="{% static 'jsproject/angularapp.js' %}"></script>
+        <script src="{% static 'jsproject/controllers.js' %}"></script>
+        <script src="{% static 'jsproject/services.js' %}"></script>
 		{% block extra_js %}
 
 

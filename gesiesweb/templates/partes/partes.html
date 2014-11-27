@@ -88,8 +88,7 @@
                     <td class="align-left" style="vertical-align: middle">
                         {% if parte.grupoalumno.cursoalumno.alumno.foto %}
                             {% thumbnail parte.grupoalumno.cursoalumno.alumno.foto "50x40" as fotoalu %}
-                                <img class="nav-user-photo" style="border-radius: 15px; margin:{{ fotoalu|margin:"50x40" }}"
-                                    src="{{ fotoalu.url }}" width="{{ fotoalu.width }}" height="{{ fotoalu.height }}"
+                                <img class="nav-user-photo img-circle img-thumbnail" src="{{ fotoalu.url }}"
                                     alt="Foto de {{ parte.grupoalumno.cursoalumno.alumno }}" />
                             {% endthumbnail %}
                         {% endif %}

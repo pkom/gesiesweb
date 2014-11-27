@@ -9,7 +9,7 @@ from django.views.generic import ListView, CreateView, DetailView
 from sorl.thumbnail import get_thumbnail
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
-from core.mixins import LoginRequerido
+from core.mixins import LoginRequerido, ResponsableRequiredMixin
 
 from .models import Parte, ParteSeguimiento
 
@@ -58,11 +58,11 @@ class ParteUpdateView(LoginRequerido, DetailView):
     pass
 
 
-class ParteDeleteView(LoginRequerido, DetailView):
+class ParteDeleteView(ResponsableRequiredMixin, DetailView):
     pass
 
 
-class ParteResponsableListView(LoginRequerido, ListView):
+class ParteResponsableListView(ResponsableRequiredMixin, ListView):
     template_name = "partes/partes_responsables.html"
     model = Parte
     context_object_name = 'partes'
@@ -87,7 +87,7 @@ class ParteResponsableListView(LoginRequerido, ListView):
         return context
 
 
-class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
+class ParteResponsableBaseDatatableView(ResponsableRequiredMixin, BaseDatatableView):
 
     model = Parte
     columns = ['id', 'fecha', 'grupo', 'fotoalu', 'alumno', 'fotoprofe', 'profesor', 'con_parte', 'comunicado',
@@ -97,6 +97,7 @@ class ParteResponsableBaseDatatableView(LoginRequerido, BaseDatatableView):
                      ['cursoprofesor__profesor__user__last_name', 'cursoprofesor__profesor__user__first_name' ],
                      'con_parte', 'comunicado', 'cerrado', '', '']
     max_display_length = 500
+
 
     def get_initial_queryset(self):
 
