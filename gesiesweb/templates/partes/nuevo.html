@@ -65,53 +65,73 @@
 
                         </div>
                         <div class="col-xs-12 col-md-10">
-                            <form role="form" class="form-horizontal">
-                                <!-- #section:elements.form -->
+                            <form role="form" class="form-horizontal" action="" method="POST">{% csrf_token %}
+                                {% if form.non_field_errors %}
+                                    <li style="list-style-type: none;" class="text-warning bigger-110 red">
+                                    {% for error in form.non_field_errors %}
+                                        <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                        {{ error|escape }}
+                                    {% endfor %}
+                                    </li>
+                                {% endif %}
                                 <div class="form-group">
-                                    <label for="form-grupo" class="col-sm-3 control-label no-padding-right"> Grupo </label>
+                                    <label for="id-alumno" class="col-sm-3 control-label no-padding-right"> Alumn@ </label>
                                     <div class="col-sm-9">
-                                        <select class="col-xs-12" id="form-grupo">
+                                        {% if form.alumno.errors %}
+                                            <li style="list-style-type: none;" class="text-warning bigger-110 red">
+                                            {% for error in form.alumno.errors %}
+                                                <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                                {{ error|escape }}
+                                            {% endfor %}
+                                            </li>
+                                        {% endif %}
+                                        <input type="text" class="col-xs-12" id="id-alumno" name="alumno"
+                                               placeholder="Teclea nombre del alumn@">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="form-alumno" class="col-sm-3 control-label no-padding-right"> Alumn@ </label>
+                                    <label for="id-fecha" class="col-sm-3 control-label no-padding-right"> Fecha </label>
                                     <div class="col-sm-9">
-                                        <select class="col-xs-12" id="form-alumno">
-                                        </select>
+                                        {% if form.fecha.errors %}
+                                            <li style="list-style-type: none;" class="text-warning bigger-110 red">
+                                            {% for error in form.fecha.errors %}
+                                                <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                                {{ error|escape }}
+                                            {% endfor %}
+                                            </li>
+                                        {% endif %}
+                                        <input type="date" class="col-xs-12" id="id-fecha" name="fecha"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="form-fecha" class="col-sm-3 control-label no-padding-right"> Fecha </label>
+                                    <label for="id-parte" class="col-sm-3 control-label no-padding-right"> Motivo </label>
                                     <div class="col-sm-9">
-                                        <input type="date" class="col-xs-12" id="form-fecha"/>
+                                        {% if form.parte.errors %}
+                                            <li style="list-style-type: none;" class="text-warning bigger-110 red">
+                                            {% for error in form.parte.errors %}
+                                                <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                                {{ error|escape }}
+                                            {% endfor %}
+                                            </li>
+                                        {% endif %}
+                                        <textarea class="col-xs-12" rows="6" id="id-parte" name="parte"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="form-parte" class="col-sm-3 control-label no-padding-right"> Motivo </label>
+                                    <label for="id-comunicado" class="col-sm-3 control-label no-padding-right"> Comunicado </label>
                                     <div class="col-sm-9">
-                                        <textarea class="col-xs-12" placeholder="Describe el motivo del parte" id="form-parte">
-                                        </textarea>
+                                        <input type="checkbox" class="col-xs-12" id="id-comunicado" name="comunicado"/>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="form-comunicado" class="col-sm-3 control-label no-padding-right"> Comunicado </label>
-                                    <div class="col-sm-9">
-                                        <input type="checkbox" class="col-xs-12" id="form-comunicado"/>
-                                    </div>
+
+                                <div class="col-xs-offset-4 col-xs-7">
+                                    <button type="button submit" class="width-35 btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-save"></i>
+                                        <span class="bigger-110">Enviar</span>
+                                    </button>
                                 </div>
                             </form>
-                            <div class="col-xs-offset-4 col-xs-7">
-                                <a class="btn btn-success" href="{% url 'parte:partes' %}">
-                                    <i class="ace-icon fa fa-save bigger-110"></i>
-                                        Grabar
-                                </a>
-                                <a class="btn btn-danger" href="{% url 'parte:partes' %}">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i>
-                                        Cancelar
-                                </a>
-
-                            </div>
                         </div>
                     </div>
                 </div>

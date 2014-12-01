@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-
-import datetime
-
+from django.utils.timezone import now
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.views.generic import ListView, CreateView, DetailView
-
 from sorl.thumbnail import get_thumbnail
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
 from core.mixins import LoginRequerido, ResponsableRequiredMixin
 
+from grupos.models import GrupoAlumno
 from .models import Parte, ParteSeguimiento
 
-
 class ParteListView(LoginRequerido, ListView):
+
     template_name = "partes/partes.html"
     model = Parte
     context_object_name = 'partes'
@@ -35,20 +33,25 @@ class ParteListView(LoginRequerido, ListView):
 
 
 class ParteCreateView(LoginRequerido, CreateView):
+
     template_name = "partes/nuevo.html"
     model = Parte
     success_url = reverse_lazy('parte:partes')
-    fields = ('fecha', 'parte', 'comunicado', )
+    fields = ['fecha', 'parte', 'comunicado']
+
+    def get_initial(self):
+        return { 'fecha' : now().date() }
 
     def form_valid(self, form):
+
+        grupoalumno = GrupoAlumno.objects.get(pk=124)
+        form.instance.grupoalumno = grupoalumno
+        form.instance.cursoprofesor = self.request.session['curso_profesor']
         return super(ParteCreateView, self).form_valid(form)
 
 
-    def form_invalid(self, form):
-        return super(ParteCreateView, self).form_invalid(form)
-
-
 class ParteDetailView(LoginRequerido, DetailView):
+
     template_name = "partes/detalle.html"
     model = Parte
     context_object_name = 'parte'
