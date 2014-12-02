@@ -1,42 +1,14 @@
 # -*- encoding: utf-8 -*-
 
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
 
-from config.models import Config
 from cursos.models import Curso
 from alumnos.models import Alumno, CursoAlumno
-from profesores.models import Profesor
+from profesores.models import Profesor, CursoProfesor
 from partes.models import Parte, ParteSeguimiento
-
-
-class ProfesorSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Profesor
-
-
-class ConfigSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Config
-
-
-class CursoSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Curso
-
-
-class AlumnoSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Alumno
-
-
-class CursoAlumnoSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = CursoAlumno
+from grupos.models import Grupo, CursoGrupo, GrupoAlumno
 
 
 class ParteSeguimientoSerializer(serializers.ModelSerializer):
@@ -45,7 +17,7 @@ class ParteSeguimientoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ParteSeguimiento
-        fields = ( 'id', 'parte', 'cursoprofesor', 'profesor', 'seguimiento', 'created', 'modified')
+        fields = ( 'id', 'parte', 'cursoprofesor', 'profesor', 'seguimiento', 'created')
 
 
 class ParteSerializer(serializers.ModelSerializer):
@@ -60,4 +32,77 @@ class ParteSerializer(serializers.ModelSerializer):
                 'comunicado', 'cerrado', 'seguimientos')
 
 
+class GrupoSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Grupo
+        fields = ( 'id', 'grupo', 'descripcion')
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ( 'id', 'username', 'first_name', 'last_name')
+
+
+class ProfesorSerializer(serializers.ModelSerializer):
+
+    user = UserSerializer()
+
+    class Meta:
+        model = Profesor
+        fields = ( 'id', 'user', 'dni', 'usuario_rayuela', 'foto', 'es_usuario')
+
+
+class CursoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Curso
+        fields = ( 'id', 'curso')
+
+
+class CursoProfesorSerializer(serializers.ModelSerializer):
+
+    profesor = ProfesorSerializer()
+    curso = CursoSerializer()
+
+    class Meta:
+        model = CursoProfesor
+        fields = ( 'id', 'curso', 'profesor', 'es_responsable')
+
+class CursoGrupoSerializer(serializers.ModelSerializer):
+
+    grupo = GrupoSerializer()
+    tutor = CursoProfesorSerializer()
+    curso = CursoSerializer()
+
+    class Meta:
+        model = CursoGrupo
+        fields = ( 'id', 'curso', 'grupo', 'tutor')
+
+
+class AlumnoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Alumno
+        fields = ( 'id', 'nie', 'apellidos', 'nombre', 'fecha_nacimiento', 'usuario_rayuela', 'foto')
+
+
+class CursoAlumnoSerializer(serializers.ModelSerializer):
+
+    alumno = AlumnoSerializer()
+
+    class Meta:
+        model = CursoAlumno
+        fields = ( 'id', 'curso', 'alumno')
+
+
+class GrupoAlumnoSerializer(serializers.ModelSerializer):
+
+    cursogrupo = CursoGrupoSerializer()
+    cursoalumno = CursoAlumnoSerializer()
+
+    class Meta:
+        model = GrupoAlumno
+        fields = ( 'id', 'cursogrupo', 'cursoalumno')

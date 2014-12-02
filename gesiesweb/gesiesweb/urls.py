@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import admin
 
 from core.views import HomeTemplateView, AboutTemplateView, LoginView
-from api.views import router
+from api.urls import router
 
 admin.autodiscover()
 

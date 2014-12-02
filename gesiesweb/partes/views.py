@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.utils.timezone import now
+from django.utils import timezone
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.views.generic import ListView, CreateView, DetailView
@@ -40,7 +40,7 @@ class ParteCreateView(LoginRequerido, CreateView):
     fields = ['fecha', 'parte', 'comunicado']
 
     def get_initial(self):
-        return { 'fecha' : now().date() }
+        return { 'fecha' : timezone.now() }
 
     def form_valid(self, form):
 
