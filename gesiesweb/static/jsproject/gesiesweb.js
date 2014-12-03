@@ -43,3 +43,16 @@ $.ajaxSetup({
         }
     }
 });
+
+
+$(document).ready(function() {
+
+    $('.datepicker').datepicker({
+        language: 'es',
+        weekStart: 1,
+        autoclose: true,
+        todayHighlight: true,
+        format: "dd/mm/yyyy"
+
+    });
+});

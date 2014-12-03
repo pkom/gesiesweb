@@ -14,7 +14,7 @@
         <i class="ace-icon fa fa-bullhorn home-icon"></i>
         <a href="{% url 'parte:partes' %}">Partes</a>
       </li>
-      <li class="active">Parte {{ parte.pk }}</li>
+      <li class="active">Edición Parte {{ parte.pk }}</li>
     </ul><!-- /.breadcrumb -->
 
     <!-- #section:basics/content.searchbox -->
@@ -37,10 +37,10 @@
 {% block pageheader %}
   <div class="page-header">
     <h1>
-      Detalle del Parte
+      Edición del Parte
       <small>
         <i class="ace-icon fa fa-angle-double-right"></i>
-        Detalle del Parte {{ parte.pk }} ({{ parte.fecha }}) de {{ parte.get_nombre_completo_profesor }}
+        Edición del Parte {{ parte.pk }} ({{ parte.fecha }}) de {{ parte.get_nombre_completo_profesor }}
           a {{ parte.get_nombre_completo_alumno }} ({{ parte.get_nombre_grupo_alumno }})
       </small>
     </h1>
@@ -49,7 +49,6 @@
 
 
 {% block contenido %}
-
 
 <div class="row">
     <div class="col-sm-7">
@@ -71,13 +70,13 @@
                             {% endif %}
                         </div>
                         <div class="col-xs-12 col-md-10">
-                            <form role="form" class="form-horizontal">
+                            <form action="" method="post" role="form" class="form-horizontal">{% csrf_token %}
                                 <!-- #section:elements.form -->
                                 <div class="form-group">
                                     <label for="form-field-1" class="col-sm-3 control-label no-padding-right"> Grupo </label>
                                     <div class="col-sm-9">
                                         <input type="text" class="col-xs-12" value="{{ parte.get_nombre_grupo_alumno }}"
-                                               id="form-field-1" readonly disabled>
+                                               id="form-field-1">
                                     </div>
                                 </div>
 
@@ -86,7 +85,7 @@
                                     <label for="form-field-2" class="col-sm-3 control-label no-padding-right"> Alumno </label>
                                     <div class="col-sm-9">
                                         <input type="text" class="col-xs-12" value="{{ parte.get_nombre_completo_alumno }}"
-                                               id="form-field-2" readonly disabled>
+                                               id="form-field-2">
                                     </div>
                                 </div>
 
@@ -94,7 +93,7 @@
                                     <label for="form-field-3" class="col-sm-3 control-label no-padding-right"> Profesor </label>
                                     <div class="col-sm-9">
                                         <input type="text" class="col-xs-12" value="{{ parte.get_nombre_completo_profesor }}"
-                                               id="form-field-3" readonly disabled>
+                                               id="form-field-3">
                                     </div>
                                 </div>
 
@@ -102,8 +101,7 @@
                                     <label for="form-field-4" class="col-sm-3 control-label no-padding-right"> Fecha </label>
 
                                     <div class="col-sm-9">
-                                        <input type="text" class="col-xs-12" value="{{ parte.fecha }}"
-                                               id="form-field-4" readonly disabled>
+                                        {{ form.fecha }}
                                     </div>
                                 </div>
 
@@ -111,47 +109,35 @@
                                     <label for="form-field-5" class="col-sm-3 control-label no-padding-right"> Parte </label>
 
                                     <div class="col-sm-9">
-                                        <textarea class="col-xs-12" id="form-field-5" rows="10" readonly disabled>{{ parte.parte }}</textarea>
+                                        {{ form.parte }}
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="form-field-6" class="col-sm-3 control-label no-padding-right"> Parte </label>
                                     <div class="col-sm-9">
-                                        <input type="checkbox" class="col-xs-12 col-sm-11" id="form-field-6" readonly disabled
-                                               {% if parte.con_parte %}
-                                                checked="checked"
-                                               {% endif %}
-                                                />
+                                        {{ form.con_parte }}
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="form-field-7" class="col-sm-3 control-label no-padding-right"> Comunicado </label>
                                     <div class="col-sm-9">
-                                        <input type="checkbox" class="col-xs-12 col-sm-5" id="form-field-7" readonly disabled
-                                               {% if parte.comunicado %}
-                                                checked="checked"
-                                               {% endif %}
-                                                />
+                                        {{ form.comunicado }}
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="form-field-8" class="col-sm-3 control-label no-padding-right"> Cerrado </label>
                                     <div class="col-sm-9">
-                                        <input type="checkbox" class="col-xs-12 col-sm-5" id="form-field-8" readonly disabled
-                                               {% if parte.cerrado %}
-                                                checked="checked"
-                                               {% endif %}
-                                                />
+                                        {{ form.cerrado }}
                                     </div>
                                 </div>
                                 <div class="col-xs-offset-4 col-xs-7">
-                                    <a class="btn" href="{% url 'parte:partes' %}">
-                                        <i class="ace-icon fa fa-reply bigger-110"></i>
-                                            Regresar
-                                    </a>
+                                    <button type="button submit" class="width-35 btn btn-sm btn-primary">
+                                        <i class="ace-icon fa fa-save"></i>
+                                        <span class="bigger-110">Grabar</span>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -180,7 +166,7 @@
                                 <label for="form-field-{{ seguimiento.created }}-fecha" class="col-sm-12 col-md-3 control-label"> Fecha </label>
 
                                 <div class="col-sm-12 col-md-9">
-                                    <input type="text" class="col-xs-12" placeholder="{{ seguimiento.created }}"
+                                    <input type="text" class="col-xs-12" value="{{ seguimiento.created }}"
                                            id="form-field-{{ seguimiento.created }}-fecha" readonly disabled>
                                 </div>
                             </div>
@@ -189,7 +175,7 @@
                                 <label for="form-field-{{ seguimiento.id }}-responsable" class="col-sm-12 col-md-3 control-label"> Responsable </label>
                                 <div class="col-sm-12 col-md-9">
                                     <input type="text" class="col-xs-12" id="form-field-{{ seguimiento.id }}-responsable" readonly disabled
-                                       placeholder="{{ seguimiento.get_nombre_completo }}">
+                                       value="{{ seguimiento.get_nombre_completo }}">
                                 </div>
                             </div>
 

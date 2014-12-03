@@ -2,7 +2,7 @@
 from django.utils import timezone
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.views.generic import ListView, CreateView, DetailView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 from sorl.thumbnail import get_thumbnail
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
@@ -10,6 +10,8 @@ from core.mixins import LoginRequerido, ResponsableRequiredMixin
 
 from grupos.models import GrupoAlumno
 from .models import Parte, ParteSeguimiento
+from .forms import ParteForm
+
 
 class ParteListView(LoginRequerido, ListView):
 
@@ -57,22 +59,35 @@ class ParteDetailView(LoginRequerido, DetailView):
     context_object_name = 'parte'
 
 
-class ParteUpdateView(LoginRequerido, DetailView):
-    pass
+class ParteUpdateView(LoginRequerido, UpdateView):
 
-
-class ParteDeleteView(ResponsableRequiredMixin, DetailView):
-    pass
-
-
-class ParteResponsableListView(ResponsableRequiredMixin, ListView):
-    template_name = "partes/partes_responsables.html"
+    template_name = "partes/editar.html"
     model = Parte
-    context_object_name = 'partes'
+    form_class = ParteForm
+    success_url = reverse_lazy("parte:partes-responsable")
 
-    def get_queryset(self):
-        return Parte.objects.filter(cursoprofesor__curso=self.request.session['curso_academico_usuario'])
+    def form_valid(self, form):
+        print "Formulario VALIDO"
+        print form.instance
+        form.instance.cursoprofesor = self.request.session['curso_profesor']
+        return super(ParteUpdateView, self).form_valid(form)
 
+    def form_invalid(self, form):
+        print "Formulario NO VALIDO"
+        print form
+        return super(ParteUpdateView, self).form_invalid(form)
+
+
+class ParteDeleteView(ResponsableRequiredMixin, DeleteView):
+
+    model = Parte
+    template_name = "partes/borrar.html"
+    success_url = reverse_lazy("parte:partes-responsable")
+
+
+class ParteResponsableListView(ResponsableRequiredMixin, TemplateView):
+
+    template_name = "partes/partes_responsables.html"
 
     def get_context_data(self, **kwargs):
         context = super(ParteResponsableListView, self).get_context_data(**kwargs)

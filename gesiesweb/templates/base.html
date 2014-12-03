@@ -20,6 +20,9 @@
 		<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
 		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" />
 
+		<link rel="stylesheet" href="{% static 'css/jquery-ui.custom.min.css' %}" />
+		<link rel="stylesheet" href="{% static 'css/datepicker.css' %}" />
+
 		<!-- text fonts -->
 		<link rel="stylesheet" href="{% static 'css/ace-fonts.css' %}" />
 
@@ -50,7 +53,8 @@
 		<script src="{% static 'js/html5shiv.min.js' %}"></script>
 		<script src="{% static 'js/respond.min.js' %}"></script>
 		<![endif]-->
-		
+
+
 		<!-- This file store project specific CSS -->
 		<link rel="stylesheet" href="{% static 'cssproject/gesiesweb.css' %}" />
 		<!-- Use this to quickly test CSS changes in a template, then move to gesiesweb.css -->
@@ -151,9 +155,13 @@
 		<script type="text/javascript">
 			if('ontouchstart' in document.documentElement) document.write("<script src='{% static "js/jquery.mobile.custom.min.js" %}'>"+"<"+"/script>");
 		</script>
+
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
-		<script src="{% static 'js/angular.min.js' %}"></script>
+		<script src="{% static 'js/jquery-ui.custom.min.js' %}"></script>
+		<script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
+		<script src="{% static 'js/date-time/bootstrap-datepicker.min.js' %}"></script>
+        <script src="{% static 'js/date-time/locales/bootstrap-datepicker.es.js' %}"></script>
 
 
 		{% block extra_js_links %}
@@ -167,9 +175,7 @@
 
 		<!-- place project specific Javascript in this file -->
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
-		<script src="{% static 'jsproject/angularapp.js' %}"></script>
-        <script src="{% static 'jsproject/controllers.js' %}"></script>
-        <script src="{% static 'jsproject/services.js' %}"></script>
+
 		{% block extra_js %}
 
 
