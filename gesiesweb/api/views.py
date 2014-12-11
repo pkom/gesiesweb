@@ -11,7 +11,7 @@ class CursoGrupoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
 
     model = CursoGrupo
     serializer_class = CursoGrupoSerializer
-
+    filter_fields = ('id', 'curso__id', 'grupo__id', 'tutor__id')
 
 class GrupoAlumnoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
 

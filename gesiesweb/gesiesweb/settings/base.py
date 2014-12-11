@@ -195,19 +195,6 @@ LOGOUT_URL = '/core/logout'
 
 SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-#        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',
-                                'rest_framework.filters.OrderingFilter'),
-    'PAGINATE_BY': 10,
-    'PAGINATE_BY_PARAM': 'page_size',
-    'ORDERING_PARAM': 'ordering',
-    'MAX_PAGINATE_BY': 100,
-}
-
 ########## DJANGO-AUTH-LDAP CONFIGURATION
 import ldap
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
