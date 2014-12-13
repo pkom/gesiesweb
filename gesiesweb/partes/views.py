@@ -85,31 +85,12 @@ class ParteDeleteView(ResponsableRequiredMixin, DeleteView):
     success_url = reverse_lazy("parte:partes-responsable")
 
 
-class ParteResponsableTemplateView(ResponsableRequiredMixin, TemplateView):
-
-    template_name = "partes/partes_responsablesjq.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(ParteResponsableTemplateView, self).get_context_data(**kwargs)
-        context['total_partes'] = Parte.objects.filter(
-            cursoprofesor__curso=self.request.session['curso_academico_usuario']).count()
-        context['total_partes_partes'] = Parte.objects.filter(
-            cursoprofesor__curso=self.request.session['curso_academico_usuario'],
-            con_parte=True).count()
-        context['total_partes_comunicados'] = Parte.objects.filter(
-            cursoprofesor__curso=self.request.session['curso_academico_usuario'],
-            comunicado=True).count()
-        context['total_partes_cerrados'] = Parte.objects.filter(
-            cursoprofesor__curso=self.request.session['curso_academico_usuario'],
-            cerrado=True).count()
-        return context
-
-
 class ParteResponsableListView(ResponsableRequiredMixin, TemplateView):
 
     template_name = "partes/partes_responsables.html"
 
     def get_context_data(self, **kwargs):
+
         context = super(ParteResponsableListView, self).get_context_data(**kwargs)
         context['total_partes'] = Parte.objects.filter(
             cursoprofesor__curso=self.request.session['curso_academico_usuario']).count()
