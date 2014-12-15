@@ -13,7 +13,7 @@
     <ul class="breadcrumb">
       <li>
         <i class="ace-icon fa fa-bullhorn home-icon"></i>
-        <a href="{% url 'parte:partes' %}">Partes</a>
+        <a href="{% url 'parte:partes-profesor' %}">Partes</a>
       </li>
       <li class="active">Partes del profesor {{ request.user.get_full_name }}</li>
     </ul><!-- /.breadcrumb -->
@@ -49,6 +49,7 @@
 
 
 {% block contenido %}
+
     <div class="table-header">
       <span class="badge badge-success">{{ total_partes }}</span>
       <span> Partes del profesor {{ request.user.get_full_name }}</span>
@@ -58,136 +59,59 @@
     </div>
 
     <div>
-
-        <table id="partes-profesor" class="table table-striped table-bordered table-hover dataTable" aria-describedby="partes-profesor_info">
-            <thead>
-                <tr role="row">
-                    <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Id: activate to sort column ascending">Id</th>
-                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Fecha: activate to sort column ascending">Fecha</th>
-                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Grupo: activate to sort column ascending">Grupo</th>
-                    <th class="sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Update: activate to sort column ascending">Alumn@</th>
-                    <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Parte</th>
-                    <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Comun.</th>
-                    <th class="hidden-480 sorting align-center" role="columnheader" tabindex="0" aria-controls="partes-profesor" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Cerrado</th>
-                    <th class="sorting_disabled" role="columnheader" rowspan="1" colspan="1" aria-label=""></th>
-                </tr>
-            </thead>
-
-
-            <tbody role="alert" aria-live="polite" aria-relevant="all">
-            {% for parte in partes %}
-                {% cycle 'odd' 'event' as rowcolors silent %}
-                <tr class="{{ rowcolors }}">
-                    <td class="hidden-480 align-right" style="vertical-align: middle">
-                        <a href="{% url "parte:detalle" parte.id %}">{{ parte.id }}</a>
-                    </td>
-                    <td class="align-center" style="vertical-align: middle">
-                        {{ parte.fecha | date:"SHORT_DATE_FORMAT" }}</td>
-                    <td class="align-center" style="vertical-align: middle">
-                        {{ parte.get_nombre_grupo_alumno }}</td>
-                    <td class="align-left" style="vertical-align: middle">
-                        {% if parte.grupoalumno.cursoalumno.alumno.foto %}
-                            {% thumbnail parte.grupoalumno.cursoalumno.alumno.foto "50x40" as fotoalu %}
-                                <img class="nav-user-photo img-circle img-thumbnail" src="{{ fotoalu.url }}"
-                                    alt="Foto de {{ parte.grupoalumno.cursoalumno.alumno }}" />
-                            {% endthumbnail %}
-                        {% endif %}
-                        {{ parte.get_nombre_completo_alumno }}</td>
-                    <td class="hidden-480 align-center" style="vertical-align: middle">
-                        {% if parte.con_parte %}
-                            <i class="ace-icon fa fa-check bigger-120"></i>
-                        {% endif %}
-                    </td>
-                    <td class="hidden-480 align-center" style="vertical-align: middle">
-                        {% if parte.comunicado %}
-                            <i class="ace-icon fa fa-check bigger-120"></i>
-                        {% endif %}
-                    </td>
-                    <td class="hidden-480 align-center" style="vertical-align: middle">
-                        {% if parte.cerrado %}
-                            <i class="ace-icon fa fa-check bigger-120"></i>
-                        {% endif %}
-                    </td>
-
-                    <td class="align-center" style="vertical-align: middle">
-                        <div class="hidden-sm hidden-xs action-buttons">
-                            <a class="blue tooltip-info" href="{% url "parte:detalle" parte.id %}" data-rel="tooltip" title="" data-original-title="Ver">
-                                <i class="ace-icon fa fa-search-plus bigger-130"></i>
-                            </a>
-
-                            <a class="green tooltip-success" href="{% url "parte:editar" parte.id %}" data-rel="tooltip" title="" data-original-title="Edita">
-                                <i class="ace-icon fa fa-pencil bigger-130"></i>
-                            </a>
-
-                        </div>
-
-                        <div class="hidden-md hidden-lg">
-                            <div class="inline position-relative">
-                                <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                    <i class="ace-icon fa fa-caret-down icon-only bigger-120"></i>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                    <li>
-                                        <a href="{% url "parte:detalle" parte.id %}" class="tooltip-info" data-rel="tooltip" title="" data-original-title="Ver">
-                                            <span class="blue">
-                                                <i class="ace-icon fa fa-search-plus bigger-120"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="{% url "parte:editar" parte.id %}" class="tooltip-success" data-rel="tooltip" title="" data-original-title="Edita">
-                                            <span class="green">
-                                                <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <table id="partes-profesor"></table>
+        <div id="partes-profesor-pager"></div>
 	</div>
+
 {% endblock contenido %}
 
-{% block extra_js_links %}
-		<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-		<script src="{% static 'js/jquery.dataTables.bootstrap.min.js' %}"></script>
-{% endblock extra_js_links %}
 
 {% block extra_js %}
     <script type="text/javascript">
+        var partes = [
+            {id: 1, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 2, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 3, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 4, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 5, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 6, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 7, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 8, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 9, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },
+            {id: 10, grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' }
+        ];
+
         jQuery(function($) {
-            var oTable1 = $('#partes-profesor')
-            .dataTable( {
-                "language": {
-                    "url": "{% static 'js/dataTables.spanish.lang' %}"
-                },
-                "lengthMenu": [[ 5, 10, 15, -1 ], [ 5, 10, 15, "Todos" ]],
-                "order": [[ 1, "desc" ], [ 0, "desc" ]],
-                bAutoWidth: false,
-                "aoColumns": [
-                  null, null, null, null, null, null, null,
-                  { "bSortable": false }
-                ]
-            } );
-            $('[data-rel="tooltip"]').tooltip({placement: tooltip_placement});
-            function tooltip_placement(context, source) {
-                var $source = $(source);
-                var $parent = $source.closest('table')
-                var off1 = $parent.offset();
-                var w1 = $parent.width();
+            var grid_selector = "#partes-profesor";
+            var pager_selector = "#partes-profesor-pager";
+            //resize to fit page size
+            $(window).on('resize.jqGrid', function () {
+                $(grid_selector).jqGrid('setGridWidth', $(".page-content").width());
+            })
+            //resize on sidebar collapse/expand
+            var parent_column = $(grid_selector).closest('[class*="col-"]');
+            $(document).on('settings.ace.jqGrid', function (ev, event_name, collapsed) {
+                if (event_name === 'sidebar_collapsed' || event_name === 'main_container_fixed') {
+                    $(grid_selector).jqGrid('setGridWidth', parent_column.width());
+                }
+            })
+            $('#partes-profesor').jqGrid({
+                datatype: 'local',
+                data: partes,
+                colmodel: [
+                    {id: 'id', label: 'Id'},
+                    {id: 'grupo', label: 'Grupo'},
+                    {id: 'fecha', label: 'Fecha'},
+                    {id: 'alumno', label: 'Alumn@'},
+                    {id: 'con_parte', label: 'Parte'},
+                    {id: 'comunicado', label: 'Comunicado'},
+                    {id: 'cerrado', label: 'Cerrado'},
+                    {id: 'parte', label: 'Parte'}
+                ],
+                height: 'auto',
+                caption: 'Partes del profesorado'
+            });
+        });
 
-                var off2 = $source.offset();
-                //var w2 = $source.width();
-
-                if( parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2) ) return 'right';
-                return 'left';
-            }
-        })
     </script>
 {% endblock extra_js %}

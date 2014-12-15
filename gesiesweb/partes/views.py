@@ -13,9 +13,46 @@ from .models import Parte, ParteSeguimiento
 from .forms import ParteForm
 
 
-class ParteListView(LoginRequerido, ListView):
+class ParteTemplateView(LoginRequerido, TemplateView):
 
     template_name = "partes/partes.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ParteTemplateView, self).get_context_data(**kwargs)
+        context['total_partes'] = Parte.objects.filter(cursoprofesor=self.request.session['curso_profesor']).count()
+        context['total_partes_partes'] = Parte.objects.filter(cursoprofesor=self.request.session['curso_profesor'],
+                                                              con_parte=True).count()
+        context['total_partes_comunicados'] = Parte.objects.filter(cursoprofesor=self.request.session['curso_profesor'],
+                                                                   comunicado=True).count()
+        context['total_partes_cerrados'] = Parte.objects.filter(cursoprofesor=self.request.session['curso_profesor'],
+                                                                cerrado=True).count()
+        return context
+
+
+class ParteResponsableTemplateView(ResponsableRequiredMixin, TemplateView):
+
+    template_name = "partes/partes_responsables.html"
+
+    def get_context_data(self, **kwargs):
+
+        context = super(ParteResponsableTemplateView, self).get_context_data(**kwargs)
+        context['total_partes'] = Parte.objects.filter(
+            cursoprofesor__curso=self.request.session['curso_academico_usuario']).count()
+        context['total_partes_partes'] = Parte.objects.filter(
+            cursoprofesor__curso=self.request.session['curso_academico_usuario'],
+            con_parte=True).count()
+        context['total_partes_comunicados'] = Parte.objects.filter(
+            cursoprofesor__curso=self.request.session['curso_academico_usuario'],
+            comunicado=True).count()
+        context['total_partes_cerrados'] = Parte.objects.filter(
+            cursoprofesor__curso=self.request.session['curso_academico_usuario'],
+            cerrado=True).count()
+        return context
+
+
+class ParteListView(LoginRequerido, ListView):
+
+    template_name = "partes/partesdatatables.html"
     model = Parte
     context_object_name = 'partes'
 
@@ -87,7 +124,7 @@ class ParteDeleteView(ResponsableRequiredMixin, DeleteView):
 
 class ParteResponsableListView(ResponsableRequiredMixin, TemplateView):
 
-    template_name = "partes/partes_responsables.html"
+    template_name = "partes/partes_responsablesdatatables.html"
 
     def get_context_data(self, **kwargs):
 
