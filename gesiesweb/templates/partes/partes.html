@@ -58,6 +58,9 @@
       <span class="badge badge-important">Cerrados {{ total_partes_cerrados }}</span>
     </div>
 
+    <table id="mygrid"></table>
+    <div id="pager"></div>
+
     <table id="partes-profesor"></table>
     <div id="partes-profesor-pager"></div>
 
@@ -67,6 +70,23 @@
 
 {% block extra_js %}
     <script type="text/javascript">
+
+
+        $.getJSON("{% url 'parte:grid_config' %}", function(data){
+            console.log(data);
+            $("#mygrid")
+                .jqGrid(data)
+                .navGrid('#pager',
+                    {add: false, edit: false, del: false, view: true},
+            {}, // edit options
+            {}, // add options
+            {}, // del options
+            { multipleSearch:true, closeOnEscape:true }, // search options
+            { jqModal:false, closeOnEscape:true} // view options
+            );
+        });
+
+
 
         var partes = [
             {id: "1", grupo: '1AE', fecha: '2014-12-15', alumno:'Alcantarilla Romero, Pablo', con_parte: 'True', comunicado: 'True', cerrado: 'True', parte: 'Pues el parte' },

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.utils import timezone
+from django.http import JsonResponse, HttpResponse
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -11,7 +12,7 @@ from core.mixins import LoginRequerido, ResponsableRequiredMixin
 from grupos.models import GrupoAlumno
 from .models import Parte, ParteSeguimiento
 from .forms import ParteForm
-
+from .grids import ParteGrid
 
 class ParteTemplateView(LoginRequerido, TemplateView):
 
@@ -48,6 +49,19 @@ class ParteResponsableTemplateView(ResponsableRequiredMixin, TemplateView):
             cursoprofesor__curso=self.request.session['curso_academico_usuario'],
             cerrado=True).count()
         return context
+
+
+def grid_handler(request):
+    # handles pagination, sorting and searching
+    grid = ParteGrid()
+    return HttpResponse(grid.get_json(request), content_type="application/json")
+    #return JsonResponse(grid.get_json(request), safe=False)
+
+def grid_config(request):
+    # build a config suitable to pass to jqgrid constructor
+    grid = ParteGrid()
+    return HttpResponse(grid.get_config(), content_type="application/json")
+    #return JsonResponse(grid.get_config())
 
 
 class ParteListView(LoginRequerido, ListView):
