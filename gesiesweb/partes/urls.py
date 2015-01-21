@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 
 from .views import ParteTemplateView, ParteResponsableTemplateView, ParteListView, ParteCreateView, ParteDetailView, ParteUpdateView
 from .views import ParteResponsableListView, ParteResponsableBaseDatatableView, ParteDeleteView
-from .views import grid_config, grid_handler
+from .views import grid_config, grid_handler, grid_config_responsable, grid_handler_responsable
 
 urlpatterns = patterns("",
 #   url(regex=r'^$', view=ParteListView.as_view(), name="partes"),
@@ -17,5 +17,8 @@ urlpatterns = patterns("",
 
    url(r'^partegrid/$', grid_handler, name='grid_handler'),
    url(r'^partegrid/cfg/$', grid_config, name='grid_config'),
+   url(r'^partegridresponsable/$', grid_handler_responsable, name='grid_handler_responsable'),
+   url(r'^partegridresponsable/cfg/$', grid_config_responsable, name='grid_config_responsable'),
+
 
 )

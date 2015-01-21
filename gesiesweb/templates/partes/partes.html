@@ -81,7 +81,16 @@
                         $("#mygrid").jqGrid('setGridWidth', parent_column.width());
                     }
                 });
+                data.loadComplete = function() {
+						var table = $("#mygrid");
+						setTimeout(function(){
+							styleCheckbox(table);
 
+							updateActionIcons(table);
+							updatePagerIcons(table);
+							enableTooltips(table);
+						}, 0);
+			    };
                 $("#mygrid")
                     .jqGrid(data)
                     .navGrid('#pager',

@@ -12,7 +12,7 @@ from core.mixins import LoginRequerido, ResponsableRequiredMixin
 from grupos.models import GrupoAlumno
 from .models import Parte, ParteSeguimiento
 from .forms import ParteForm
-from .grids import ParteGrid
+from .grids import ParteGrid, ParteGridResponsable
 
 class ParteTemplateView(LoginRequerido, TemplateView):
 
@@ -60,6 +60,18 @@ def grid_handler(request):
 def grid_config(request):
     # build a config suitable to pass to jqgrid constructor
     grid = ParteGrid()
+    return HttpResponse(grid.get_config(), content_type="application/json")
+    #return JsonResponse(grid.get_config())
+
+def grid_handler_responsable(request):
+    # handles pagination, sorting and searching
+    grid = ParteGridResponsable()
+    return HttpResponse(grid.get_json(request), content_type="application/json")
+    #return JsonResponse(grid.get_json(request), safe=False)
+
+def grid_config_responsable(request):
+    # build a config suitable to pass to jqgrid constructor
+    grid = ParteGridResponsable()
     return HttpResponse(grid.get_config(), content_type="application/json")
     #return JsonResponse(grid.get_config())
 
