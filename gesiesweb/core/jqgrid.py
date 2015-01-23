@@ -192,8 +192,9 @@ class JqGrid(object):
 
     def get_json(self, request):
         paginator, page, items = self.get_items(request)
-        if type(items) != ValuesQuerySet:
-            items = items.values()
+        # comento porque no va bien con los campos foreign
+        #if type(items) != ValuesQuerySet:
+            #items = items.values()
         data = {
             'page': int(page.number),
             'total': int(paginator.num_pages),
