@@ -20,9 +20,14 @@
 		<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
 		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" />
 
-		<link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" />
 		<link rel="stylesheet" href="{% static 'css/datepicker.css' %}" />
         <link rel="stylesheet" href="{% static 'css/ui.jqgrid.css' %}" />
+
+		<!-- page specific plugin styles -->
+		{% block page_especific_plugins_styles %}
+
+        {% endblock page_especific_plugins_styles %}
 
 		<!-- text fonts -->
 		<link rel="stylesheet" href="{% static 'css/ace-fonts.css' %}" />
@@ -41,9 +46,9 @@
 		<![endif]-->
 		
 		<!-- inline styles related to this page -->
-		{% block extra_css_links %}
+		{% block inline_styles_related_to_this_page %}
 
-		{% endblock extra_css_links %}
+		{% endblock inline_styles_related_to_this_page %}
 
 		<!-- ace settings handler -->
 		<script src="{% static 'js/ace-extra.min.js' %}"></script>
@@ -59,7 +64,6 @@
 		<!-- This file store project specific CSS -->
 		<link rel="stylesheet" href="{% static 'cssproject/gesiesweb.css' %}" />
 		<!-- Use this to quickly test CSS changes in a template, then move to gesiesweb.css -->
-
 		{% block extra_css %}
 
 		{% endblock extra_css %} 
@@ -163,10 +167,12 @@
 		<script src="{% static 'js/jqGrid/jquery.jqGrid.js' %}"></script>
 		<script src="{% static 'js/jqGrid/i18n/grid.locale-es.js' %}"></script>
 
-		{% block extra_js_links %}
-		
+		<script src="{% static 'js/angular.min.js' %}"></script>
 
-		{% endblock extra_js_links %}  			
+
+		{% block page_specific_plugin_scripts %}
+
+		{% endblock page_specific_plugin_scripts %}
 
 		<!-- ace scripts -->
 		<script src="{% static 'js/ace-elements.min.js' %}"></script>
@@ -174,6 +180,11 @@
 
 		<!-- place project specific Javascript in this file -->
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
+
+		{% block extra_js %}
+
+
+		{% endblock extra_js %}
 
         <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -185,10 +196,5 @@
           ga('send', 'pageview');
 
         </script>
-
-		{% block extra_js %}
-
-
-		{% endblock extra_js %}
 	</body>
 </html>

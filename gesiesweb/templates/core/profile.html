@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
-{% block extra_css_links %}
+{% block page_specific_plugin_styles %}
 	<!-- page specific plugin styles -->
-	<link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" />
 	<link rel="stylesheet" href="{% static 'css/jquery.gritter.css' %}" />
 	<link rel="stylesheet" href="{% static 'css/select2.css' %}" />
 	<link rel="stylesheet" href="{% static 'css/datepicker.css' %}" />
 	<link rel="stylesheet" href="{% static 'css/bootstrap-editable.css' %}" />
-{% endblock extra_css_links %}
+{% endblock page_specific_plugin_styles %}
 
 {% block breadcrumbs %}
   <!-- #section:basics/content.breadcrumbs -->
@@ -333,32 +332,16 @@
 
 {% endblock contenido %}
 
-{% block extra_js_links %}
-<!--
-	<script src="{% static 'js/jquery-ui.custom.min.js' %}"></script>
-	<script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
--->	
+{% block page_specific_plugin_scripts %}
 	<script src="{% static 'js/jquery.gritter.min.js' %}"></script>
-<!--	
-	<script src="{% static 'js/bootbox.min.js' %}"></script>
-	<script src="{% static 'js/jquery.easy-pie-chart.min.js' %}"></script>
-	<script src="{% static 'js/date-time/bootstrap-datepicker.min.js' %}"></script>
-	<script src="{% static 'js/bootstrap-wysiwyg.min.js' %}"></script>
-	<script src="{% static 'js/select2.min.js' %}"></script>
-	<script src="{% static 'js/fuelux/fuelux.spinner.min.js' %}"></script>
--->	
 	<script src="{% static 'js/x-editable/bootstrap-editable.min.js' %}"></script>
 	<script src="{% static 'js/x-editable/ace-editable.min.js' %}"></script>	
-<!--
-	<script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
--->
     <!--[if lte IE 8]>
         <script src="{static 'js/excanvas.min.js' %}"></script>
     <![endif]-->
-
     <script src="{% static 'js/jquery.nestable.min.js' %}"></script>
 
-{% endblock extra_js_links %}
+{% endblock page_specific_plugin_scripts %}
 
 {% block extra_js %}
  <script>
