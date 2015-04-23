@@ -37,6 +37,15 @@ class Parte(TimeStampedModel):
 
         return self.grupoalumno.get_nombre_grupo()
 
+    def get_foto_profesor_peque(self):
+
+        return self.cursoprofesor.get_foto()
+
+    def get_foto_alumno_peque(self):
+
+        return self.grupoalumno.get_foto()
+
+
     class Meta:
 
         ordering = ['-created' ]

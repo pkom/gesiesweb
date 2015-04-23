@@ -41,7 +41,7 @@ class CursoAlumno(TimeStampedModel):
 
     def get_nombre_completo(self):
 
-        return u"%s, %s" % (self.alumno.apellidos, self.alumno.nombre)
+        return self.alumno.get_nombre_completo()
 
     class Meta:
         unique_together = (("curso", "alumno"),)

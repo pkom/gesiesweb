@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from model_utils.models import TimeStampedModel
 
-from sorl.thumbnail import ImageField
+from sorl.thumbnail import ImageField, get_thumbnail
 
 import django_auth_ldap.backend
 
@@ -72,7 +72,15 @@ class CursoProfesor(TimeStampedModel):
 
     def get_nombre_completo(self):
 
-        return u"%s, %s" % (self.profesor.user.last_name, self.profesor.user.first_name)
+        return self.profesor.get_nombre_completo()
+
+    def get_foto(self):
+
+        if self.profesor.foto:
+            return u"%s" % (get_thumbnail(self.profesor.foto, '50x40').url)
+        else:
+            return u""
+
 
     class Meta:
         unique_together = (("curso", "profesor"),)

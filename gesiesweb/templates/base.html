@@ -168,6 +168,7 @@
 		<script src="{% static 'js/jqGrid/i18n/grid.locale-es.js' %}"></script>
 
 		<script src="{% static 'js/angular.min.js' %}"></script>
+		<script src="{% static 'js/angular-resource.min.js' %}"></script>
 
 
 		{% block page_specific_plugin_scripts %}
@@ -179,6 +180,9 @@
 		<script src="{% static 'js/ace.min.js' %}"></script>
 
 		<!-- place project specific Javascript in this file -->
+		<script src="{% static 'jsproject/angularapp.js' %}"></script>
+		<script src="{% static 'jsproject/controllers.js' %}"></script>
+		<script src="{% static 'jsproject/services.js' %}"></script>
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
 
 		{% block extra_js %}

@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
@@ -10,6 +10,7 @@ from profesores.models import Profesor, CursoProfesor
 from partes.models import Parte, ParteSeguimiento
 from grupos.models import Grupo, CursoGrupo, GrupoAlumno
 
+User = get_user_model()
 
 class ParteSeguimientoSerializer(serializers.ModelSerializer):
 
@@ -25,11 +26,14 @@ class ParteSerializer(serializers.ModelSerializer):
     seguimientos = ParteSeguimientoSerializer(many=True)
     profesor = serializers.CharField(source='get_nombre_completo_profesor', read_only=True)
     alumno = serializers.CharField(source='get_nombre_completo_alumno', read_only=True)
+    fotoalumno = serializers.CharField(source='get_foto_alumno_peque', read_only=True)
+    fotoprofesor = serializers.CharField(source='get_foto_profesor_peque', read_only=True)
+
 
     class Meta:
         model = Parte
-        fields = ( 'id', 'grupoalumno', 'alumno', 'cursoprofesor', 'profesor', 'fecha', 'parte', 'con_parte',
-                'comunicado', 'cerrado', 'seguimientos')
+        fields = ( 'id', 'grupoalumno', 'fotoalumno', 'alumno', 'cursoprofesor', 'fotoprofesor', 'profesor',
+                   'fecha', 'parte', 'con_parte', 'comunicado', 'cerrado', 'seguimientos')
 
 
 class GrupoSerializer(serializers.ModelSerializer):

@@ -5,7 +5,8 @@ from core.jqgrid import JqGrid
 from partes.models import Parte
 
 class ParteGrid(JqGrid):
-    model = Parte
+    #model = Parte
+    queryset = Parte.objects.all()
     fields = ['id', 'grupoalumno__cursogrupo__grupo__grupo', 'grupoalumno__cursoalumno__alumno__apellidos',
               'grupoalumno__cursoalumno__alumno__nombre', 'fecha', 'con_parte', 'comunicado', 'cerrado']
     url = reverse_lazy('parte:grid_handler')

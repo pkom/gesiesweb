@@ -3,6 +3,8 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 
+from sorl.thumbnail import get_thumbnail
+
 from cursos.models import Curso
 from profesores.models import CursoProfesor
 from alumnos.models import CursoAlumno
@@ -43,11 +45,19 @@ class GrupoAlumno(TimeStampedModel):
 
     def get_nombre_completo(self):
 
-        return u"%s, %s" % (self.cursoalumno.alumno.apellidos, self.cursoalumno.alumno.nombre)
+        return self.cursoalumno.alumno.get_nombre_completo()
 
     def get_nombre_grupo(self):
 
         return u"%s" % (self.cursogrupo.grupo.grupo)
+
+    def get_foto(self):
+
+        if self.cursoalumno.alumno.foto:
+            return u"%s" % (get_thumbnail(self.cursoalumno.alumno.foto, '50x40').url)
+        else:
+            return u""
+
 
     class Meta:
         unique_together = (("cursogrupo", "cursoalumno"),)
