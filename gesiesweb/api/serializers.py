@@ -40,7 +40,7 @@ class GrupoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Grupo
-        fields = ( 'id', 'grupo', 'descripcion')
+        fields = ( 'id', 'grupo', 'descripcion', 'slug')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -63,27 +63,26 @@ class CursoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Curso
-        fields = ( 'id', 'curso')
 
 
 class CursoProfesorSerializer(serializers.ModelSerializer):
 
     profesor = ProfesorSerializer()
-    curso = CursoSerializer()
+#    curso = CursoSerializer()
 
     class Meta:
         model = CursoProfesor
-        fields = ( 'id', 'curso', 'profesor', 'es_responsable')
+        fields = ( 'id', 'profesor', 'es_responsable')
 
 class CursoGrupoSerializer(serializers.ModelSerializer):
 
     grupo = GrupoSerializer()
     tutor = CursoProfesorSerializer()
-    curso = CursoSerializer()
+#    curso = CursoSerializer()
 
     class Meta:
         model = CursoGrupo
-        fields = ( 'id', 'curso', 'grupo', 'tutor')
+        fields = ( 'id', 'grupo', 'tutor')
 
 
 class AlumnoSerializer(serializers.ModelSerializer):
