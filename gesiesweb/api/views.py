@@ -21,7 +21,8 @@ class GrupoAlumnoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
 
 class ParteViewSet(AuthenticateMixin, viewsets.ModelViewSet):
 
-    model = Parte
+#    model = Parte
+    queryset = Parte.objects.all()
     serializer_class = ParteSerializer
 
 

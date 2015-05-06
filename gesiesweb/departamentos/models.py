@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from django.db import models
+from django.utils.text import slugify
 
 from model_utils.models import TimeStampedModel
 
@@ -10,9 +11,14 @@ from profesores.models import CursoProfesor
 class Departamento(TimeStampedModel):
     departamento = models.CharField(max_length=100, db_index=True, unique=True)
     descripcion = models.TextField(max_length=100, blank=True)
+    slug = models.SlugField(unique=True, max_length=100)
 
     def __unicode__(self):
         return u"%s" % self.departamento
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.departamento)
+        super(Departamento, self).save(*args, **kwargs)
 
     class Meta:
         ordering = [ 'departamento' ]

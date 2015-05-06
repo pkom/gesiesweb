@@ -3,6 +3,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 
 from django.utils.encoding import smart_unicode
+from django.utils.text import slugify
 
 # Create your models here.
 class Curso(TimeStampedModel):
@@ -20,10 +21,15 @@ class Curso(TimeStampedModel):
     peso_3 = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     peso_4 = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     peso_5 = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    peso_6 = models.DecimalField(max_digits=5, decimal_places=2, default=0)    
+    peso_6 = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    slug = models.SlugField(unique=True)
 
     def __unicode__(self):
     	return smart_unicode(self.curso)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.curso)
+        super(Curso, self).save(*args, **kwargs)
 
     class Meta:
         ordering = [ 'curso' ]

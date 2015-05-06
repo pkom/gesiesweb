@@ -10,7 +10,7 @@ class Parte(TimeStampedModel):
 
     grupoalumno = models.ForeignKey(GrupoAlumno)
     cursoprofesor = models.ForeignKey(CursoProfesor)
-    fecha = models.DateField(null=False, default= timezone.now())
+    fecha = models.DateField(null=False, auto_now_add=True)
     parte = models.TextField(blank=False)
     con_parte = models.BooleanField(default=False)
     comunicado = models.BooleanField(default=False)

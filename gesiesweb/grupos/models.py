@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 
 from django.db import models
+from django.utils.text import slugify
+
 from model_utils.models import TimeStampedModel
 
 from sorl.thumbnail import get_thumbnail
@@ -13,9 +15,14 @@ class Grupo(TimeStampedModel):
 
     grupo = models.CharField(max_length=10, db_index=True, unique=True)
     descripcion = models.CharField(max_length=50, blank=True)
+    slug = models.SlugField(unique=True, max_length=10)
 
     def __unicode__(self):
         return u"%s" % self.grupo
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.grupo)
+        super(Grupo, self).save(*args, **kwargs)
 
     class Meta:
         ordering = [ 'grupo' ]
