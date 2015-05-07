@@ -1,4 +1,6 @@
-from rest_framework import viewsets
+from django.contrib.auth import get_user_model
+
+from rest_framework import viewsets, mixins
 
 from cursos.models import Curso
 from grupos.models import CursoGrupo, GrupoAlumno
@@ -9,19 +11,28 @@ from .serializers import ParteSerializer, ParteSeguimientoSerializer, CursoGrupo
 from .mixins import AuthenticateMixin
 
 
-class CursoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
+User = get_user_model()
 
-    model = Curso
+
+class CursoMixin(object):
+
+    queryset = Curso.objects.all()
+
+
+class CursoViewSet(AuthenticateMixin, CursoMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                   viewsets.GenericViewSet):
+
     serializer_class = CursoSerializer
-    filter_fields = ('id', 'slug')
 
-class CursoGrupoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
 
-    model = CursoGrupo
+class CursoGrupoViewSet(AuthenticateMixin, CursoMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                        viewsets.GenericViewSet):
+
     serializer_class = CursoGrupoSerializer
-    filter_fields = ('id', 'curso__id')
 
-class GrupoAlumnoViewSet(AuthenticateMixin, viewsets.ModelViewSet):
+
+class GrupoAlumnoViewSet(AuthenticateMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                        viewsets.GenericViewSet):
 
     model = GrupoAlumno
     serializer_class = GrupoAlumnoSerializer

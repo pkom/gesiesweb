@@ -4,7 +4,7 @@ from .views import CursoViewSet, CursoGrupoViewSet, GrupoAlumnoViewSet, ParteVie
 
 router = DefaultRouter()
 router.register(r'cursos', CursoViewSet)
-router.register(r'cursogrupos', CursoGrupoViewSet)
+router.register(r'cursogrupos', CursoGrupoViewSet, base_name='grupos')
 router.register(r'grupoalumnos', GrupoAlumnoViewSet)
 router.register(r'partes', ParteViewSet)
 router.register(r'parteseguimientos', ParteSeguimientoViewSet)

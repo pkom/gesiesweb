@@ -36,13 +36,6 @@ class ParteSerializer(serializers.ModelSerializer):
                    'fecha', 'parte', 'con_parte', 'comunicado', 'cerrado', 'seguimientos')
 
 
-class GrupoSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Grupo
-        fields = ( 'id', 'grupo', 'descripcion', 'slug')
-
-
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -63,26 +56,30 @@ class CursoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Curso
+        fields = ('id', 'curso', 'slug')
 
 
-class CursoProfesorSerializer(serializers.ModelSerializer):
+class GrupoCursoSerializer(serializers.ModelSerializer):
 
-    profesor = ProfesorSerializer()
-#    curso = CursoSerializer()
+    grupo = serializers.CharField(source='grupo.grupo')
+    tutor_id = serializers.IntegerField(source='tutor.id')
+    tutor  = serializers.CharField(source='get_nombre_completo')
+    tutor_foto = serializers.CharField(source='tutor.get_foto')
+    #tutor_foto = serializers.Field('tutor.profesor.foto.url')
 
-    class Meta:
-        model = CursoProfesor
-        fields = ( 'id', 'profesor', 'es_responsable')
-
-class CursoGrupoSerializer(serializers.ModelSerializer):
-
-    grupo = GrupoSerializer()
-    tutor = CursoProfesorSerializer()
-#    curso = CursoSerializer()
 
     class Meta:
         model = CursoGrupo
-        fields = ( 'id', 'grupo', 'tutor')
+        fields = ( 'id', 'grupo', 'tutor_id', 'tutor', 'tutor_foto')
+
+
+class CursoGrupoSerializer(serializers.ModelSerializer):
+
+    grupos = GrupoCursoSerializer(many=True)
+
+    class Meta:
+        model = Curso
+        fields = ('id', 'curso', 'slug', 'grupos')
 
 
 class AlumnoSerializer(serializers.ModelSerializer):
@@ -103,7 +100,7 @@ class CursoAlumnoSerializer(serializers.ModelSerializer):
 
 class GrupoAlumnoSerializer(serializers.ModelSerializer):
 
-    cursogrupo = CursoGrupoSerializer()
+    cursogrupo = serializers.RelatedField()
     cursoalumno = CursoAlumnoSerializer()
 
     class Meta:

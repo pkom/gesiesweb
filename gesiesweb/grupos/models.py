@@ -30,12 +30,15 @@ class Grupo(TimeStampedModel):
 
 class CursoGrupo(TimeStampedModel):
 
-    curso = models.ForeignKey(Curso)
+    curso = models.ForeignKey(Curso, related_name='grupos')
     grupo = models.ForeignKey(Grupo)
     tutor = models.ForeignKey(CursoProfesor, null=True, blank=True)
 
     def __unicode__(self):
         return u"%s - %s (%s)" % (self.curso, self.grupo, self.tutor if self.tutor else u'Sin tutoría asignada')
+
+    def get_nombre_completo(self):
+        return self.tutor.get_nombre_completo()
 
     class Meta:
         unique_together = (("curso", "grupo"),)
@@ -44,8 +47,8 @@ class CursoGrupo(TimeStampedModel):
 
 class GrupoAlumno(TimeStampedModel):
 
-    cursogrupo = models.ForeignKey(CursoGrupo)
-    cursoalumno = models.ForeignKey(CursoAlumno)
+    cursogrupo = models.ForeignKey(CursoGrupo, related_name='grupos')
+    cursoalumno = models.ForeignKey(CursoAlumno, related_name='alumnos')
 
     def __unicode__(self):
         return u"%s - %s" % (self.cursogrupo, self.cursoalumno)

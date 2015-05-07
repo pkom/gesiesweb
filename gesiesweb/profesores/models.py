@@ -53,7 +53,7 @@ class Profesor(TimeStampedModel):
 
     def get_nombre_completo(self):
 
-        return u"%s, %s (%s)" % (self.user.last_name, self.user.first_name, self.user.username)
+        return u"%s, %s" % (self.user.last_name, self.user.first_name)
 
     class Meta:
 
