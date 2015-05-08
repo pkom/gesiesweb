@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import admin
 
 from core.views import HomeTemplateView, AboutTemplateView, LoginView
-from api.urls import router
+
 
 admin.autodiscover()
 
@@ -48,7 +48,7 @@ urlpatterns = patterns('',
                 namespace='parte')),
 
     # API
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include('api.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     # Uncomment the next line to enable the admin:

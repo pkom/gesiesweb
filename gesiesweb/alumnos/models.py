@@ -3,7 +3,7 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 
-from sorl.thumbnail import ImageField
+from sorl.thumbnail import ImageField, get_thumbnail
 
 from cursos.models import Curso
 
@@ -32,8 +32,8 @@ class Alumno(TimeStampedModel):
 
 class CursoAlumno(TimeStampedModel):
 
-    curso = models.ForeignKey(Curso)
-    alumno = models.ForeignKey(Alumno)
+    curso = models.ForeignKey(Curso, related_name='cursoalumnos')
+    alumno = models.ForeignKey(Alumno, related_name='alumnos')
 
     def __unicode__(self):
 
@@ -42,6 +42,13 @@ class CursoAlumno(TimeStampedModel):
     def get_nombre_completo(self):
 
         return self.alumno.get_nombre_completo()
+
+    def get_foto(self):
+
+        if self.alumno.foto:
+            return u"%s" % (get_thumbnail(self.alumno.foto, '50x40').url)
+        else:
+            return u""
 
     class Meta:
         unique_together = (("curso", "alumno"),)

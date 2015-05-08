@@ -25,9 +25,9 @@ class Departamento(TimeStampedModel):
 
 
 class CursoDepartamento(TimeStampedModel):
-    curso = models.ForeignKey(Curso)
-    departamento = models.ForeignKey(Departamento)
-    jefe = models.ForeignKey(CursoProfesor, null=True, blank=True)
+    curso = models.ForeignKey(Curso, related_name='cursodepartamentos')
+    departamento = models.ForeignKey(Departamento, related_name='departamentos')
+    jefe = models.ForeignKey(CursoProfesor, null=True, blank=True, related_name='jefes')
 
     def __unicode__(self):
         return u"%s - %s (%s)" % (self.curso, self.departamento, self.jefe if self.jefe else u'Sin jefe asignado')
@@ -37,8 +37,8 @@ class CursoDepartamento(TimeStampedModel):
         ordering = [ 'curso__curso', 'departamento__departamento' ]
 
 class DepartamentoProfesor(TimeStampedModel):
-    cursodepartamento = models.ForeignKey(CursoDepartamento)
-    cursoprofesor = models.ForeignKey(CursoProfesor)
+    cursodepartamento = models.ForeignKey(CursoDepartamento, related_name='cursodepartamentos')
+    cursoprofesor = models.ForeignKey(CursoProfesor, related_name='cursoprofesores')
 
     def __unicode__(self):
         return u"%s - %s" % (self.cursodepartamento, self.cursoprofesor)

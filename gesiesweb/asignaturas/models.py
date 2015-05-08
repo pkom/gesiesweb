@@ -15,8 +15,8 @@ class Asignatura(TimeStampedModel):
         ordering = [ 'abreviatura' ]
 
 class DepartamentoAsignatura(TimeStampedModel):
-    departamento = models.ForeignKey(Departamento)
-    asignatura = models.ForeignKey(Asignatura)
+    departamento = models.ForeignKey(Departamento, related_name='departamentoasignaturas')
+    asignatura = models.ForeignKey(Asignatura, related_name='asignaturas')
 
     def __unicode__(self):
         return u"%s - %s" % (self.departamento, self.asignatura)

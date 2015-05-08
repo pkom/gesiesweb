@@ -30,9 +30,9 @@ class Grupo(TimeStampedModel):
 
 class CursoGrupo(TimeStampedModel):
 
-    curso = models.ForeignKey(Curso, related_name='grupos')
-    grupo = models.ForeignKey(Grupo)
-    tutor = models.ForeignKey(CursoProfesor, null=True, blank=True)
+    curso = models.ForeignKey(Curso, related_name='cursogrupos')
+    grupo = models.ForeignKey(Grupo, related_name='grupos')
+    tutor = models.ForeignKey(CursoProfesor, null=True, blank=True, related_name='tutores')
 
     def __unicode__(self):
         return u"%s - %s (%s)" % (self.curso, self.grupo, self.tutor if self.tutor else u'Sin tutoría asignada')
@@ -47,7 +47,7 @@ class CursoGrupo(TimeStampedModel):
 
 class GrupoAlumno(TimeStampedModel):
 
-    cursogrupo = models.ForeignKey(CursoGrupo, related_name='grupos')
+    cursogrupo = models.ForeignKey(CursoGrupo, related_name='grupoalumnos')
     cursoalumno = models.ForeignKey(CursoAlumno, related_name='alumnos')
 
     def __unicode__(self):
@@ -77,8 +77,8 @@ class GrupoAlumno(TimeStampedModel):
 
 class GrupoProfesor(TimeStampedModel):
 
-    cursogrupo = models.ForeignKey(CursoGrupo)
-    cursoprofesor = models.ForeignKey(CursoProfesor)
+    cursogrupo = models.ForeignKey(CursoGrupo, related_name='grupoprofesores')
+    cursoprofesor = models.ForeignKey(CursoProfesor, related_name='profesores')
 
     def __unicode__(self):
         return u"%s - %s" % (self.cursogrupo, self.cursoprofesor)

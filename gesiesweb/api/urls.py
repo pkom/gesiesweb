@@ -1,10 +1,14 @@
-from rest_framework.routers import DefaultRouter
+from django.conf.urls import patterns, url
 
-from .views import CursoViewSet, CursoGrupoViewSet, GrupoAlumnoViewSet, ParteViewSet, ParteSeguimientoViewSet
+from .views import CursoList, CursoDetail, GrupoList, GrupoAlumnosDetail, GrupoProfesoresDetail
 
-router = DefaultRouter()
-router.register(r'cursos', CursoViewSet)
-router.register(r'cursogrupos', CursoGrupoViewSet, base_name='grupos')
-router.register(r'grupoalumnos', GrupoAlumnoViewSet)
-router.register(r'partes', ParteViewSet)
-router.register(r'parteseguimientos', ParteSeguimientoViewSet)
+
+urlpatterns = patterns('',
+
+    url( r'^cursos/$', CursoList.as_view(), name='curso_list'),
+    url( r'^cursodetalle/(?P<pk>[0-9]+)$', CursoDetail.as_view(), name='curso_detail'),
+    url( r'^grupos/(?P<pk>[0-9]+)$', GrupoList.as_view(), name='grupo_list'),
+    url( r'^grupoalumnos/(?P<pk>[0-9]+)$', GrupoAlumnosDetail.as_view(), name='grupo_alumnos_detail'),
+    url( r'^grupoprofesores/(?P<pk>[0-9]+)$', GrupoProfesoresDetail.as_view(), name='grupo_profesores_detail')
+)
+
