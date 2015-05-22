@@ -4,7 +4,7 @@
 
 
 			<!-- #section:basics/navbar.layout -->
-			<div id="navbar" class="navbar navbar-default">
+			<div id="navbar" class="navbar navbar-default navbar-fixed-top">
 				<script type="text/javascript">
 					try{ace.settings.check('navbar' , 'fixed')}catch(e){}
 				</script>
@@ -27,10 +27,9 @@
 						<a href="{% url 'core:home' %}" class="navbar-brand">
 							<small>
 								<i class="fa fa-leaf"></i>
-								GesIESWeb
-							</small>
+								GesIESWeb {{ data.nombre_centro }} {{ request.session.curso_academico_usuario }}
+                            </small>
 						</a>
-
 						<!-- /section:basics/navbar.layout.brand -->
 
 						<!-- #section:basics/navbar.toggle -->

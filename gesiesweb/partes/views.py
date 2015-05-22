@@ -16,7 +16,7 @@ from .grids import ParteGrid, ParteGridResponsable
 
 class ParteTemplateView(LoginRequerido, TemplateView):
 
-    template_name = "partes/partes.html"
+    template_name = "partes/partesnojqgrid.html"
 
     def get_context_data(self, **kwargs):
         context = super(ParteTemplateView, self).get_context_data(**kwargs)

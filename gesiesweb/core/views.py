@@ -15,6 +15,7 @@ from braces.views import LoginRequiredMixin
 
 from django.contrib.auth.models import User
 
+from config.models import Config
 from profesores.models import Profesor, CursoProfesor
 from grupos.models import CursoGrupo, GrupoProfesor
 from departamentos.models import DepartamentoProfesor, CursoDepartamento

@@ -8,8 +8,8 @@ from profesores.models import CursoProfesor
 
 class Parte(TimeStampedModel):
 
-    grupoalumno = models.ForeignKey(GrupoAlumno)
-    cursoprofesor = models.ForeignKey(CursoProfesor)
+    grupoalumno = models.ForeignKey(GrupoAlumno, related_name='partes')
+    cursoprofesor = models.ForeignKey(CursoProfesor, related_name='partes')
     fecha = models.DateField(null=False, auto_now_add=True)
     parte = models.TextField(blank=False)
     con_parte = models.BooleanField(default=False)

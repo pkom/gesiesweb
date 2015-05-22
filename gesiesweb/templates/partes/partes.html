@@ -94,6 +94,7 @@
 			    };
                 $("#mygrid")
                     .jqGrid(data)
+                    .filterToolbar()
                     .navGrid('#pager',
                         { 	//navbar options
                             edit: true,
@@ -152,6 +153,10 @@
                         {
                             //search form
                             recreateForm: true,
+                            searchOnEnter: true,
+                            closeAfterSearch: true,
+                            closeAfterReset: true,
+                            closeOnEscape: true,
                             afterShowSearch: function(e){
                                 var form = $(e[0]);
                                 form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
@@ -294,13 +299,6 @@
                         $('.navtable .ui-pg-button').tooltip({container:'body'});
                         $(table).find('.ui-pg-div').tooltip({container:'body'});
                     }
-
-
-
-
-
-
-
             });
         });
 

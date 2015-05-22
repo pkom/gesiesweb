@@ -28,7 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import operator
-from django.core.serializers import json
+#from django.core.serializers import json
+import json
 from django.db import models
 from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.paginator import Paginator, InvalidPage
@@ -133,8 +134,18 @@ class JqGrid(object):
         for rule in _filters['rules']:
             op, field, data = rule['op'], rule['field'], rule['data']
             # FIXME: Restrict what lookups performed against RelatedFields
-            field_class = self.get_model()._meta.get_field_by_name(field)[0]
-            if isinstance(field_class, models.related.RelatedField):
+            #field_class = self.get_model()._meta.get_field_by_name(field)[0]
+
+            #patch to filter RelatedFields
+            if '__' in field:
+                tmp = field.split('__')[0]
+                field_class = self.get_model()._meta.get_field_by_name(tmp)[0]
+            else:
+                field_class = self.get_model()._meta.get_field_by_name(field)[0]
+
+            #Antes, pero da error con django 1.7
+            #if isinstance(field_class, models.related.RelatedField):
+            if isinstance(field_class, models.ForeignKey):
                 op = 'eq'
             filter_fmt, exclude = filter_map[op]
             filter_str = smart_str(filter_fmt % {'field': field})
@@ -192,9 +203,8 @@ class JqGrid(object):
 
     def get_json(self, request):
         paginator, page, items = self.get_items(request)
-        # comento porque no va bien con los campos foreign
-        #if type(items) != ValuesQuerySet:
-            #items = items.values()
+        if type(items) != ValuesQuerySet:
+            items = items.values(*self.fields)
         data = {
             'page': int(page.number),
             'total': int(paginator.num_pages),
