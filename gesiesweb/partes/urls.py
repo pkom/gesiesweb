@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from .views import ParteTemplateView, ParteResponsableTemplateView, ParteListView, ParteCreateView, ParteDetailView, ParteUpdateView
 from .views import ParteResponsableListView, ParteResponsableBaseDatatableView, ParteDeleteView
 from .views import grid_config, grid_handler, grid_config_responsable, grid_handler_responsable
-from .grids import ver_jqgrid_partes_profesor
+from .grids import partes_profesor, partes_actualiza
 
 
 urlpatterns = patterns("",
@@ -18,7 +18,9 @@ urlpatterns = patterns("",
    url(regex=r'^responsable/data/$', view=ParteResponsableBaseDatatableView.as_view(), name='partes_responsable_json'),
 
 
-   url(r'^partegrid/profesor/$', ver_jqgrid_partes_profesor, name='grid_profesor_data'),
+   url(r'^ajax/partes_profesor/$', partes_profesor, name='partes_profesor'),
+   url(r'^ajax/partes_actualiza/$', partes_actualiza, name='partes_actualiza'),
+
    url(r'^partegrid/$', grid_handler, name='grid_handler'),
    url(r'^partegrid/cfg/$', grid_config, name='grid_config'),
    url(r'^partegridresponsable/$', grid_handler_responsable, name='grid_handler_responsable'),

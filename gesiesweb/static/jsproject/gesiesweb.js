@@ -49,10 +49,11 @@ $(document).ready(function() {
 
     $('.datepicker').datepicker({
         language: 'es',
+        firstDay: 1,
         weekStart: 1,
         autoclose: true,
         todayHighlight: true,
-        format: "dd/mm/yyyy"
-
+        format: "yyyy-mm-dd"
     });
+
 });

@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from cursos.models import Curso
 from grupos.models import CursoGrupo, GrupoAlumno, GrupoProfesor
+from partes.models import Parte
 
 User = get_user_model()
 
@@ -96,3 +97,9 @@ class CursoGrupoProfesoresDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CursoGrupo
         fields = ('id', 'curso', 'grupo', 'descripcion', 'tutor_id', 'tutor', 'tutor_foto', 'grupoprofesores')
+
+class ParteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Parte
+        fields = ('id', 'grupoalumno', 'cursoprofesor', 'fecha', 'parte', 'comunicado', 'con_parte', 'cerrado')

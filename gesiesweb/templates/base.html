@@ -162,18 +162,20 @@
 		</script>
 
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'js/jquery-ui.min.js' %}"></script>
 		<script src="{% static 'js/date-time/bootstrap-datepicker.min.js' %}"></script>
         <script src="{% static 'js/date-time/locales/bootstrap-datepicker.es.js' %}"></script>
+
+        <!-- jqgrid ace
 		<script src="{% static 'js/jqGrid/jquery.jqGrid.js' %}"></script>
 		<script src="{% static 'js/jqGrid/i18n/grid.locale-es.js' %}"></script>
+        -->
+
+        <script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
+   		<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
 
 		<script src="{% static 'js/angular.min.js' %}"></script>
 		<script src="{% static 'js/angular-resource.min.js' %}"></script>
-
-
-		{% block page_specific_plugin_scripts %}
-
-		{% endblock page_specific_plugin_scripts %}
 
 		<!-- ace scripts -->
 		<script src="{% static 'js/ace-elements.min.js' %}"></script>
@@ -185,8 +187,12 @@
 		<script src="{% static 'jsproject/services.js' %}"></script>
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
 
-		{% block extra_js %}
+		{% block page_specific_plugin_scripts %}
 
+		{% endblock page_specific_plugin_scripts %}
+
+
+		{% block extra_js %}
 
 		{% endblock extra_js %}
 
