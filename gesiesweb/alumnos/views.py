@@ -20,14 +20,22 @@ def dame_alumnos_curso(request):
         if request.method == 'GET':
             term = request.GET.get('term', '')
             if term:
-                cursoalumnos = CursoAlumno.objects.filter(Q(alumno__nombre__icontains=term) | Q(alumno__apellidos__icontains=term),
-                                                          curso=request.session['curso_academico_usuario'])
+                try:
+                    cursoalumnos = CursoAlumno.objects.filter(Q(alumno__nombre__icontains=term)
+                                                              | Q(alumno__apellidos__icontains=term),
+                                                              curso=request.session['curso_academico_usuario'])
+                except Exception:
+                    return HttpResponseServerError({"estado": "fallo",
+                                                    "error": "Ha ocurrido un error al procesar la petición en el servidor",
+                                                    "descripcion": Exception.message})
                 result = []
                 for alumno in cursoalumnos:
                     result.append({'id': alumno.id,
                                    'foto': alumno.get_foto(),
                                    'nombre': alumno.get_nombre_completo()})
-                return JsonResponse({"estado": "ok", "alumnos": result}, safe=False)
+                return JsonResponse(result, safe=False)
+            else:
+                return HttpResponseServerError("Error: No se ha recibido el valor a buscar")
         else:
             return HttpResponseNotAllowed({"estado": "fallo",
                                            "error": "No tienes permiso para realizar esta acción"})

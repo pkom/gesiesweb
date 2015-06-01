@@ -21,7 +21,9 @@
 		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" />
 
         <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" />
+
 		<link rel="stylesheet" href="{% static 'css/datepicker.css' %}" />
+
         <link rel="stylesheet" href="{% static 'css/ui.jqgrid.css' %}" />
 
 		<!-- page specific plugin styles -->
@@ -163,6 +165,8 @@
 
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 		<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+		<script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
+
 		<script src="{% static 'js/date-time/bootstrap-datepicker.min.js' %}"></script>
         <script src="{% static 'js/date-time/locales/bootstrap-datepicker.es.js' %}"></script>
 
@@ -174,18 +178,21 @@
         <script src="{% static 'jqgrid/js/i18n/grid.locale-es.js' %}"></script>
    		<script src="{% static 'jqgrid/js/jquery.jqGrid.min.js' %}"></script>
 
+        <!--
 		<script src="{% static 'js/angular.min.js' %}"></script>
 		<script src="{% static 'js/angular-resource.min.js' %}"></script>
+        -->
 
 		<!-- ace scripts -->
 		<script src="{% static 'js/ace-elements.min.js' %}"></script>
 		<script src="{% static 'js/ace.min.js' %}"></script>
 
-		<!-- place project specific Javascript in this file -->
+		<!-- place project specific Javascript in this file
 		<script src="{% static 'jsproject/angularapp.js' %}"></script>
 		<script src="{% static 'jsproject/controllers.js' %}"></script>
 		<script src="{% static 'jsproject/services.js' %}"></script>
 		<script src="{% static 'jsproject/gesiesweb.js' %}"></script>
+        -->
 
 		{% block page_specific_plugin_scripts %}
 
@@ -197,6 +204,7 @@
 		{% endblock extra_js %}
 
         <script>
+            /*
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
           m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -204,7 +212,7 @@
 
           ga('create', 'UA-59049582-1', 'auto');
           ga('send', 'pageview');
-
+            */
         </script>
 	</body>
 </html>
