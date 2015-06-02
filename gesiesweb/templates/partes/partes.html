@@ -171,7 +171,7 @@
                 sortorder: 'desc',
                 datatype: "json",
                 height: 250,
-                colNames:['Id', 'Grupo', '', 'Alumn@', 'Fecha', 'Parte', 'Comunicado', 'Cerrado', 'Parte'],
+                colNames:['Id', 'Grupo', '', 'Alumn@', 'Parte', 'Fecha', 'Parte', 'Comunicado', 'Cerrado'],
                 colModel:[
                     /*
                     {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
@@ -186,7 +186,7 @@
                     },
                     */
                     {name:'id',index:'id', hidden: true,width:15, sortable: false, search: false},
-                    {name:'grupo',index:'grupo', width: 10, align:"center", editable: true, edittype: 'select',
+                    {name:'grupo',index:'grupo', width: 15, align:"center", editable: true, edittype: 'select',
                         searchoptions: {
                             clearSearch: false
                         },
@@ -194,9 +194,10 @@
                             //dataUrl: 'cargar_grupos_curso'
                         }
                     },
-                    {name:'foto',index:'foto', width:10, align:"center", editable: false, sortable: false, search: false,
-                        formatter: formatImage,},
-                    {name:'alumno',index:'alumno', editable: true, sortable: true, edittype: 'text',
+                    {name:'foto',index:'foto', hidden: true, width:10, align:"center", editable: false,
+                        sortable: false, search: false, formatter: formatFoto},
+                    {name:'alumno',index:'alumno', width: 70, editable: true, sortable: true, edittype: 'text',
+                        formatter: formatAlumno, unformat: unformatAlumno,
                         searchoptions: {
                             clearSearch: false
                         },
@@ -225,6 +226,14 @@
                             }
                         }
                     },
+
+                    {name:'parte',index:'parte', sortable:false,editable: true,
+                        formatter: formatParte, unformat: unformatParte, search: false,
+                        edittype:"textarea",
+
+                        editoptions:{rows:"10",cols:"80"}
+                    },
+
                     {name:'fecha',index:'fecha', width:20, align:"center", editable: true,
                         //sorttype: "date",
                         //formatter: 'date',
@@ -236,14 +245,7 @@
                             // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
                             // use it to place a third party control to customize the toolbar
                             dataInit: function (element) {
-                                $(element).datepicker({
-                                        language: 'es',
-                                        firstDay: 1,
-                                        weekStart: 1,
-                                        autoclose: true,
-                                        todayHighlight: true,
-                                        format: "yyyy-mm-dd"
-                                });
+                                $(element).datepicker();
                             }
                         },
 
@@ -299,9 +301,7 @@
                             sopt: ['eq'],
                             clearSearch: false
                         }
-                    },
-                    {name:'parte',index:'parte', hidden: true, width:150, sortable:false,editable: true,
-                        edittype:"textarea", editoptions:{rows:"10",cols:"80"}}
+                    }
                 ],
                 viewrecords : true,
                 rowNum:10,
@@ -387,10 +387,37 @@
                 }, 0);
             }
 
-            // fotos alumnos
-            function formatImage(cellValue, options, rowObject) {
-                var imageHtml = "<img class='nav-user-photo img-circle' src='" + cellValue + "' originalValue='" + cellValue + "' />";
+            // formatea parte
+            function formatParte(cellValue, options, rowObject) {
+                var parteHtml = "<p originalValue='"+cellValue+"'>"+cellValue.substring(0, 100)+"...</p>"
+                //return cellValue.substring(0, 100) + "...";
+                return parteHtml;
+            };
+
+            function unformatParte(cellValue, options, cellObject) {
+                return $(cellObject.html()).attr("originalValue");
+            };
+
+            // formatea foto
+            function formatFoto(cellValue, options, rowObject) {
+                var imageHtml = "<img alt='Foto de "+rowObject.alumno+"' class='nav-user-photo img-circle' src='" + cellValue +
+                        "' originalValue='" + cellValue + "' />";
                 return imageHtml;
+            }
+
+            function unformatFoto(cellValue, options, cellObject) {
+                return $(cellObject.html()).attr("originalValue");
+            }
+
+            // formatea alumno
+            function formatAlumno(cellValue, options, rowObject) {
+                var imageHtml = "<img class='nav-user-photo img-circle' src='" + rowObject.foto +
+                        "' originalValue='" + cellValue + "' />"+"<span>"+cellValue+"</span>";
+                return imageHtml;
+            }
+
+            function unformatAlumno(cellValue, options, cellObject) {
+                return $(cellObject.html()).attr("originalValue");
             }
 
 
@@ -424,7 +451,7 @@
                     refresh: true,
                     refreshicon : 'ace-icon fa fa-refresh green',
                     view: true,
-                    viewicon : 'ace-icon fa fa-search-plus grey',
+                    viewicon : 'ace-icon fa fa-search-plus grey'
                 },
                 {
 
@@ -449,18 +476,33 @@
 
 
                     //edit record form
-                    //closeAfterEdit: true,
-                    //width: 700,
+                    editCaption: 'Modificación de parte',
+                    closeAfterEdit: true,
+                    width: 800,
                     recreateForm: true,
+                    viewPagerButtons: false,
                     beforeShowForm : function(e) {
                         var form = $(e[0]);
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
                         style_edit_form(form);
+                    },
+					afterSubmit : function( data, postdata, oper) {
+						var response = data.responseJSON;
+						if (response.hasOwnProperty("error")) {
+							if(response.error.length) {
+								return [false,response.error ];
+							}
+						}
+						return [true,"",""];
+					},
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.error
                     }
                 },
                 {
                     //new record form
-                    //width: 700,
+                    addCaption: 'Alta de nuevo parte',
+                    width: 800,
                     closeAfterAdd: true,
                     recreateForm: true,
                     viewPagerButtons: false,
@@ -469,6 +511,19 @@
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
                         .wrapInner('<div class="widget-header" />')
                         style_edit_form(form);
+                    },
+					afterSubmit : function( data, postdata, oper) {
+                        debugger;
+						var response = data.responseJSON;
+						if (response.hasOwnProperty("error")) {
+							if(response.error.length) {
+								return [false,response.error ];
+							}
+						}
+						return [true,"",""];
+					},
+                    errorTextFormat: function (data) {
+                        return 'Error: ' + data.error
                     }
                 },
                 {

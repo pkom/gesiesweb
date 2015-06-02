@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from api.serializers import ParteSerializer
 from core.jqgrid import JqGrid
 
+from grupos.models import GrupoAlumno
 from partes.models import Parte
 
 class ParteGrid(JqGrid):
@@ -73,9 +74,9 @@ def partes_profesor(request):
             busqueda = request.GET.get('_search','')
 
             if sord == 'asc':
-                sord = '-'
-            elif sord == 'desc':
                 sord = ''
+            elif sord == 'desc':
+                sord = '-'
 
             partes = Parte.objects.filter(cursoprofesor__id=request.session['curso_profesor'].id)
 
@@ -188,13 +189,44 @@ def partes_actualiza(request):
                 #añadimos nuevo parte
                 parte = Parte()
                 parte.cursoprofesor = request.session['curso_profesor']
+                idalumno = request.POST.get('alumno', '')
+                if not idalumno:
+                    results = {"estado": "fallo", "error": "No se ha seleccionado un alumn@"}
+                    return JsonResponse(results, safe=False)
+                try:
+                    alumno = GrupoAlumno.objects.get(id=idalumno)
+                except GrupoAlumno.DoesNotExist:
+                    results = {"estado": "fallo", "error": "No se ha podido localizar el alumno"}
+                    return JsonResponse(results, safe=False)
+                parte.grupoalumno = alumno
+                parte.fecha = request.POST.get('fecha', '')
+                parte.parte = request.POST.get('parte', '')
+                parte.comunicado = request.POST.get('comunicado', '')
             elif oper == "edit":
                 #modificamos un parte
-                id = request.POST.get('id', '')
-                parte = Parte.objects.get(id=id)
+                idparte = request.POST.get('id', '')
+                if not idparte:
+                    results = {"estado": "fallo", "error": "No se ha seleccionado un parte"}
+                    return JsonResponse(results, safe=False)
+                try:
+                    parte = Parte.objects.get(id=idparte)
+                except Parte.DoesNotExist:
+                    results = {"estado": "fallo", "error": "No se ha podido localizar el parte"}
+                    return JsonResponse(results, safe=False)
                 if request.session['curso_profesor'] == parte.cursoprofesor or request.session['es_responsable']:
-                    # puede modificar el parte
-                    pass
+                    idalumno = request.POST.get('alumno', '')
+                    if not idalumno:
+                        results = {"estado": "fallo", "error": "No se ha seleccionado un alumn@"}
+                        return JsonResponse(results, safe=False)
+                    try:
+                        alumno = GrupoAlumno.objects.get(id=idalumno)
+                    except GrupoAlumno.DoesNotExist:
+                        results = {"estado": "fallo", "error": "No se ha podido localizar el alumno"}
+                        return JsonResponse(results, safe=False)
+                    parte.grupoalumno = alumno
+                    parte.fecha = request.POST.get('fecha', '')
+                    parte.parte = request.POST.get('parte', '')
+                    parte.comunicado = request.POST.get('comunicado', '')
                 else:
                     return HttpResponseNotAllowed({"estado": "fallo",
                                                    "error": "No tienes permiso para realizar esta acción"})
@@ -213,9 +245,7 @@ def partes_actualiza(request):
             try:
                 parte.save()
             except Exception:
-                return HttpResponseServerError({"estado": "fallo",
-                                                "error": "Ha ocurrido un error al procesar la petición en el servidor",
-                                                "descripcion": Exception.message})
+                return HttpResponseServerError(Exception.message)
             results = {"estado": "ok",
                        "parte": ParteSerializer(parte).data}
             return JsonResponse(results, safe=False)

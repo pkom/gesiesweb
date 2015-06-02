@@ -47,6 +47,17 @@ $.ajaxSetup({
 
 $(document).ready(function() {
 
+    $.fn.datepicker.defaults.format = "yyyy-mm-dd";
+    $.fn.datepicker.defaults.language = "es";
+    $.fn.datepicker.defaults.autoclose = false;
+    $.fn.datepicker.defaults.toggleActive = false;
+    $.fn.datepicker.defaults.todayHighlight = true;
+    $.fn.datepicker.defaults.weekStart = 1;
+    $.fn.datepicker.defaults.firstDay = 1;
+    $.fn.datepicker.defaults.showOnFocus = false;
+
+
+/*
     $('.datepicker').datepicker({
         language: 'es',
         firstDay: 1,
@@ -55,5 +66,6 @@ $(document).ready(function() {
         todayHighlight: true,
         format: "yyyy-mm-dd"
     });
+*/
 
 });
