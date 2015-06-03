@@ -1,3 +1,8 @@
+/* jqgrid ace no muestra el primer campo en los dialogos */
+.FormGrid .EditTable tr:first-child {
+    display: table-row;
+}
+
 /* set the size of the datepicker search control for Order Date*/
 #ui-datepicker-div { font-size:11px; }
 

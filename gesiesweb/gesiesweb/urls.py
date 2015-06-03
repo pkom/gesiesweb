@@ -42,6 +42,11 @@ urlpatterns = patterns('',
         include('alumnos.urls',
                 namespace='alumno')),
 
+    # urls grupos
+    url(r'^grupos/',
+        include('grupos.urls',
+                namespace='grupo')),
+
     # urls partes
     url(r'^partes/',
         include('partes.urls',

@@ -174,7 +174,7 @@
                 colNames:['Id', 'Grupo', '', 'Alumn@', 'Parte', 'Fecha', 'Parte', 'Comunicado', 'Cerrado'],
                 colModel:[
                     /*
-                    {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false,
+                    {name:'myac',index:'', width:80, fixed:true, sortable:false, resize:false, sortable: false, search: false,
                         formatter:'actions',
                         formatoptions:{
                             keys:true,
@@ -191,18 +191,19 @@
                             clearSearch: false
                         },
                         editoptions: {
-                            //dataUrl: 'cargar_grupos_curso'
+                            //dataUrl: '{% url "grupo:dame_grupos_curso" %}'
                         }
                     },
                     {name:'foto',index:'foto', hidden: true, width:10, align:"center", editable: false,
                         sortable: false, search: false, formatter: formatFoto},
-                    {name:'alumno',index:'alumno', width: 70, editable: true, sortable: true, edittype: 'text',
+                    {name:'alumno',index:'alumno', width: 70, editable: true, sortable: true, edittype: 'select',
                         formatter: formatAlumno, unformat: unformatAlumno,
                         searchoptions: {
                             clearSearch: false
                         },
                         editoptions: {
-                            //dataUrl: 'cargar_alumnos_grupo'
+                            //dataUrl: '{% url "alumno:dame_alumnos_curso" %}'
+                            /*
                             // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
                             // use it to place a third party control to customize the toolbar
                             dataInit: function (element) {
@@ -224,6 +225,7 @@
                                     }
                                 });
                             }
+                            */
                         }
                     },
 
@@ -481,6 +483,7 @@
                     width: 800,
                     recreateForm: true,
                     viewPagerButtons: false,
+                    afterShowForm: cargaGrupos,
                     beforeShowForm : function(e) {
                         var form = $(e[0]);
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
@@ -570,6 +573,53 @@
                 }
             )
 
+            function cargaGrupos() {
+                // first of all load the groups
+				var current = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).grupo;
+				$("#grupo")
+                     .html("<option value=''>Cargando grupos...</option>")
+                     .attr("disabled", "disabled");
+                $.ajax({
+                    url: '{% url "grupo:dame_grupos_curso" %}',
+                    type: "GET",
+                    success: function (grupos) {
+                        $("#grupo")
+                             .removeAttr("disabled")
+                             //.html(gruposHtml);
+                         $.each(grupos, function(key, val){
+                            $("#grupo").append('<option id="' + val.id + '">' + val.grupo +'</option>');
+                        });
+                        actualizaAlumnosCallBack($("#grupo").val(), true);
+                        // then hook the change event of the grupo dropdown so that it updates students all the time
+                        $("#grupo").bind("change", function (e) {
+                            actualizaAlumnosCallBack($("#grupo").val(), false);
+                        });
+						//if(setselected) {
+						//	$("#grupo").val( current );
+						//}
+                    }
+                });
+            }
+
+            function actualizaAlumnosCallBack(grupo, setselected) {
+				var current = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).alumno;
+				$("#alumno")
+                     .html("<option value=''>Cargando alumnos...</option>")
+                     .attr("disabled", "disabled");
+
+                $.ajax({
+                    url: '{% url "alumno:dame_alumnos_curso" %}',
+                    type: "GET",
+                    success: function (alumnosHtml) {
+                        $("#alumno")
+                             .removeAttr("disabled")
+                             .html(alumnosHtml);
+						if(setselected) {
+							$("#alumno").val( current );
+						}
+                    }
+                });
+            }
 
 
             function style_edit_form(form) {
