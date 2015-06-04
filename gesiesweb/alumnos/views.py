@@ -6,7 +6,8 @@ from django.views.generic import ListView
 
 from rest_framework import viewsets
 
-from .models import Alumno, CursoAlumno
+from .models import Alumno
+from grupos.models import GrupoAlumno
 
 
 # Create your views here.
@@ -18,18 +19,24 @@ class ConfigListView(ListView):
 def dame_alumnos_curso(request):
     if request.user.is_authenticated():
         if request.method == 'GET':
-            try:
-                cursoalumnos = CursoAlumno.objects.filter(curso=request.session['curso_academico_usuario'])
-            except Exception:
-                return HttpResponseServerError({"estado": "fallo",
-                                                "error": "Ha ocurrido un error al procesar la petición en el servidor",
-                                                "descripcion": Exception.message})
-            result = []
-            for alumno in cursoalumnos:
-                result.append({'id': alumno.id,
-                               'foto': alumno.get_foto(),
-                               'nombre': alumno.get_nombre_completo()})
-            return JsonResponse(result, safe=False)
+            term = request.GET.get('term', '')
+            if term:
+                try:
+                    grupoalumnos = GrupoAlumno.objects.filter(cursogrupo__curso=request.session['curso_academico_usuario'],
+                                                              cursogrupo_id=term)
+                except Exception:
+                    return HttpResponseServerError({"estado": "fallo",
+                                                    "error": "Ha ocurrido un error al procesar la petición en el servidor",
+                                                    "descripcion": Exception.message})
+                result = []
+                for alumno in grupoalumnos:
+                    result.append({'id': alumno.id,
+                                   'foto': alumno.cursoalumno.get_foto(),
+                                   'nombre': alumno.cursoalumno.get_nombre_completo()})
+                return JsonResponse(result, safe=False)
+            else:
+                result = {"estado": "fallo", "error": "No se ha pasado un grupo"}
+                return JsonResponse(result, safe=False)
         else:
             return HttpResponseNotAllowed({"estado": "fallo",
                                            "error": "No tienes permiso para realizar esta acción"})

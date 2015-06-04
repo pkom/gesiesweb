@@ -168,7 +168,9 @@ def partes_profesor(request):
                         "con_parte": r.con_parte,
                         "comunicado": r.comunicado,
                         "cerrado": r.cerrado,
-                        "parte": r.parte}
+                        "parte": r.parte,
+                        "id_grupoalumno": r.grupoalumno.id,
+                        "id_cursogrupo": r.grupoalumno.cursogrupo.id}
                 filas.append(fila)
                 i += 1
             results = {"page": page, "total": paginator.num_pages, "records": n_partes, "rows": filas}
