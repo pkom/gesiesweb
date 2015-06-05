@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseServerError
 from django.db.models import Q
 from django.core.urlresolvers import reverse_lazy
@@ -81,59 +83,77 @@ def partes_profesor(request):
             partes = Parte.objects.filter(cursoprofesor__id=request.session['curso_profesor'].id)
 
             if busqueda == 'true':
-                if request.GET.get('grupo'):
-                    grupo = request.GET.get('grupo')
-                    partes = partes.filter(grupoalumno__cursogrupo__grupo__grupo__contains=grupo)
-                if request.GET.get('alumno'):
-                    nombre = request.GET.get('alumno')
-                    partes = partes.filter(Q(grupoalumno__cursoalumno__alumno__nombre__icontains=nombre) |
-                                           Q(grupoalumno__cursoalumno__alumno__apellidos__icontains=nombre))
-                if request.GET.get('fecha'):
-                    fecha = request.GET.get('fecha')
-                    #fechafield = datetime.strptime(fecha, '%Y-%m-%d')
-                    #partes = partes.filter(fecha__ge=fechafield)
-                    partes = partes.filter(fecha__range=[fecha, "9999-12-31"])
-                if request.GET.get('con_parte'):
-                    con_parte = request.GET.get('con_parte')
-                    if con_parte == 'True':
-                        partes = partes.filter(con_parte=True)
-                    else:
-                        partes = partes.filter(con_parte=False)
-                if request.GET.get('comunicado'):
-                    comunicado = request.GET.get('comunicado')
-                    if comunicado == 'True':
-                        partes = partes.filter(comunicado=True)
-                    else:
-                        partes = partes.filter(comunicado=False)
-                if request.GET.get('cerrado'):
-                    cerrado = request.GET.get('cerrado')
-                    if cerrado == 'True':
-                        partes = partes.filter(cerrado=True)
-                    else:
-                        partes = partes.filter(cerrado=False)
+                filter_map = {
+                    # jqgrid op: (django_lookup, use_exclude)
+                    'ne': ('%(field)s__exact', True),
+                    'bn': ('%(field)s__startswith', True),
+                    'en': ('%(field)s__endswith', True),
+                    'nc': ('%(field)s__contains', True),
+                    'ni': ('%(field)s__in', True),
+                    'in': ('%(field)s__in', False),
+                    'eq': ('%(field)s__exact', False),
+                    'bw': ('%(field)s__startswith', False),
+                    'gt': ('%(field)s__gt', False),
+                    'ge': ('%(field)s__gte', False),
+                    'lt': ('%(field)s__lt', False),
+                    'le': ('%(field)s__lte', False),
+                    'ew': ('%(field)s__endswith', False),
+                    'cn': ('%(field)s__contains', False)
+                }
+                _filters = request.GET.get('filters')
+                try:
+                    filters = _filters and json.loads(_filters)
+                except ValueError:
+                    filters = None
 
+                if filters:
+                    for rule in filters['rules']:
+                        op, field, data = rule['op'], rule['field'], rule['data']
+                        if field == "alumno":
+                            partes = partes.filter(Q(grupoalumno__cursoalumno__alumno__nombre__icontains=data) |
+                                               Q(grupoalumno__cursoalumno__alumno__apellidos__icontains=data))
+                        if field == "grupo":
+                            partes = partes.filter(grupoalumno__cursogrupo_id=data)
+                        if field == "fecha":
+                            partes = partes.filter(fecha__range=[data, "9999-12-31"])
+                        if field == "con_parte":
+                            partes = partes.filter(con_parte=True if data == 'True' else False)
+                        if field == "comunicado":
+                            partes = partes.filter(comunicado=True if data == 'True' else False)
+                        if field == "cerrado":
+                            partes = partes.filter(cerrado=True if data == 'True' else False)
 
-                campo = request.GET.get('searchField','')
-                operacion = request.GET.get('searchOper','')
-                palabra = request.GET.get('searchString','')
-
-                if campo == 'grupo':
-                    if operacion == "eq":
-                        students = partes.filter(grupoalumno__cursogrupo__grupo__grupo__exact=palabra)
-                    elif operacion == "nq":
-                        students = partes.exclude(grupoalumno__cursogrupo__grupo__grupo__exact=palabra)
-                    elif operacion == "bw":
-                        students = partes.filter(grupoalumno__cursogrupo__grupo__grupo__startswith=palabra)
-                    elif operacion == "bn":
-                        students = partes.exclude(grupoalumno__cursogrupo__grupo__grupo__startswith=palabra)
-                    elif operacion == "ew":
-                        students = partes.filter(grupoalumno__cursogrupo__grupo__grupo__endswith=palabra)
-                    elif operacion == "en":
-                        students = partes.exclude(grupoalumno__cursogrupo__grupo__grupo__endswith=palabra)
-                    elif operacion == "cn":
-                        students = partes.filter(grupoalumno__cursogrupo__grupo__grupo__contains=palabra)
-                    elif operacion == "nc":
-                        students = partes.exclude(grupoalumno__cursogrupo__grupo__grupo__contains=palabra)
+                else:
+                    if request.GET.get('grupo'):
+                        grupo = request.GET.get('grupo')
+                        partes = partes.filter(grupoalumno__cursogrupo__grupo__grupo__contains=grupo)
+                    if request.GET.get('alumno'):
+                        nombre = request.GET.get('alumno')
+                        partes = partes.filter(Q(grupoalumno__cursoalumno__alumno__nombre__icontains=nombre) |
+                                               Q(grupoalumno__cursoalumno__alumno__apellidos__icontains=nombre))
+                    if request.GET.get('fecha'):
+                        fecha = request.GET.get('fecha')
+                        #fechafield = datetime.strptime(fecha, '%Y-%m-%d')
+                        #partes = partes.filter(fecha__ge=fechafield)
+                        partes = partes.filter(fecha__range=[fecha, "9999-12-31"])
+                    if request.GET.get('con_parte'):
+                        con_parte = request.GET.get('con_parte')
+                        if con_parte == 'True':
+                            partes = partes.filter(con_parte=True)
+                        else:
+                            partes = partes.filter(con_parte=False)
+                    if request.GET.get('comunicado'):
+                        comunicado = request.GET.get('comunicado')
+                        if comunicado == 'True':
+                            partes = partes.filter(comunicado=True)
+                        else:
+                            partes = partes.filter(comunicado=False)
+                    if request.GET.get('cerrado'):
+                        cerrado = request.GET.get('cerrado')
+                        if cerrado == 'True':
+                            partes = partes.filter(cerrado=True)
+                        else:
+                            partes = partes.filter(cerrado=False)
 
             if str(sidx) == "grupo":
                 partes = partes.order_by(str(sord) + str("grupoalumno__cursogrupo__grupo__grupo"), '-fecha', '-id')

@@ -187,25 +187,74 @@
                     },
                     */
                     {name:'id',index:'id', hidden: true,width:15, sortable: false, search: false},
-                    {name:'grupo',index:'grupo', width: 25, align:"center", editable: true, edittype: 'select',
+                    {name:'grupo',index:'grupo', width: 20, align:"center", editable: true, edittype: 'select',
+                        //formatter: 'select',
+                        stype: 'select',
                         searchoptions: {
-                            clearSearch: false
+                            clearSearch: false,
+                            dataUrl: '{% url "grupo:dame_grupos_curso" %}',
+                            buildSelect: buildSelectGruposSearch
                         },
                         editoptions: {
                             dataUrl: '{% url "grupo:dame_grupos_curso" %}',
-                            buildSelect: buildSelectGrupos
+                            buildSelect: buildSelectGrupos,
+                            dataInit: function (elem) {
+                                // cargamos los alumnos del grupo
+                				var grupo = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_cursogrupo;
+                				var alumnoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
+                                $.ajax({
+                                    url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+grupo,
+                                    type: "GET",
+                                    success: function (alumnos) {
+                                        debugger;
+                                        var values = '';
+                                        $.each(alumnos, function(i, item) {
+                                            values += item.id + ':' + item.nombre +';';
+                                        });
+                                        values = values.substring(0, values.length-1);
+                                        $(grid_selector).setColProp('alumno', { editoptions: { value : values }});
+                                    }
+                                });
+                            },
+                            dataEvents: [
+                                {
+                                    type: 'change',
+                                    fn: function(e) {
+                                        debugger;
+                                        var grupo = $(elem).val();
+                                        // cargamos los alumnos del grupo
+                                        var alumnoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
+                                        $("#alumno")
+                                         .html("<option value='0'>Cargando alumnos...</option>")
+                                         .attr("disabled", "disabled");
+                                        $.ajax({
+                                            url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+grupo,
+                                            type: "GET",
+                                            success: function (alumnos) {
+                                                debugger;
+                                                $("#alumno option[value='0']").remove();
+                                                $("#alumno").removeAttr("disabled");
+                                                $.each(alumnos, function(key, val) {
+                                                  $("#alumno").append('<option value="' + val.id + '">' + val.nombre + '</option>');
+                                                });
+                                                $("#alumno").val( alumnoactual );
+                                            }
+                                        });
+                                    }
+                                }
+                            ]
                         }
                     },
                     {name:'foto',index:'foto', hidden: true, width:10, align:"center", editable: false,
                         sortable: false, search: false, formatter: formatFoto},
                     {name:'alumno',index:'alumno', editable: true, sortable: true, edittype: 'select',
-                        //formatter: formatAlumno, unformat: unformatAlumno,
+                        formatter: formatAlumno, unformat: unformatAlumno,
                         searchoptions: {
                             clearSearch: false
                         },
-                        editoptions: {
-                            value: '0:Selecciona alumn@...'
-                        }
+                        //editoptions: {
+                        //    value: '0:Selecciona alumn@...'
+                        //}
                     },
 
                     {name:'parte',index:'parte', sortable:false,editable: true, hidden: true,
@@ -347,7 +396,7 @@
 
             //enable search/filter toolbar
             //jQuery(grid_selector).jqGrid('filterToolbar',{defaultSearch:true,stringResult:true})
-            jQuery(grid_selector).filterToolbar({});
+            jQuery(grid_selector).filterToolbar({stringResult: true, searchOnEnter: true, defaultSearch : "cn"});
 
 
             //switch element when editing inline
@@ -390,8 +439,8 @@
 
             // formatea alumno
             function formatAlumno(cellValue, options, rowObject) {
-                var imageHtml = "<div id='"+rowObject.id+"'><img class='nav-user-photo img-circle' src='" + rowObject.foto +
-                        "' originalValue='" + cellValue + "' />"+"<span>"+cellValue+"</span></div>";
+                var imageHtml = "<img class='nav-user-photo img-circle' src='" + rowObject.foto +
+                        "' originalValue='" + rowObject.id_grupoalumno + "' />"+"<span>"+cellValue+"</span>";
                 return imageHtml;
             }
 
@@ -440,7 +489,7 @@
                     width: 800,
                     recreateForm: true,
                     viewPagerButtons: false,
-                    afterShowForm: cargaAlumnos,
+                    //afterShowForm: cargaAlumnos,
                     beforeShowForm : function(e) {
                         var form = $(e[0]);
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
@@ -530,6 +579,21 @@
                 }
             )
 
+            function buildSelectGruposSearch(grupos) {
+                // first of all load the groups
+                var response = jQuery.parseJSON(grupos);
+
+                var s = '<select><option value="">Todos</option>';
+
+                jQuery.each(response, function(i, item) {
+
+                    s += '<option value="'+response[i].id+'">'+response[i].grupo+'</option>';
+
+                });
+                return s + "</select>";
+            }
+
+
             function buildSelectGrupos(grupos) {
                 // first of all load the groups
                 var response = jQuery.parseJSON(grupos);
@@ -546,21 +610,23 @@
 
             function cargaAlumnos() {
                 // first of all update the student based on the group
-                actualizaAlumnosCallBack($("#grupo").val(), true);
+                var grupoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_cursogrupo;
+                actualizaAlumnosCallBack(grupoactual, true);
                 // then hook the change event of the group dropdown so that it updates students all the time
                 $("#grupo").bind("change", function (e) {
+                    debugger;
                     actualizaAlumnosCallBack($("#grupo").val(), false);
                 });
             }
 
             function actualizaAlumnosCallBack(grupo, setselected) {
-				var current = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
+				var alumnoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
 				$("#alumno")
                      .html("<option value='0'>Cargando alumnos...</option>")
                      .attr("disabled", "disabled");
 
                 $.ajax({
-                    url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+$("#grupo").val(),
+                    url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+grupo,
                     type: "GET",
                     success: function (alumnos) {
                         $("#alumno option[value='0']").remove();
@@ -570,7 +636,7 @@
                           $("#alumno").append('<option value="' + val.id + '">' + val.nombre + '</option>');
                         });
                         if(setselected) {
-                            $("#alumno").val( current );
+                            $("#alumno").val( alumnoactual );
                         }
                     }
                 })
