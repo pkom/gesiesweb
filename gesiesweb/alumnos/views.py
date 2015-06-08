@@ -19,24 +19,23 @@ class ConfigListView(ListView):
 def dame_alumnos_curso(request):
     if request.user.is_authenticated():
         if request.method == 'GET':
-            term = request.GET.get('term', '')
-            if term:
-                try:
+            id_grupo = request.GET.get('idgrupo', '')
+            try:
+                if id_grupo:
                     grupoalumnos = GrupoAlumno.objects.filter(cursogrupo__curso=request.session['curso_academico_usuario'],
-                                                              cursogrupo_id=term)
-                except Exception:
-                    return HttpResponseServerError({"estado": "fallo",
-                                                    "error": "Ha ocurrido un error al procesar la petición en el servidor",
-                                                    "descripcion": Exception.message})
-                result = []
-                for alumno in grupoalumnos:
-                    result.append({'id': alumno.id,
-                                   'foto': alumno.cursoalumno.get_foto(),
-                                   'nombre': alumno.cursoalumno.get_nombre_completo()})
-                return JsonResponse(result, safe=False)
-            else:
-                result = {"estado": "fallo", "error": "No se ha pasado un grupo"}
-                return JsonResponse(result, safe=False)
+                                                          cursogrupo_id=id_grupo)
+                else:
+                    grupoalumnos = GrupoAlumno.objects.filter(cursogrupo__curso=request.session['curso_academico_usuario'])
+            except Exception:
+                return HttpResponseServerError({"estado": "fallo",
+                                                "error": "Ha ocurrido un error al procesar la petición en el servidor",
+                                                "descripcion": Exception.message})
+            result = []
+            for alumno in grupoalumnos:
+                result.append({'id': alumno.id,
+                               #'foto': alumno.cursoalumno.get_foto(),
+                               'nombre': alumno.cursoalumno.get_nombre_completo()})
+            return JsonResponse(result, safe=False)
         else:
             return HttpResponseNotAllowed({"estado": "fallo",
                                            "error": "No tienes permiso para realizar esta acción"})

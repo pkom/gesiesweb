@@ -199,66 +199,51 @@
                             dataUrl: '{% url "grupo:dame_grupos_curso" %}',
                             buildSelect: buildSelectGrupos,
                             dataInit: function (elem) {
-                                // cargamos los alumnos del grupo
-                				var grupo = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_cursogrupo;
-                				var alumnoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
-                                $.ajax({
-                                    url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+grupo,
-                                    type: "GET",
-                                    success: function (alumnos) {
-                                        debugger;
-                                        var values = '';
-                                        $.each(alumnos, function(i, item) {
-                                            values += item.id + ':' + item.nombre +';';
-                                        });
-                                        values = values.substring(0, values.length-1);
-                                        $(grid_selector).setColProp('alumno', { editoptions: { value : values }});
-                                    }
+                                var grupo = $(grid_selector).jqGrid('getRowData', $(grid_selector)[0].p.selrow).id_cursogrupo;
+                                $(grid_selector).jqGrid('setColProp', 'alumno', { editoptions: {
+                                    dataUrl: '{% url "alumno:dame_alumnos_curso" %}'+'?idgrupo='+grupo,
+                                    buildSelect: buildSelectAlumnos}
                                 });
                             },
                             dataEvents: [
-                                {
-                                    type: 'change',
-                                    fn: function(e) {
-                                        debugger;
-                                        var grupo = $(elem).val();
-                                        // cargamos los alumnos del grupo
-                                        var alumnoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
-                                        $("#alumno")
-                                         .html("<option value='0'>Cargando alumnos...</option>")
-                                         .attr("disabled", "disabled");
-                                        $.ajax({
-                                            url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+grupo,
-                                            type: "GET",
-                                            success: function (alumnos) {
-                                                debugger;
-                                                $("#alumno option[value='0']").remove();
-                                                $("#alumno").removeAttr("disabled");
-                                                $.each(alumnos, function(key, val) {
-                                                  $("#alumno").append('<option value="' + val.id + '">' + val.nombre + '</option>');
-                                                });
-                                                $("#alumno").val( alumnoactual );
-                                            }
-                                        });
-                                    }
+                                { type: 'change', fn: function (e) {
+                                    var alumno, alumnoSelect, parentWidth, $row,
+                                                $grupoElem = $(e.target);
+                                                newOptions = '';
+                                    $.ajax({
+                                        url: '{% url "alumno:dame_alumnos_curso" %}'+'?idgrupo='+ $grupoElem.val(),
+                                        type: "GET",
+                                        success: function (alumnos) {
+                                            $.each(alumnos, function(i, alumno) {
+                                                newOptions += '<option role="option" value="' + alumno.id + '">' +
+                                                    alumno.nombre + '</option>';
+                                            });
+                                            $(grid_selector).jqGrid('setColProp', 'alumno', { editoptions: {
+                                                dataUrl: '{% url "alumno:dame_alumnos_curso" %}'+'?idgrupo='+$grupoElem.val(),
+                                                buildSelect: buildSelectAlumnos}
+                                            });
+                                            $grupoElem.closest('form.FormGrid').find("select#alumno.FormElement").html(newOptions);
+                                        }
+                                    });
                                 }
-                            ]
+                            }]
                         }
                     },
                     {name:'foto',index:'foto', hidden: true, width:10, align:"center", editable: false,
-                        sortable: false, search: false, formatter: formatFoto},
+                        sortable: false, search: false
+                    },
                     {name:'alumno',index:'alumno', editable: true, sortable: true, edittype: 'select',
                         formatter: formatAlumno, unformat: unformatAlumno,
                         searchoptions: {
                             clearSearch: false
                         },
-                        //editoptions: {
-                        //    value: '0:Selecciona alumn@...'
-                        //}
+                        editoptions: {
+                            dataUrl: '{% url "alumno:dame_alumnos_curso" %}',
+                            buildSelect: buildSelectAlumnos
+                        }
                     },
 
                     {name:'parte',index:'parte', sortable:false,editable: true, hidden: true,
-                        //formatter: formatParte, unformat: unformatParte,
                         search: false,
                         edittype:"textarea",
                         editoptions:{rows:"10",cols:"80"},
@@ -266,36 +251,29 @@
                     },
 
                     {name:'fecha',index:'fecha', width:20, align:"center", editable: true,
-                        //sorttype: "date",
-                        //formatter: 'date',
-						//srcformat: 'Y-m-d',
-						//newformat: 'm/d/Y',
+                        formatter: 'date',
+                        formatoptions: {
+                            srcformat: 'Y-m-d',
+                            newformat: 'Y-m-d'
+                        },
                         searchoptions: {
                             sopt: ['ge'],
                             clearSearch: false,
                             // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
                             // use it to place a third party control to customize the toolbar
                             dataInit: function (element) {
-                                $(element).datepicker();
+                                $(element).datepicker(
+                                );
                             }
                         },
-
-
-
                         editoptions: {
-                                // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
-                                // use it to place a third party control to customize the toolbar
-                                dataInit: function (element) {
-                                    $(element).datepicker({
-                                        language: 'es',
-                                        firstDay: 1,
-                                        weekStart: 1,
-                                        autoclose: true,
-                                        todayHighlight: true,
-                                        format: "yyyy-mm-dd"}
-                                    );
-                                }
-                            }},
+                            // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
+                            // use it to place a third party control to customize the toolbar
+                            dataInit: function (element) {
+                                $(element).datepicker();
+                            }
+                        }
+                    },
                     {name:'con_parte',index:'con_parte', width:20, align:'center', sortable:false, editable: false,
                         search: true,
                         formatter:'checkbox',
@@ -396,7 +374,7 @@
 
             //enable search/filter toolbar
             //jQuery(grid_selector).jqGrid('filterToolbar',{defaultSearch:true,stringResult:true})
-            jQuery(grid_selector).filterToolbar({stringResult: true, searchOnEnter: true, defaultSearch : "cn"});
+            jQuery(grid_selector).filterToolbar({stringResult: true, searchOnEnter: false, defaultSearch : "cn"});
 
 
             //switch element when editing inline
@@ -413,28 +391,6 @@
                     $(cell) .find('input[type=text]')
                             .datepicker({format:'yyyy-mm-dd' , autoclose:true});
                 }, 0);
-            }
-
-            // formatea parte
-            function formatParte(cellValue, options, rowObject) {
-                var parteHtml = "<p originalValue='"+cellValue+"'>"+cellValue.substring(0, 100)+"...</p>"
-                //return cellValue.substring(0, 100) + "...";
-                return parteHtml;
-            };
-
-            function unformatParte(cellValue, options, cellObject) {
-                return $(cellObject.html()).attr("originalValue");
-            };
-
-            // formatea foto
-            function formatFoto(cellValue, options, rowObject) {
-                var imageHtml = "<img alt='Foto de "+rowObject.alumno+"' class='nav-user-photo img-circle' src='" + cellValue +
-                        "' originalValue='" + cellValue + "' />";
-                return imageHtml;
-            }
-
-            function unformatFoto(cellValue, options, cellObject) {
-                return $(cellObject.html()).attr("originalValue");
             }
 
             // formatea alumno
@@ -489,7 +445,9 @@
                     width: 800,
                     recreateForm: true,
                     viewPagerButtons: false,
-                    //afterShowForm: cargaAlumnos,
+                    beforeInitData: function () {
+                      inEdit = true;
+                    },
                     beforeShowForm : function(e) {
                         var form = $(e[0]);
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
@@ -515,6 +473,9 @@
                     closeAfterAdd: true,
                     recreateForm: true,
                     viewPagerButtons: false,
+                    beforeInitData: function () {
+                      inEdit = false;
+                    },
                     beforeShowForm : function(e) {
                         var form = $(e[0]);
                         form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar')
@@ -608,43 +569,23 @@
                 return s + "</select>";
             }
 
-            function cargaAlumnos() {
-                // first of all update the student based on the group
-                var grupoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_cursogrupo;
-                actualizaAlumnosCallBack(grupoactual, true);
-                // then hook the change event of the group dropdown so that it updates students all the time
-                $("#grupo").bind("change", function (e) {
-                    debugger;
-                    actualizaAlumnosCallBack($("#grupo").val(), false);
+            function buildSelectAlumnos(alumnos) {
+                // first of all load the groups
+                var response = jQuery.parseJSON(alumnos);
+
+                var s = '<select>';
+
+                jQuery.each(response, function(i, item) {
+
+                    s += '<option value="'+response[i].id+'">'+response[i].nombre+'</option>';
+
                 });
-            }
-
-            function actualizaAlumnosCallBack(grupo, setselected) {
-				var alumnoactual = $(grid_selector).jqGrid('getRowData',$(grid_selector)[0].p.selrow).id_grupoalumno;
-				$("#alumno")
-                     .html("<option value='0'>Cargando alumnos...</option>")
-                     .attr("disabled", "disabled");
-
-                $.ajax({
-                    url: '{% url "alumno:dame_alumnos_curso" %}'+'?term='+grupo,
-                    type: "GET",
-                    success: function (alumnos) {
-                        $("#alumno option[value='0']").remove();
-                        $("#alumno").removeAttr("disabled");
-                             //.html(citiesHtml);
-                        $.each(alumnos, function(key, val) {
-                          $("#alumno").append('<option value="' + val.id + '">' + val.nombre + '</option>');
-                        });
-                        if(setselected) {
-                            $("#alumno").val( alumnoactual );
-                        }
-                    }
-                })
+                return s + "</select>";
             }
 
             function style_edit_form(form) {
-                //enable datepicker on "sdate" field and switches for "stock" field
-                form.find('input[name=fecha]').datepicker({format:'yyyy-mm-dd' , autoclose:true})
+                //enable datepicker on "sdate" field and switches for "comunicado" field
+                //form.find('input[name=fecha]').datepicker({format:'yyyy-mm-dd' , autoclose:true})
 
                 form.find('input[name=comunicado]').addClass('ace ace-switch ace-switch-5').after('<span class="lbl"></span>');
                            //don't wrap inside a label element, the checkbox value won't be submitted (POST'ed)
@@ -699,8 +640,6 @@
                 form.closest('.ui-jqdialog').find('.ui-jqdialog-titlebar').wrapInner('<div class="widget-header" />')
                 style_edit_form(form);
             }
-
-
 
             //it causes some flicker when reloading or navigating grid
             //it may be possible to have some custom formatter to do this as the grid is being created to prevent this
