@@ -25,6 +25,7 @@ def dame_alumnos_curso(request):
                     grupoalumnos = GrupoAlumno.objects.filter(cursogrupo__curso=request.session['curso_academico_usuario'],
                                                           cursogrupo_id=id_grupo)
                 else:
+                    return JsonResponse([{'id': '', 'nombre': 'Selecciona el alumno...'}], safe=False)
                     grupoalumnos = GrupoAlumno.objects.filter(cursogrupo__curso=request.session['curso_academico_usuario'])
             except Exception:
                 return HttpResponseServerError({"estado": "fallo",

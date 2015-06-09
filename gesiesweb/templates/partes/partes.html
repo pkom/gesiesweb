@@ -199,17 +199,17 @@
                             dataUrl: '{% url "grupo:dame_grupos_curso" %}',
                             buildSelect: buildSelectGrupos,
                             dataInit: function (elem) {
-                                var grupo = $(grid_selector).jqGrid('getRowData', $(grid_selector)[0].p.selrow).id_cursogrupo;
-                                $(grid_selector).jqGrid('setColProp', 'alumno', { editoptions: {
-                                    dataUrl: '{% url "alumno:dame_alumnos_curso" %}'+'?idgrupo='+grupo,
-                                    buildSelect: buildSelectAlumnos}
-                                });
+                                if (inEdit) {
+                                    var grupo = $(grid_selector).jqGrid('getRowData', $(grid_selector)[0].p.selrow).id_cursogrupo;
+                                    $(grid_selector).jqGrid('setColProp', 'alumno', { editoptions: {
+                                        dataUrl: '{% url "alumno:dame_alumnos_curso" %}'+'?idgrupo='+grupo,
+                                        buildSelect: buildSelectAlumnos}
+                                    });
+                                }
                             },
                             dataEvents: [
                                 { type: 'change', fn: function (e) {
-                                    var alumno, alumnoSelect, parentWidth, $row,
-                                                $grupoElem = $(e.target);
-                                                newOptions = '';
+                                    var alumno, $grupoElem = $(e.target), newOptions = '';
                                     $.ajax({
                                         url: '{% url "alumno:dame_alumnos_curso" %}'+'?idgrupo='+ $grupoElem.val(),
                                         type: "GET",
@@ -262,8 +262,7 @@
                             // dataInit is the client-side event that fires upon initializing the toolbar search field for a column
                             // use it to place a third party control to customize the toolbar
                             dataInit: function (element) {
-                                $(element).datepicker(
-                                );
+                                $(element).datepicker().change(function(){$(grid_selector)[0].triggerToolbar()});
                             }
                         },
                         editoptions: {
@@ -271,6 +270,15 @@
                             // use it to place a third party control to customize the toolbar
                             dataInit: function (element) {
                                 $(element).datepicker();
+                            },
+                            defaultValue: function(){
+                                                var currentTime = new Date();
+                                                var month = parseInt(currentTime.getMonth() + 1);
+                                                month = month <= 9 ? "0"+month : month;
+                                                var day = currentTime.getDate();
+                                                day = day <= 9 ? "0"+day : day;
+                                                var year = currentTime.getFullYear();
+                                                return year+"-"+month + "-"+day;
                             }
                         }
                     },
@@ -345,6 +353,22 @@
                         updatePagerIcons(table);
                         enableTooltips(table);
                     }, 0);
+                },
+
+                ondblClickRow: function(rowid) {
+                    jQuery(this).jqGrid('viewGridRow', rowid, {
+                        closeOnEscape: true,
+                        caption: 'Ver parte',
+                        width: 800,
+                        recreateForm: true,
+                        viewPagerButtons: false,
+                        labelswidth: 100,
+                        beforeShowForm: function(e){
+                            var form = $(e[0]);
+                            //form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />');
+                            style_display_form(form)
+                        }
+                    });
                 },
 
                 //gridComplete: initGrid,
@@ -422,10 +446,14 @@
             //navButtons
             jQuery(grid_selector).jqGrid('navGrid',pager_selector,
                 { 	//navbar options
+                    alertcap: 'Aviso',
+                    alerttext: '¡Debes tener seleccionado un parte!',
                     edit: true,
                     editicon : 'ace-icon fa fa-pencil blue',
+                    edittitle: 'Modifica el parte seleccionado',
                     add: true,
                     addicon : 'ace-icon fa fa-plus-circle purple',
+                    addtitle: 'Alta de un nuevo parte',
                     del: false,
                     delicon : 'ace-icon fa fa-trash-o red',
                     search: false,
@@ -433,10 +461,11 @@
                     refresh: true,
                     refreshicon : 'ace-icon fa fa-refresh green',
                     view: true,
-                    viewicon : 'ace-icon fa fa-search-plus grey'
+                    viewicon : 'ace-icon fa fa-search-plus grey',
+                    viewtitle: 'Visualizar el parte seleccionado'
                 },
                 {
-                    closeOnEscape: true,//Closes the popup on pressing escape key
+                    closeOnEscape: false,//Closes the popup on pressing escape key
                     reloadAfterSubmit: true,
                     drag: true,
                     //edit record form
@@ -468,6 +497,7 @@
                 },
                 {
                     //new record form
+                    closeOnEscape: false,
                     addCaption: 'Alta de nuevo parte',
                     width: 800,
                     closeAfterAdd: true,
@@ -483,7 +513,6 @@
                         style_edit_form(form);
                     },
 					afterSubmit : function( data, postdata, oper) {
-                        debugger;
 						var response = data.responseJSON;
 						if (response.hasOwnProperty("error")) {
 							if(response.error.length) {
@@ -524,7 +553,7 @@
                         style_search_filters($(this));
                     }
                     ,
-                    multipleSearch: true,
+                    multipleSearch: true
                     /**
                     multipleGroup:true,
                     showQuery: true
@@ -532,10 +561,16 @@
                 },
                 {
                     //view record form
+                    closeOnEscape: true,
+                    caption: 'Ver parte',
+                    width: 800,
                     recreateForm: true,
+                    viewPagerButtons: false,
+                    labelswidth: 100,
                     beforeShowForm: function(e){
                         var form = $(e[0]);
-                        form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />')
+                        //form.closest('.ui-jqdialog').find('.ui-jqdialog-title').wrap('<div class="widget-header" />');
+                        style_display_form(form)
                     }
                 }
             )
@@ -559,8 +594,11 @@
                 // first of all load the groups
                 var response = jQuery.parseJSON(grupos);
 
-                var s = '<select>';
-
+                if (inEdit) {
+                    var s = '<select>';
+                } else {
+                    var s = '<select><option value="">Selecciona un grupo</option>';
+                }
                 jQuery.each(response, function(i, item) {
 
                     s += '<option value="'+response[i].id+'">'+response[i].grupo+'</option>';
@@ -572,9 +610,7 @@
             function buildSelectAlumnos(alumnos) {
                 // first of all load the groups
                 var response = jQuery.parseJSON(alumnos);
-
                 var s = '<select>';
-
                 jQuery.each(response, function(i, item) {
 
                     s += '<option value="'+response[i].id+'">'+response[i].nombre+'</option>';
@@ -603,6 +639,28 @@
                 buttons.eq(0).append('<i class="ace-icon fa fa-chevron-left"></i>');
                 buttons.eq(1).append('<i class="ace-icon fa fa-chevron-right"></i>');
             }
+
+            function style_display_form(form) {
+                form.find('input[type=checkbox]').addClass('ace ace-switch ace-switch-5')
+                        .attr('disabled', 'disabled')
+                        .after('<span class="lbl"></span>');
+                           //don't wrap inside a label element, the checkbox value won't be submitted (POST'ed)
+                          //.addClass('ace ace-switch ace-switch-5').wrap('<label class="inline" />').after('<span class="lbl"></span>');
+                form.find('#v_parte span').replaceWith('<textarea cols="80" rows="10" disabled="disabled">'  +
+                        form.find('#v_parte span').text() +'</textarea>');
+
+                //update buttons classes
+                var buttons = form.next().find('.EditButton .fm-button');
+                buttons.addClass('btn btn-sm').find('[class*="-icon"]').hide();//ui-icon, s-icon
+                buttons.eq(0).addClass('btn-primary').prepend('<i class="ace-icon fa fa-check"></i>');
+                buttons.eq(1).prepend('<i class="ace-icon fa fa-times"></i>')
+
+                buttons = form.next().find('.navButton a');
+                buttons.find('.ui-icon').hide();
+                buttons.eq(0).append('<i class="ace-icon fa fa-chevron-left"></i>');
+                buttons.eq(1).append('<i class="ace-icon fa fa-chevron-right"></i>');
+            }
+
 
             function style_delete_form(form) {
                 var buttons = form.next().find('.EditButton .fm-button');
