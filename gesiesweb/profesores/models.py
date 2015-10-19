@@ -42,7 +42,7 @@ class Profesor(TimeStampedModel):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, db_index=True, related_name='profesor')
     dni = models.CharField(blank=True, max_length=20, default='', db_index=True, unique=True)
-    usuario_rayuela = models.CharField(blank=True, max_length=20, default='')
+    usuario_rayuela = models.CharField(blank=True, max_length=50, default='')
     foto = ImageField(upload_to=upload_to, blank=True, default='')
     es_usuario = models.BooleanField(default=False)
     id_usuario = models.CharField(blank=True, max_length=20, default='')
