@@ -17,7 +17,8 @@ def get_data(request):
     if config:
         for field in fields:
             if (isinstance(field, models.ImageField) or isinstance(field, models.FileField)):
-                context[field.name] = getattr(config, field.name).url
+                if getattr(config, field.name):
+                    context[field.name] = getattr(config, field.name).url
             else:
                 context[field.name] = getattr(config, field.name)
     context['debug'] = settings.DEBUG

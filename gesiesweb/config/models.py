@@ -27,17 +27,17 @@ class Config(TimeStampedModel):
     def logo(self):
         return """
         <img src ="%s"/>
-        """ % self.logo_centro.url
+        """ % self.logo_centro.url if self.logo_centro else '#'
 
     def sello(self):
         return """
         <img src ="%s"/>
-        """ % self.sello_centro.url
+        """ % self.sello_centro.url if self.sello_centro else '#'
 
     def firma(self):
         return """
         <img src ="%s"/>
-        """ % self.firma_director.url
+        """ % self.firma_director.url if self.firma_director else '#'
 
     logo.allow_tags = True
     sello.allow_tags = True
